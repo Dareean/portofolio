@@ -8,9 +8,21 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-inter)", "sans-serif"],
+        display: ["var(--font-syne)", "sans-serif"],
+      },
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        "void-black": "#080808",
+        "off-white": "#E0E0E0",
+      },
+      spacing: {
+        "128": "32rem",
+        "144": "36rem",
+      },
+      height: {
+        "128": "32rem",
+        "144": "36rem",
       },
     },
   },
