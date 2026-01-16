@@ -38,15 +38,21 @@ export default function Footer() {
               href="/blog"
               className="text-off-white/60 hover:text-off-white text-sm tracking-widest uppercase transition-colors duration-300"
             >
-              Blog
+              Journey
             </Link>
-            {["GitHub", "LinkedIn", "Twitter"].map((link) => (
+            {[
+              { name: "GitHub", href: "https://github.com/Dareean" },
+              { name: "LinkedIn", href: "https://www.linkedin.com/in/dareean-ahmad-raffi-mardin-72247a229/" },
+              { name: "Instagram", href: "https://www.instagram.com/darenrafi/" },
+            ].map((link) => (
               <a
-                key={link}
-                href="#"
+                key={link.name}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-off-white/60 hover:text-off-white text-sm tracking-widest uppercase transition-colors duration-300"
               >
-                {link}
+                {link.name}
               </a>
             ))}
           </div>

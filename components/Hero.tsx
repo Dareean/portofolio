@@ -72,7 +72,7 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
         >
-          Full Stack Developer
+          Logic meets Aesthetics
         </motion.p>
 
         {/* Scroll Indicator */}

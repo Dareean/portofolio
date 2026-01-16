@@ -86,42 +86,70 @@ export const PROJECTS: Project[] = [
 export const ABOUT_TEXT =
   "Logic meets Aesthetics. I build digital experiences that are as functional as they are beautiful.";
 
-export interface BlogPost {
+export interface JourneyItem {
   id: number;
   title: string;
-  excerpt: string;
-  content: string;
-  image: string;
+  description: string;
   date: string;
-  category: string;
+  type: "milestone" | "project" | "education" | "award" | "experience";
+  image?: string;
 }
 
-export const BLOG_POSTS: BlogPost[] = [
+export const JOURNEY_ITEMS: JourneyItem[] = [
   {
     id: 1,
-    title: "Building My First Mobile App",
-    excerpt: "A journey through the development process of SOROT, from concept to launch.",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
-    image: "/images/blog-mobile-app.jpg",
-    date: "2025-01-10",
-    category: "Development",
+    title: "Started My Development Journey",
+    description: "Began learning web development, exploring HTML, CSS, and JavaScript fundamentals.",
+    date: "2020-01",
+    type: "milestone",
   },
   {
     id: 2,
-    title: "UI/UX Design Principles I Live By",
-    excerpt: "The core design philosophies that shape every project I work on.",
-    content: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.",
-    image: "/images/blog-design.jpg",
-    date: "2025-01-05",
-    category: "Design",
+    title: "First Freelance Project",
+    description: "Completed my first paid project - a website for a local business.",
+    date: "2021-03",
+    type: "project",
   },
   {
     id: 3,
-    title: "My Daily Routine as a Developer",
-    excerpt: "How I structure my day for maximum productivity and creativity.",
-    content: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.",
-    image: "/images/blog-routine.jpg",
-    date: "2024-12-28",
-    category: "Lifestyle",
+    title: "Learned React & Next.js",
+    description: "Deep dive into modern frontend frameworks and built several applications.",
+    date: "2021-08",
+    type: "education",
+  },
+  {
+    id: 4,
+    title: "Joined Tech Startup",
+    description: "Started working as a Full Stack Developer, building products from scratch.",
+    date: "2022-02",
+    type: "experience",
+  },
+  {
+    id: 5,
+    title: "Launched PRISM",
+    description: "Released my first major side project - a data visualization tool.",
+    date: "2022-09",
+    type: "project",
+  },
+  {
+    id: 6,
+    title: "UI/UX Certification",
+    description: "Completed professional certification in User Interface and Experience Design.",
+    date: "2023-04",
+    type: "education",
+  },
+  {
+    id: 7,
+    title: "Best Developer Award",
+    description: "Recognized for outstanding contributions and innovative solutions.",
+    date: "2023-11",
+    type: "award",
+  },
+  {
+    id: 8,
+    title: "Launched SOROT",
+    description: "Released a photography app with AI-powered editing features.",
+    date: "2025-01",
+    type: "project",
   },
 ];
