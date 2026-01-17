@@ -13,7 +13,7 @@ const syne = Syne({
 });
 
 export const metadata: Metadata = {
-  title: "Dareean - Full Stack Developer",
+  title: "Dareean - Logic meets Creativity",
   description: "Logic meets Aesthetics. Portfolio of Dareean.",
 };
 
