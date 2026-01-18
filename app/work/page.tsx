@@ -75,7 +75,7 @@ export default function WorkPage() {
             transition={{ duration: 0.6, delay: index * 0.1 }}
           >
             {/* Image Container */}
-            <div className="relative aspect-[16/10] mb-6 overflow-hidden bg-off-white/5 border border-off-white/10">
+            <div className="relative aspect-[16/9] mb-4 overflow-hidden bg-off-white/5 border border-off-white/10">
               <div className="absolute inset-0 bg-gradient-to-br from-off-white/10 to-transparent flex items-center justify-center">
                 <span className="font-display text-4xl text-off-white/20">
                   {project.title}

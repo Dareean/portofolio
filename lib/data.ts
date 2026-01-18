@@ -153,3 +153,76 @@ export const JOURNEY_ITEMS: JourneyItem[] = [
     type: "project",
   },
 ];
+
+export interface Story {
+  id: number;
+  title: string;
+  excerpt: string;
+  date: string;
+  category: "travel" | "life" | "tech" | "creative";
+  images: string[];
+}
+
+export const STORIES: Story[] = [
+  {
+    id: 1,
+    title: "Weekend in Bali",
+    excerpt: "Exploring the hidden temples and rice terraces of Ubud. A journey through ancient traditions and breathtaking landscapes.",
+    date: "2025-01-10",
+    category: "travel",
+    images: [
+      "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800",
+      "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800",
+      "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=800",
+    ],
+  },
+  {
+    id: 2,
+    title: "My Home Office Setup",
+    excerpt: "After months of iteration, I finally achieved the perfect workspace. Here's the story behind every decision.",
+    date: "2024-12-15",
+    category: "life",
+    images: [
+      "https://images.unsplash.com/photo-1593062096033-9a26b09da705?w=800",
+      "https://images.unsplash.com/photo-1616628188859-7a11abb6fcc9?w=800",
+      "https://images.unsplash.com/photo-1598300056393-4aac492f4344?w=800",
+    ],
+  },
+  {
+    id: 3,
+    title: "Building SOROT",
+    excerpt: "The challenges and learnings from developing an AI-powered photography app from scratch.",
+    date: "2024-11-20",
+    category: "tech",
+    images: [
+      "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800",
+      "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800",
+      "https://images.unsplash.com/photo-1555774698-0b77e0d5fac6?w=800",
+    ],
+  },
+  {
+    id: 4,
+    title: "Tokyo at Night",
+    excerpt: "Neon lights, quiet alleys, and the electric energy of Shibuya. A visual diary of my first trip to Japan.",
+    date: "2024-10-05",
+    category: "travel",
+    images: [
+      "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800",
+      "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=800",
+      "https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?w=800",
+      "https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=800",
+    ],
+  },
+  {
+    id: 5,
+    title: "Design System Deep Dive",
+    excerpt: "Lessons learned building a scalable design system for enterprise applications.",
+    date: "2024-08-12",
+    category: "creative",
+    images: [
+      "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800",
+      "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800",
+    ],
+  },
+];
+

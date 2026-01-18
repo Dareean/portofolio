@@ -13,8 +13,8 @@ const config: Config = {
         display: ["var(--font-syne)", "sans-serif"],
       },
       colors: {
-        "void-black": "#080808",
-        "off-white": "#E0E0E0",
+        "void-black": "#F5F5F5",
+        "off-white": "#1A1A1A",
       },
       spacing: {
         "128": "32rem",
