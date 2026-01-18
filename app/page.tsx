@@ -1,4 +1,5 @@
 import Hero from "@/components/Hero";
+import AboutMe from "@/components/AboutMe";
 import Marquee from "@/components/Marquee";
 import JourneyTimeline from "@/components/JourneyTimeline";
 import WorkList from "@/components/WorkList";
@@ -10,6 +11,9 @@ export default function Home() {
     <main className="min-h-screen">
       {/* Hero Section */}
       <Hero />
+
+      {/* About Me */}
+      <AboutMe />
 
       {/* Marquee Divider */}
       <div className="py-16">
