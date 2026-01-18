@@ -16,8 +16,7 @@ export default function Marquee({
           <span
             className="font-display text-[8vw] md:text-[6vw] uppercase tracking-wider"
             style={{
-              WebkitTextStroke: "1px rgba(224, 224, 224, 0.4)",
-              WebkitTextFillColor: "transparent",
+              color: "rgba(0, 0, 0, 0.7)",
             }}
           >
             {repeatedText}
@@ -25,8 +24,7 @@ export default function Marquee({
           <span
             className="font-display text-[8vw] md:text-[6vw] uppercase tracking-wider"
             style={{
-              WebkitTextStroke: "1px rgba(224, 224, 224, 0.4)",
-              WebkitTextFillColor: "transparent",
+              color: "rgba(0, 0, 0, 0.7)",
             }}
           >
             {repeatedText}
