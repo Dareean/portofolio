@@ -21,7 +21,7 @@ export default function Navbar() {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/work", label: "Work" },
-    { href: "/blog", label: "Journey" },
+    { href: "/blog", label: "Blog" },
   ];
 
   return (
@@ -79,7 +79,7 @@ export default function Navbar() {
             href="/blog"
             className="hidden md:block px-4 py-2 border border-off-white/30 text-off-white text-sm tracking-widest uppercase hover:bg-off-white hover:text-void-black transition-all duration-300"
           >
-            My Journey
+            Contact Me
           </Link>
         </div>
       </nav>

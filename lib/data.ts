@@ -1,84 +1,53 @@
 export interface Project {
   id: number;
   title: string;
-  category: string;
+  category: string | string[];  // Can be single or multiple categories
   year: string;
   image: string;
   description?: string;
   featured?: boolean;
+  link?: string;
 }
 
 export const PROJECTS: Project[] = [
   {
     id: 1,
-    title: "SOROT",
-    category: "Mobile App",
+    title: "Medicflow - Medical Record Submission",
+    link: "https://github.com/Dareean/Medical-Record",
+    category: "Web Platform",
     year: "2025",
-    image: "/images/placeholder-sorot.jpg",
-    description: "A photography app that captures moments with intelligent filters and AI-powered editing.",
+    image: "/assets/medicflow-showcase2.png",
+    description: "Medicflow is a comprehensive medical record platform designed to streamline clinical workflows and facilitate interaction between patients and doctors. It allows users to effortlessly handle patient records, history, and appointments in one place, reducing paperwork and increasing time for patient care.",
     featured: true,
   },
   {
     id: 2,
-    title: "NEXUS",
-    category: "Web Platform",
-    year: "2024",
-    image: "/images/placeholder-nexus.jpg",
-    description: "Collaborative workspace platform connecting remote teams across the globe.",
+    title: "Sorot - Geospatial Environmental Reporting Platform",
+    link: "https://github.com/Dareean/sorot_app",
+    category: ["Mobile App", "Web Platform"],
+    year: "2025",
+    image: "/assets/sorot-dummy_showcase.png",
+    description: "Developed a comprehensive prototype geospatial reporting system enabling citizens to report environmental issues with automatic GPS mapping. The platform features real-time monitoring through QGIS integration and a responsive admin dashboard for efficient issue management.",
     featured: true,
   },
   {
     id: 3,
-    title: "PULSE",
-    category: "Dashboard",
-    year: "2024",
-    image: "/images/placeholder-pulse.jpg",
-    description: "Real-time analytics dashboard for monitoring business metrics and KPIs.",
+    title: "JasaKita Application - Services Platform for Migrants",
+    link: "https://www.figma.com/proto/JwXmVMkU9HF5rSb8mN9b68/JasaKita?node-id=768-1763&p=f&t=WFD7f1ilxwpXzMR2-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=768%3A1656&show-proto-sidebar=1",
+    category: ["UI/UX Design", "Mobile App", "Tournament"],
+    year: "2025",
+    image: "/assets/jasakita_showcase.png",
+    description: "A solution designed for migrants in Palu City who experience difficulty finding trusted local service providers.",
     featured: true,
   },
   {
     id: 4,
-    title: "ECHO",
-    category: "Mobile App",
-    year: "2024",
-    image: "/images/placeholder-echo.jpg",
-    description: "Voice-first social media platform for authentic audio conversations.",
-    featured: false,
-  },
-  {
-    id: 5,
-    title: "ORBIT",
-    category: "Web App",
-    year: "2023",
-    image: "/images/placeholder-orbit.jpg",
-    description: "Project management tool with AI-powered task prioritization.",
-    featured: false,
-  },
-  {
-    id: 6,
-    title: "FLOW",
-    category: "Design System",
-    year: "2023",
-    image: "/images/placeholder-flow.jpg",
-    description: "Comprehensive design system for scalable enterprise applications.",
-    featured: false,
-  },
-  {
-    id: 7,
-    title: "SPARK",
-    category: "E-Commerce",
-    year: "2023",
-    image: "/images/placeholder-spark.jpg",
-    description: "Modern e-commerce platform with seamless checkout experience.",
-    featured: false,
-  },
-  {
-    id: 8,
-    title: "PRISM",
-    category: "Data Visualization",
-    year: "2022",
-    image: "/images/placeholder-prism.jpg",
-    description: "Interactive data visualization tool for complex datasets.",
+    title: "Guard Riders - Smart Helmet",
+    link: "https://guardriders.com",
+    category: "Tournament",
+    year: "2025",
+    image: "/assets/rsict_2025.jpeg",
+    description: "Joined the 'Guard Riders' team to tackle road safety challenges. We designed a multifunctional smart helmet aimed at reducing accident rates by preventing their primary causes.",
     featured: false,
   },
 ];

@@ -5,7 +5,11 @@ import Link from "next/link";
 import { useState, useRef } from "react";
 import { PROJECTS } from "@/lib/data";
 
-const categories = ["All", "Mobile App", "Web Platform", "Dashboard", "Design System", "E-Commerce"];
+// Generate categories dynamically from projects
+const allCategories = PROJECTS.flatMap(p => 
+  Array.isArray(p.category) ? p.category : [p.category]
+);
+const categories = ["All", ...Array.from(new Set(allCategories))];
 
 // Tilt card component for 3D hover effect
 function TiltCard({ 
@@ -66,7 +70,11 @@ export default function WorkPage() {
 
   const filteredProjects = activeFilter === "All" 
     ? PROJECTS 
-    : PROJECTS.filter(p => p.category === activeFilter);
+    : PROJECTS.filter(p => 
+        Array.isArray(p.category) 
+          ? p.category.includes(activeFilter) 
+          : p.category === activeFilter
+      );
 
   return (
     <main className="min-h-screen py-24 px-6 md:px-12 lg:px-20 overflow-hidden">
@@ -230,7 +238,7 @@ export default function WorkPage() {
 
       {/* Bento Grid */}
       <motion.section
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[280px]"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[340px]"
         layout
       >
         {filteredProjects.map((project, index) => {
@@ -252,22 +260,23 @@ export default function WorkPage() {
               onMouseLeave={() => setHoveredProject(null)}
             >
               <TiltCard className="h-full">
-                <Link href={`/work/${project.id}`} className="block h-full">
+                <Link href={project.link || `/work/${project.id}`} className="block h-full" target={project.link ? "_blank" : undefined}>
                   <div 
-                    className="group relative h-full rounded-2xl overflow-hidden border border-off-white/10 bg-gradient-to-br from-off-white/[0.03] to-transparent backdrop-blur-sm transition-all duration-500 hover:border-off-white/25 hover:shadow-2xl hover:shadow-off-white/5"
+                    className="group relative h-full rounded-2xl overflow-hidden border border-off-white/10 transition-all duration-500 hover:border-off-white/25 hover:shadow-2xl hover:shadow-off-white/5"
                     style={{ transform: "translateZ(50px)" }}
                   >
-                    {/* Background Pattern */}
-                    <div className="absolute inset-0 opacity-30">
-                      <div className="absolute inset-0" style={{
-                        backgroundImage: `radial-gradient(circle at 1px 1px, rgba(26,26,26,0.15) 1px, transparent 0)`,
-                        backgroundSize: "24px 24px"
-                      }} />
-                    </div>
+                    {/* Project Image Background */}
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                      style={{ backgroundImage: `url(${project.image})` }}
+                    />
+                    
+                    {/* Dark Gradient Overlay for text readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-void-black from-30% via-void-black/70 via-60% to-transparent" />
 
-                    {/* Gradient Overlay on Hover */}
+                    {/* Hover Overlay */}
                     <motion.div 
-                      className="absolute inset-0 bg-gradient-to-br from-off-white/5 via-transparent to-off-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      className="absolute inset-0 bg-void-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                     />
 
                     {/* Project Number */}
@@ -278,35 +287,42 @@ export default function WorkPage() {
                     </div>
 
                     {/* Content */}
-                    <div className="relative h-full p-8 flex flex-col justify-end z-10">
-                      {/* Featured Badge */}
-                      {project.featured && (
-                        <motion.div 
-                          className="absolute top-6 left-6"
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: 1 + index * 0.1 }}
-                        >
-                          <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-off-white text-void-black text-xs tracking-widest uppercase rounded-full">
-                            <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                            Featured
-                          </span>
-                        </motion.div>
-                      )}
-
-                      {/* Category & Year */}
-                      <div className="flex items-center gap-4 mb-4">
-                        <span className="px-3 py-1 text-xs tracking-widest uppercase text-off-white/60 border border-off-white/20 rounded-full">
-                          {project.category}
-                        </span>
-                        <span className="text-off-white/40 font-mono text-xs">
-                          {project.year}
-                        </span>
+                    <div className="relative h-full p-6 flex flex-col justify-between z-10">
+                      {/* Top Row - Featured Badge & Project Number */}
+                      <div className="flex items-start justify-between">
+                        {project.featured ? (
+                          <motion.div 
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 1 + index * 0.1 }}
+                          >
+                            <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-off-white text-void-black text-xs tracking-widest uppercase rounded-full">
+                              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                              Featured
+                            </span>
+                          </motion.div>
+                        ) : (
+                          <div />
+                        )}
                       </div>
 
+                      {/* Bottom Section */}
+                      <div>
+                        {/* Categories & Year */}
+                        <div className="flex items-center gap-2 mb-3 flex-wrap">
+                          {(Array.isArray(project.category) ? project.category : [project.category]).map((cat, i) => (
+                            <span key={i} className="px-2.5 py-1 text-[10px] tracking-widest uppercase text-off-white/80 border border-off-white/20 rounded-full">
+                              {cat}
+                            </span>
+                          ))}
+                          <span className="text-off-white/100 font-mono text-xs">
+                            {project.year}
+                          </span>
+                        </div>
+
                       {/* Title */}
-                      <h2 className={`font-display text-off-white transition-colors duration-300 group-hover:text-off-white/90 ${
-                        isLarge ? "text-5xl lg:text-6xl" : "text-3xl lg:text-4xl"
+                      <h2 className={`font-display text-off-white transition-colors duration-300 group-hover:text-off-white/90 leading-tight ${
+                        isLarge ? "text-4xl lg:text-5xl" : "text-2xl lg:text-3xl line-clamp-3"
                       }`}>
                         {project.title}
                       </h2>
@@ -340,6 +356,7 @@ export default function WorkPage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                         </svg>
                       </motion.div>
+                      </div>
 
                       {/* Decorative Corner Lines */}
                       <div className="absolute bottom-0 right-0 w-20 h-20 opacity-20 group-hover:opacity-40 transition-opacity duration-300">
@@ -367,30 +384,6 @@ export default function WorkPage() {
           );
         })}
       </motion.section>
-
-      {/* Footer CTA */}
-      <motion.footer
-        className="mt-24 text-center"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 1.2 }}
-      >
-        <p className="text-off-white/40 mb-6">Have a project in mind?</p>
-        <Link
-          href="mailto:hello@dareean.com"
-          className="group inline-flex items-center gap-4 px-8 py-4 border-2 border-off-white/20 rounded-full text-off-white hover:border-off-white hover:bg-off-white hover:text-void-black transition-all duration-300"
-        >
-          <span className="text-lg tracking-widest uppercase">Let&apos;s Talk</span>
-          <svg 
-            className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1 group-hover:rotate-45" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-          </svg>
-        </Link>
-      </motion.footer>
     </main>
   );
 }
