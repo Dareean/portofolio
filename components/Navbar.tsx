@@ -74,9 +74,9 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {/* CTA Button for Blog */}
+          {/* CTA Button for Contact */}
           <Link
-            href="/blog"
+            href="/contact"
             className="hidden md:block px-4 py-2 border border-off-white/30 text-off-white text-sm tracking-widest uppercase hover:bg-off-white hover:text-void-black transition-all duration-300"
           >
             Contact Me
