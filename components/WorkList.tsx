@@ -3,14 +3,9 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, useSpring, useMotionValue } from "framer-motion";
 import Link from "next/link";
+import { Project } from "@/lib/data";
 
-interface Project {
-  id: number;
-  title: string;
-  category: string;
-  year: string;
-  image: string;
-}
+
 
 interface WorkListProps {
   projects: Project[];
@@ -86,7 +81,7 @@ export default function WorkList({ projects }: WorkListProps) {
               {/* Project Meta */}
               <div className="hidden md:flex items-center gap-12">
                 <span className="text-off-white/60 uppercase tracking-widest text-sm">
-                  {project.category}
+                  {Array.isArray(project.category) ? project.category.join(" / ") : project.category}
                 </span>
                 <span className="text-off-white/40 font-mono text-sm">
                   {project.year}

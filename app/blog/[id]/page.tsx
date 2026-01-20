@@ -3,12 +3,12 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { BLOG_POSTS } from "@/lib/data";
+import { STORIES } from "@/lib/data";
 
 export default function BlogPostPage() {
   const params = useParams();
   const postId = Number(params.id);
-  const post = BLOG_POSTS.find((p) => p.id === postId);
+  const post = STORIES.find((p) => p.id === postId);
 
   if (!post) {
     return (
@@ -141,7 +141,7 @@ export default function BlogPostPage() {
           More Posts
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {BLOG_POSTS.filter((p) => p.id !== post.id)
+          {STORIES.filter((p) => p.id !== post.id)
             .slice(0, 2)
             .map((relatedPost) => (
               <Link

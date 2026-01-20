@@ -130,6 +130,7 @@ export interface Story {
   date: string;
   category: "travel" | "life" | "tech" | "creative";
   images: string[];
+  content?: string;
 }
 
 export const STORIES: Story[] = [
@@ -144,6 +145,7 @@ export const STORIES: Story[] = [
       "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800",
       "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=800",
     ],
+    content: "Ubud is a place where time seems to slow down. From the emerald green rice terraces of Tegalalang to the sacred Monkey Forest, every corner of this town tells a story of culture and spirituality. During my weekend here, I explored ancient temples, tasted authentic Balinese cuisine, and witnessed traditional dance performances that have been preserved for generations."
   },
   {
     id: 2,
@@ -156,6 +158,7 @@ export const STORIES: Story[] = [
       "https://images.unsplash.com/photo-1616628188859-7a11abb6fcc9?w=800",
       "https://images.unsplash.com/photo-1598300056393-4aac492f4344?w=800",
     ],
+    content: "Creating a productive workspace is an art. It's not just about buying expensive gear, but about understanding your workflow. I chose a minimalist setup with a focus on ergonomics and lighting. The standing desk allows me to stay active, while the ambient lighting creates a focused atmosphere for late-night coding sessions."
   },
   {
     id: 3,
@@ -168,6 +171,7 @@ export const STORIES: Story[] = [
       "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800",
       "https://images.unsplash.com/photo-1555774698-0b77e0d5fac6?w=800",
     ],
+    content: "Building SOROT was a journey of discovery. We started with a simple idea: how can we make photography more accessible? The answer lay in AI. By integrating advanced machine learning models, we were able to create an app that understands the scene and suggests the best settings. The road wasn't easy, but the result was worth it."
   },
   {
     id: 4,
@@ -181,6 +185,7 @@ export const STORIES: Story[] = [
       "https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?w=800",
       "https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=800",
     ],
+    content: "Tokyo is a city of contrasts. The quiet discipline of the tea ceremony coexists with the chaotic energy of Shibuya Crossing. My nights in Tokyo were filled with neon lights, delicious street food, and endless exploration. Each alleyway revealed a new secret, a new perspective on this futuristic yet deeply traditional metropolis."
   },
   {
     id: 5,
@@ -192,6 +197,7 @@ export const STORIES: Story[] = [
       "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800",
       "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800",
     ],
+    content: "Design systems are the backbone of consistent user experiences. In this deep dive, I share my process for creating a scalable system that serves both designers and developers. From tokenizing colors to building atomic components, I cover the strategies that ensure your design system grows with your product."
   },
 ];
 
