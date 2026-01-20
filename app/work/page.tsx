@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useState, useRef } from "react";
 import { PROJECTS } from "@/lib/data";
@@ -67,6 +67,21 @@ function TiltCard({
 export default function WorkPage() {
   const [activeFilter, setActiveFilter] = useState("All");
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
+  const [expandedDescriptions, setExpandedDescriptions] = useState<Set<number>>(new Set());
+
+  const toggleDescription = (id: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setExpandedDescriptions(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
 
   const filteredProjects = activeFilter === "All" 
     ? PROJECTS 
@@ -238,20 +253,23 @@ export default function WorkPage() {
 
       {/* Bento Grid */}
       <motion.section
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[340px]"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        style={{ gridAutoRows: 'minmax(340px, auto)' }}
         layout
       >
         {filteredProjects.map((project, index) => {
           // Determine card size for bento effect
           const isLarge = project.featured && index < 2;
           const isMedium = index === 2 || index === 5;
+          const isExpanded = expandedDescriptions.has(project.id);
           
           return (
             <motion.article
               key={project.id}
               className={`relative ${
                 isLarge ? "md:col-span-2 md:row-span-2" : ""
-              } ${isMedium ? "lg:row-span-2" : ""}`}
+              } ${isMedium && !isExpanded ? "lg:row-span-2" : ""}`}
+              style={{ minHeight: isExpanded ? 'auto' : undefined }}
               initial={{ opacity: 0, y: 60 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.9 + index * 0.1 }}
@@ -287,7 +305,7 @@ export default function WorkPage() {
                     </div>
 
                     {/* Content */}
-                    <div className="relative h-full p-6 flex flex-col justify-between z-10">
+                    <div className="relative h-full p-6 flex flex-col justify-between z-10 overflow-hidden">
                       {/* Top Row - Featured Badge & Project Number */}
                       <div className="flex items-start justify-between">
                         {project.featured ? (
@@ -329,11 +347,45 @@ export default function WorkPage() {
 
                       {/* Description */}
                       {project.description && (
-                        <p className={`mt-4 text-off-white/50 leading-relaxed transition-colors duration-300 group-hover:text-off-white/60 ${
-                          isLarge ? "text-base max-w-md" : "text-sm line-clamp-2"
-                        }`}>
-                          {project.description}
-                        </p>
+                        <div className="mt-3">
+                          <motion.div
+                            initial={false}
+                            animate={{ 
+                              height: isExpanded ? 'auto' : (isLarge ? '3.5rem' : '1.5rem')
+                            }}
+                            transition={{ 
+                              duration: 0.4, 
+                              ease: [0.4, 0, 0.2, 1]
+                            }}
+                            className="overflow-hidden"
+                          >
+                            <p className={`text-off-white/50 leading-relaxed transition-colors duration-300 group-hover:text-off-white/60 ${
+                              isLarge ? "text-base max-w-md" : "text-sm"
+                            }`}>
+                              {project.description}
+                            </p>
+                          </motion.div>
+                          {project.description.length > 50 && (
+                            <motion.button
+                              onClick={(e) => toggleDescription(project.id, e)}
+                              className="mt-2 text-xs text-off-white/70 hover:text-off-white transition-colors underline decoration-dotted underline-offset-2 z-30 relative"
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                            >
+                              <AnimatePresence mode="wait">
+                                <motion.span
+                                  key={isExpanded ? 'less' : 'more'}
+                                  initial={{ opacity: 0, y: 5 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, y: -5 }}
+                                  transition={{ duration: 0.15 }}
+                                >
+                                  {isExpanded ? "Show less" : "Show more"}
+                                </motion.span>
+                              </AnimatePresence>
+                            </motion.button>
+                          )}
+                        </div>
                       )}
 
                       {/* View Link */}

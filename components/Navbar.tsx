@@ -22,6 +22,7 @@ export default function Navbar() {
     { href: "/", label: "Home" },
     { href: "/work", label: "Work" },
     { href: "/blog", label: "Blog" },
+    { href: "/contact", label: "Contact", mobileOnly: true },
   ];
 
   return (
@@ -52,7 +53,7 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="relative group"
+              className={`relative group ${link.mobileOnly ? 'md:hidden' : ''}`}
             >
               <span
                 className={`text-sm tracking-widest uppercase transition-colors duration-300 ${
