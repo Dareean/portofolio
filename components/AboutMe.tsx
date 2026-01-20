@@ -148,7 +148,7 @@ export default function AboutMe() {
                 viewport={{ once: true }}
                 transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
               >
-                Hi, I'm
+                Hi, I&apos;m
               </motion.h2>
             </div>
             <div className="overflow-hidden">
@@ -209,7 +209,7 @@ export default function AboutMe() {
             transition={{ delay: 0.8, duration: 0.8 }}
           >
             <p className="text-off-white/60 text-xl md:text-2xl leading-relaxed">
-              I'm a developer and designer based in{" "}
+              I&apos;m a developer and designer based in{" "}
               <span className="text-off-white font-medium">Indonesia</span>,
               passionate about crafting digital experiences that blend{" "}
               <span className="text-off-white font-medium">aesthetics</span> with{" "}

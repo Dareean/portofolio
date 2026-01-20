@@ -144,7 +144,7 @@ export default function StoriesPage() {
         </h1>
         <p className="text-off-white/60 text-lg">
           Personal moments, travel adventures, and behind-the-scenes of
-          projects I'm working on.
+          projects I&apos;m working on.
         </p>
       </motion.div>
 
