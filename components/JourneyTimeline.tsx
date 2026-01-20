@@ -9,6 +9,7 @@ const typeIcons: Record<string, string> = {
   education: "📚",
   award: "🏆",
   experience: "💼",
+  community: "🤝",
 };
 
 const typeColors: Record<string, string> = {
@@ -17,6 +18,7 @@ const typeColors: Record<string, string> = {
   education: "border-green-400/50",
   award: "border-yellow-400/50",
   experience: "border-pink-400/50",
+  community: "border-cyan-400/50",
 };
 
 export default function JourneyTimeline() {

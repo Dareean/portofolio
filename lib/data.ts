@@ -60,7 +60,7 @@ export interface JourneyItem {
   title: string;
   description: string;
   date: string;
-  type: "milestone" | "project" | "education" | "award" | "experience";
+  type: "milestone" | "project" | "education" | "award" | "experience" | "community";
   image?: string;
 }
 
@@ -105,14 +105,14 @@ export const JOURNEY_ITEMS: JourneyItem[] = [
     title: "Programming Tadulako",
     description: "Joined a community based on programming to enhance my programming skills",
     date: "2025-03",
-    type: "education",
+    type: "community",
   },
   {
     id: 7,
     title: "Green Generation Central Sulawesi",
     description: "Participated in a green community program to raise awareness about environmental issues",
     date: "2025-01",
-    type: "award",
+    type: "community",
   },
   {
     id: 8,
