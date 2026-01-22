@@ -1,150 +1,260 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
-import Image from "next/image";
-import { STORIES, Story } from "@/lib/data";
+import { EXPERIENCES, Experience } from "@/lib/data";
 
-const categories = ["all", "travel", "life", "tech", "creative"] as const;
-
-// Category colors for visual distinction
-const categoryColors: Record<string, { bg: string; text: string; border: string }> = {
-  travel: { bg: "bg-emerald-50", text: "text-emerald-600", border: "border-emerald-200" },
-  life: { bg: "bg-amber-50", text: "text-amber-600", border: "border-amber-200" },
-  tech: { bg: "bg-blue-50", text: "text-blue-600", border: "border-blue-200" },
-  creative: { bg: "bg-purple-50", text: "text-purple-600", border: "border-purple-200" },
+// Category styling
+const categoryStyles: Record<string, { icon: string; bg: string; text: string; border: string }> = {
+  education: { icon: "🎓", bg: "bg-blue-50", text: "text-blue-600", border: "border-blue-200" },
+  work: { icon: "💼", bg: "bg-emerald-50", text: "text-emerald-600", border: "border-emerald-200" },
+  award: { icon: "🏆", bg: "bg-amber-50", text: "text-amber-600", border: "border-amber-200" },
+  community: { icon: "🤝", bg: "bg-purple-50", text: "text-purple-600", border: "border-purple-200" },
+  volunteer: { icon: "🌱", bg: "bg-green-50", text: "text-green-600", border: "border-green-200" },
 };
 
-function StoryCard({ story, index, featured = false }: { story: Story; index: number; featured?: boolean }) {
-  const [currentImage, setCurrentImage] = useState(0);
-  const colors = categoryColors[story.category] || categoryColors.life;
+// Format date display
+function formatDate(dateStr: string): string {
+  const date = new Date(dateStr + "-01");
+  return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+}
+
+// Experience Card Component
+function ExperienceCard({ experience, index }: { experience: Experience; index: number }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: cardRef,
+    offset: ["start end", "center center"],
+  });
+
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
+  const x = useTransform(
+    scrollYProgress,
+    [0, 0.5],
+    [index % 2 === 0 ? -100 : 100, 0]
+  );
+  const scale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1]);
+
+  const style = categoryStyles[experience.category] || categoryStyles.work;
+  const isLeft = index % 2 === 0;
 
   return (
-    <motion.article
-      className={`group relative overflow-hidden rounded-2xl bg-white shadow-sm hover:shadow-xl transition-all duration-500 ${
-        featured ? "md:col-span-2 md:row-span-2" : ""
-      }`}
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.6, delay: index * 0.08 }}
+    <motion.div
+      ref={cardRef}
+      style={{ opacity, x, scale }}
+      className={`relative flex items-center gap-8 ${isLeft ? "md:flex-row" : "md:flex-row-reverse"}`}
     >
-      {/* Image Container */}
-      <div className={`relative overflow-hidden ${featured ? "h-72 md:h-96" : "h-52 md:h-64"}`}>
-        <Image
-          src={story.images[currentImage]}
-          alt={story.title}
-          fill
-          className="object-cover transition-transform duration-700 group-hover:scale-110"
-        />
-        
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
-        
-        {/* Image Navigation Dots */}
-        {story.images.length > 1 && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-            {story.images.map((_, i) => (
-              <button
-                key={i}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setCurrentImage(i);
-                }}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  currentImage === i
-                    ? "bg-white w-6"
-                    : "bg-white/50 hover:bg-white/80"
-                }`}
-              />
-            ))}
+      {/* Timeline dot */}
+      <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center z-10">
+        <motion.div
+          initial={{ scale: 0 }}
+          whileInView={{ scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className={`w-12 h-12 rounded-full ${style.bg} ${style.border} border-2 flex items-center justify-center text-xl shadow-lg`}
+        >
+          {style.icon}
+        </motion.div>
+      </div>
+
+      {/* Card */}
+      <div className={`w-full md:w-5/12 ${isLeft ? "md:pr-16" : "md:pl-16"}`}>
+        <motion.div
+          className="bg-white rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100"
+          whileHover={{ y: -5 }}
+        >
+          {/* Category Badge */}
+          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide ${style.bg} ${style.text} ${style.border} border mb-4`}>
+            <span>{style.icon}</span>
+            <span className="capitalize">{experience.category}</span>
           </div>
-        )}
-        
-        {/* Category Badge */}
-        <div className={`absolute top-4 left-4 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide uppercase ${colors.bg} ${colors.text} ${colors.border} border backdrop-blur-sm`}>
-          {story.category}
-        </div>
-        
-        {/* Photo Count */}
-        <div className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-sm text-off-white/80 text-xs font-medium flex items-center gap-1.5">
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          {story.images.length}
-        </div>
+
+          {/* Date */}
+          <div className="text-off-white/40 text-sm font-medium mb-2">
+            {formatDate(experience.dateStart)}
+            {experience.dateEnd ? ` — ${formatDate(experience.dateEnd)}` : " — Present"}
+          </div>
+
+          {/* Title */}
+          <h3 className="font-display text-xl md:text-2xl text-off-white mb-1">
+            {experience.title}
+          </h3>
+
+          {/* Role & Organization */}
+          <p className="text-off-white/60 font-medium mb-4">
+            {experience.role} · {experience.organization}
+          </p>
+
+          {/* Description */}
+          <p className="text-off-white/50 leading-relaxed mb-4">
+            {experience.description}
+          </p>
+
+          {/* Highlights */}
+          {experience.highlights && (
+            <div className="flex flex-wrap gap-2">
+              {experience.highlights.map((highlight, i) => (
+                <span
+                  key={i}
+                  className="px-3 py-1 bg-gray-100 text-off-white/60 text-xs rounded-full"
+                >
+                  {highlight}
+                </span>
+              ))}
+            </div>
+          )}
+        </motion.div>
       </div>
-      
-      {/* Content */}
-      <div className="p-5 md:p-6">
-        {/* Date */}
-        <span className="text-off-white/40 text-sm font-medium">
-          {new Date(story.date).toLocaleDateString("en-US", {
-            month: "long",
-            day: "numeric",
-            year: "numeric",
-          })}
-        </span>
-        
-        {/* Title */}
-        <h2 className={`font-display text-off-white mt-2 group-hover:text-off-white/80 transition-colors duration-300 ${
-          featured ? "text-2xl md:text-3xl" : "text-xl md:text-2xl"
-        }`}>
-          {story.title}
-        </h2>
-        
-        {/* Excerpt */}
-        <p className={`text-off-white/60 mt-3 leading-relaxed ${
-          featured ? "line-clamp-3" : "line-clamp-2"
-        }`}>
-          {story.excerpt}
-        </p>
-        
-        {/* Read More Link */}
-        <div className="mt-4 flex items-center gap-2 text-off-white/80 font-medium text-sm group/link">
-          <span className="group-hover:underline">Read story</span>
-          <svg 
-            className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-          </svg>
-        </div>
-      </div>
-      
-      {/* Clickable Overlay */}
-      <Link href={`/blog/${story.id}`} className="absolute inset-0 z-20" />
-    </motion.article>
+
+      {/* Empty space for the other side */}
+      <div className="hidden md:block w-5/12" />
+    </motion.div>
   );
 }
 
-export default function StoriesPage() {
-  const [activeFilter, setActiveFilter] = useState<string>("all");
-
-  const filteredStories =
-    activeFilter === "all"
-      ? STORIES
-      : STORIES.filter((s) => s.category === activeFilter);
-
-  // First story is featured
-  const featuredStory = filteredStories[0];
-  const otherStories = filteredStories.slice(1);
+// Progress Indicator
+function ScrollProgress() {
+  const { scrollYProgress } = useScroll();
+  const scaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
-    <main className="min-h-screen py-24 md:py-32">
-      {/* Hero Header */}
+    <div className="fixed left-8 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-2 z-50">
+      <div className="w-1 h-32 bg-gray-200 rounded-full overflow-hidden">
+        <motion.div
+          style={{ scaleY, transformOrigin: "top" }}
+          className="w-full h-full bg-off-white rounded-full"
+        />
+      </div>
+      <span className="text-xs text-off-white/40 font-medium -rotate-90 whitespace-nowrap mt-4">
+        Scroll to explore
+      </span>
+    </div>
+  );
+}
+
+export default function ExperiencePage() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: containerRef });
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+
+  // Sort experiences by date (newest first)
+  const sortedExperiences = [...EXPERIENCES].sort(
+    (a, b) => new Date(b.dateStart).getTime() - new Date(a.dateStart).getTime()
+  );
+
+  return (
+    <main ref={containerRef} className="min-h-screen relative overflow-hidden">
+      {/* Parallax Background */}
       <motion.div
-        className="px-6 md:px-16 mb-12 md:mb-16"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
+        style={{ y: backgroundY }}
+        className="absolute inset-0 pointer-events-none"
       >
+        <div className="absolute top-20 right-20 w-96 h-96 bg-blue-100/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-40 left-20 w-80 h-80 bg-purple-100/30 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-amber-100/30 rounded-full blur-3xl" />
+      </motion.div>
+
+      <ScrollProgress />
+
+      {/* Hero Section */}
+      <section className="min-h-screen flex flex-col justify-center items-center px-6 relative">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="text-center max-w-4xl"
+        >
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-off-white/40 text-sm tracking-widest uppercase mb-4 block"
+          >
+            My Journey
+          </motion.span>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="font-display text-5xl md:text-7xl lg:text-8xl text-off-white mb-6"
+          >
+            Experience
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.8 }}
+            className="text-off-white/50 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto"
+          >
+            A timeline of my growth — from learning to code to contributing to communities, 
+            competing in hackathons, and building meaningful projects.
+          </motion.p>
+        </motion.div>
+
+        {/* Scroll Indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2 }}
+          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
+        >
+          <span className="text-off-white/30 text-sm">Scroll to explore</span>
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="w-6 h-10 border-2 border-off-white/20 rounded-full flex justify-center pt-2"
+          >
+            <motion.div className="w-1.5 h-1.5 bg-off-white/40 rounded-full" />
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* Timeline Section */}
+      <section className="px-6 md:px-16 py-20 relative">
+        {/* Center Timeline Line */}
+        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent hidden md:block" />
+
+        {/* Experience Cards */}
+        <div className="max-w-6xl mx-auto space-y-16 md:space-y-24">
+          {sortedExperiences.map((experience, index) => (
+            <ExperienceCard key={experience.id} experience={experience} index={index} />
+          ))}
+        </div>
+      </section>
+
+      {/* Footer CTA */}
+      <motion.section
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1 }}
+        className="px-6 md:px-16 py-32 text-center"
+      >
+        <h2 className="font-display text-3xl md:text-5xl text-off-white mb-6">
+          Want to work together?
+        </h2>
+        <p className="text-off-white/50 text-lg mb-8 max-w-xl mx-auto">
+          I&apos;m always open to discussing new opportunities, collaborations, or just having a chat.
+        </p>
+        <Link
+          href="/contact"
+          className="inline-flex items-center gap-2 px-8 py-4 bg-off-white text-void-black font-medium rounded-full hover:bg-off-white/90 transition-all duration-300 shadow-lg hover:shadow-xl"
+        >
+          Get in Touch
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </Link>
+      </motion.section>
+
+      {/* Back Link */}
+      <div className="fixed top-8 left-6 md:left-16 z-50">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-off-white/50 hover:text-off-white mb-8 transition-colors group"
+          className="inline-flex items-center gap-2 text-off-white/50 hover:text-off-white transition-colors group"
         >
           <svg
             className="w-5 h-5 transition-transform group-hover:-translate-x-1"
@@ -152,118 +262,11 @@ export default function StoriesPage() {
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
           Back
         </Link>
-        
-        <div className="max-w-3xl">
-          <motion.h1 
-            className="font-display text-5xl md:text-7xl lg:text-8xl text-off-white mb-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            Stories
-          </motion.h1>
-          <motion.p 
-            className="text-off-white/50 text-lg md:text-xl leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
-            Personal moments, travel adventures, and behind-the-scenes of projects I&apos;m working on.
-          </motion.p>
-        </div>
-      </motion.div>
-
-      {/* Filter Pills */}
-      <motion.div
-        className="px-6 md:px-16 mb-10 md:mb-14"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.4 }}
-      >
-        <div className="flex flex-wrap gap-3">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveFilter(category)}
-              className={`px-5 py-2.5 rounded-full text-sm font-medium tracking-wide capitalize transition-all duration-300 ${
-                activeFilter === category
-                  ? "bg-off-white text-void-black shadow-lg"
-                  : "bg-white text-off-white/60 hover:bg-off-white/5 hover:text-off-white border border-off-white/10"
-              }`}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* Stories Grid */}
-      <div className="px-6 md:px-16">
-        {filteredStories.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {/* Featured Story */}
-            {featuredStory && (
-              <StoryCard story={featuredStory} index={0} featured={true} />
-            )}
-            
-            {/* Other Stories */}
-            {otherStories.map((story, index) => (
-              <StoryCard key={story.id} story={story} index={index + 1} />
-            ))}
-          </div>
-        ) : (
-          <motion.div
-            className="text-center py-24 bg-white rounded-2xl"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-off-white/5 flex items-center justify-center">
-              <svg className="w-8 h-8 text-off-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-            </div>
-            <p className="text-off-white/40 text-lg font-medium">
-              No stories in this category yet.
-            </p>
-            <p className="text-off-white/30 text-sm mt-2">
-              Check back soon for new adventures!
-            </p>
-          </motion.div>
-        )}
       </div>
-      
-      {/* Bottom Decoration */}
-      <motion.div 
-        className="mt-20 md:mt-32 px-6 md:px-16"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1 }}
-      >
-        <div className="border-t border-off-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-off-white/30 text-sm">
-            {filteredStories.length} {filteredStories.length === 1 ? "story" : "stories"} found
-          </p>
-          <Link 
-            href="/" 
-            className="text-off-white/50 hover:text-off-white text-sm transition-colors flex items-center gap-2"
-          >
-            View all projects
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </Link>
-        </div>
-      </motion.div>
     </main>
   );
 }

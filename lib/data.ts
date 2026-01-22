@@ -123,6 +123,108 @@ export const JOURNEY_ITEMS: JourneyItem[] = [
   },
 ];
 
+// Experience data for scrollytelling page
+export interface Experience {
+  id: number;
+  title: string;
+  role: string;
+  organization: string;
+  dateStart: string;
+  dateEnd?: string; // undefined means "Present"
+  description: string;
+  highlights?: string[];
+  category: "education" | "work" | "award" | "community" | "volunteer";
+  image?: string;
+}
+
+export const EXPERIENCES: Experience[] = [
+  {
+    id: 1,
+    title: "Started My Development Journey",
+    role: "Self-taught Developer",
+    organization: "Personal Learning",
+    dateStart: "2021-06",
+    dateEnd: "2023-06",
+    description: "Began learning web development, exploring HTML, CSS, and JavaScript fundamentals. Built small projects to solidify understanding.",
+    highlights: ["HTML/CSS", "JavaScript", "Responsive Design"],
+    category: "education",
+  },
+  {
+    id: 2,
+    title: "Web Programmer Internship",
+    role: "Web Programmer Intern",
+    organization: "PT. Educa Studio",
+    dateStart: "2023-07",
+    dateEnd: "2023-09",
+    description: "Completed my first internship focusing on web development. Gained hands-on experience with real-world projects and professional workflows.",
+    highlights: ["Professional Development", "Team Collaboration", "Web Development"],
+    category: "work",
+  },
+  {
+    id: 3,
+    title: "Teaching Factory Program",
+    role: "Web Programmer Trainee",
+    organization: "Gamelab Indonesia",
+    dateStart: "2023-09",
+    dateEnd: "2024-06",
+    description: "Assigned to follow Teaching Factory Program at PT. Educa Studio, Gamelab Indonesia. Developed production-ready web applications.",
+    highlights: ["Production Environment", "Industry Standards", "Full-Stack Development"],
+    category: "work",
+  },
+  {
+    id: 4,
+    title: "Started University",
+    role: "Informatics Student",
+    organization: "University",
+    dateStart: "2024-08",
+    description: "Began my bachelor's degree in Informatics, combining formal education with practical development experience.",
+    highlights: ["Computer Science", "Software Engineering", "Algorithms"],
+    category: "education",
+  },
+  {
+    id: 5,
+    title: "UI/UX Design Competition",
+    role: "UI/UX Designer",
+    organization: "Campus Level Competition",
+    dateStart: "2025-01",
+    dateEnd: "2025-01",
+    description: "First attempt competing as a team in a campus-level UI/UX Design competition. Developed innovative solutions for user experience challenges.",
+    highlights: ["User Research", "Interface Design", "Prototyping"],
+    category: "award",
+  },
+  {
+    id: 6,
+    title: "Programming Tadulako",
+    role: "Community Member",
+    organization: "Programming Community",
+    dateStart: "2025-03",
+    description: "Joined a programming-focused community to enhance skills and connect with fellow developers.",
+    highlights: ["Networking", "Knowledge Sharing", "Skill Development"],
+    category: "community",
+  },
+  {
+    id: 7,
+    title: "Green Generation Central Sulawesi",
+    role: "Volunteer",
+    organization: "Environmental Community",
+    dateStart: "2025-01",
+    description: "Participated in a green community program to raise awareness about environmental issues and sustainable practices.",
+    highlights: ["Environmental Awareness", "Community Service", "Sustainability"],
+    category: "volunteer",
+  },
+  {
+    id: 8,
+    title: "Guard Riders - Smart Helmet",
+    role: "Team Member",
+    organization: "Road Safety Innovation",
+    dateStart: "2025-07",
+    description: "Collaborated on the design of a smart helmet to enhance road safety. Advanced to the competition finals with innovative safety features.",
+    highlights: ["IoT Development", "Safety Innovation", "Competition Finals"],
+    category: "award",
+    image: "/assets/rsict_2025.jpeg",
+  },
+];
+
 export interface Story {
   id: number;
   title: string;
