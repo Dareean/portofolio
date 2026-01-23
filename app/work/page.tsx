@@ -105,7 +105,6 @@ export default function WorkPage() {
   const heroY = useTransform(heroScrollProgress, [0, 1], [0, -100]);
 
 
-
   const filteredProjects = activeFilter === "All" 
     ? PROJECTS 
     : PROJECTS.filter(p => 
