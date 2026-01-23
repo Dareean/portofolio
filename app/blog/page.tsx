@@ -243,7 +243,7 @@ export default function ExperiencePage() {
 
           {/* Timeline container with vertical line */}
           <div className="relative pl-8 border-l-2 border-off-white/10 space-y-8">
-            {professionalExperiences.map((experience, index) => (
+            {professionalExperiences.map((experience) => (
               <TimelineCard key={experience.id} experience={experience} />
             ))}
           </div>
@@ -274,7 +274,7 @@ export default function ExperiencePage() {
 
           {/* Timeline container with vertical line */}
           <div className="relative pl-8 border-l-2 border-off-white/10 space-y-8">
-            {volunteerExperiences.map((experience, index) => (
+            {volunteerExperiences.map((experience) => (
               <TimelineCard key={experience.id} experience={experience} />
             ))}
           </div>
