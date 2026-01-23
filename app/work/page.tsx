@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence, useScroll } from "framer-motion";
 import Link from "next/link";
 import { useState, useRef } from "react";
 import { PROJECTS } from "@/lib/data";
@@ -98,6 +98,15 @@ export default function WorkPage() {
   const [activeFilter, setActiveFilter] = useState("All");
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
   const [expandedDescriptions, setExpandedDescriptions] = useState<Set<number>>(new Set());
+
+  // Hero scroll effects
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: heroScrollProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"]
+  });
+  const heroOpacity = useTransform(heroScrollProgress, [0, 0.8], [1, 0]);
+  const heroY = useTransform(heroScrollProgress, [0, 1], [0, -100]);
 
   const toggleDescription = (id: number, e: React.MouseEvent) => {
     e.preventDefault();
@@ -281,191 +290,17 @@ export default function WorkPage() {
           ))}
         </div>
 
-      {/* Bento Grid */}
-      <motion.section
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        style={{ gridAutoRows: 'minmax(340px, auto)' }}
-        layout
-      >
-        {filteredProjects.map((project, index) => {
-          // Determine card size for bento effect
-          const isLarge = project.featured && index < 2;
-          const isMedium = index === 2 || index === 5;
-          const isExpanded = expandedDescriptions.has(project.id);
-          
-          return (
-            <motion.article
-              key={project.id}
-              className={`relative ${
-                isLarge ? "md:col-span-2 md:row-span-2" : ""
-              } ${isMedium && !isExpanded ? "lg:row-span-2" : ""}`}
-              style={{ minHeight: isExpanded ? 'auto' : undefined }}
-              initial={{ opacity: 0, y: 60 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.9 + index * 0.1 }}
-              layout
-              onMouseEnter={() => setHoveredProject(project.id)}
-              onMouseLeave={() => setHoveredProject(null)}
-            >
-              <TiltCard className="h-full">
-                <Link href={project.link || `/work/${project.id}`} className="block h-full" target={project.link ? "_blank" : undefined}>
-                  <div 
-                    className="group relative h-full rounded-2xl overflow-hidden border border-off-white/10 transition-all duration-500 hover:border-off-white/25 hover:shadow-2xl hover:shadow-off-white/5"
-                    style={{ transform: "translateZ(50px)" }}
-                  >
-                    {/* Project Image Background */}
-                    <div 
-                      className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                      style={{ backgroundImage: `url(${project.image})` }}
-                    />
-                    
-                    {/* Dark Gradient Overlay for text readability */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-void-black from-30% via-void-black/70 via-60% to-transparent" />
-
-                    {/* Hover Overlay */}
-                    <motion.div 
-                      className="absolute inset-0 bg-void-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                    />
-
-                    {/* Project Number */}
-                    <div className="absolute top-6 right-6 z-10">
-                      <span className="font-display text-6xl lg:text-7xl text-off-white/[0.07] transition-all duration-300 group-hover:text-off-white/[0.12]">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                    </div>
-
-                    {/* Content */}
-                    <div className="relative h-full p-6 flex flex-col justify-between z-10 overflow-hidden">
-                      {/* Top Row - Featured Badge & Project Number */}
-                      <div className="flex items-start justify-between">
-                        {project.featured ? (
-                          <motion.div 
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 1 + index * 0.1 }}
-                          >
-                            <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-off-white text-void-black text-xs tracking-widest uppercase rounded-full">
-                              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                              Featured
-                            </span>
-                          </motion.div>
-                        ) : (
-                          <div />
-                        )}
-                      </div>
-
-                      {/* Bottom Section */}
-                      <div>
-                        {/* Categories & Year */}
-                        <div className="flex items-center gap-2 mb-3 flex-wrap">
-                          {(Array.isArray(project.category) ? project.category : [project.category]).map((cat, i) => (
-                            <span key={i} className="px-2.5 py-1 text-[10px] tracking-widest uppercase text-off-white/80 border border-off-white/20 rounded-full">
-                              {cat}
-                            </span>
-                          ))}
-                          <span className="text-off-white/100 font-mono text-xs">
-                            {project.year}
-                          </span>
-                        </div>
-
-                      {/* Title */}
-                      <h2 className={`font-display text-off-white transition-colors duration-300 group-hover:text-off-white/90 leading-tight ${
-                        isLarge ? "text-4xl lg:text-5xl" : "text-2xl lg:text-3xl line-clamp-3"
-                      }`}>
-                        {project.title}
-                      </h2>
-
-                      {/* Description */}
-                      {project.description && (
-                        <div className="mt-3">
-                          <motion.div
-                            initial={false}
-                            animate={{ 
-                              height: isExpanded ? 'auto' : (isLarge ? '3.5rem' : '1.5rem')
-                            }}
-                            transition={{ 
-                              duration: 0.4, 
-                              ease: [0.4, 0, 0.2, 1]
-                            }}
-                            className="overflow-hidden"
-                          >
-                            <p className={`text-off-white/50 leading-relaxed transition-colors duration-300 group-hover:text-off-white/60 ${
-                              isLarge ? "text-base max-w-md" : "text-sm"
-                            }`}>
-                              {project.description}
-                            </p>
-                          </motion.div>
-                          {project.description.length > 50 && (
-                            <motion.button
-                              onClick={(e) => toggleDescription(project.id, e)}
-                              className="mt-2 text-xs text-off-white/70 hover:text-off-white transition-colors underline decoration-dotted underline-offset-2 z-30 relative"
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
-                            >
-                              <AnimatePresence mode="wait">
-                                <motion.span
-                                  key={isExpanded ? 'less' : 'more'}
-                                  initial={{ opacity: 0, y: 5 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  exit={{ opacity: 0, y: -5 }}
-                                  transition={{ duration: 0.15 }}
-                                >
-                                  {isExpanded ? "Show less" : "Show more"}
-                                </motion.span>
-                              </AnimatePresence>
-                            </motion.button>
-                          )}
-                        </div>
-                      )}
-
-                      {/* View Link */}
-                      <motion.div 
-                        className="mt-6 flex items-center gap-3 text-off-white/50 group-hover:text-off-white transition-colors duration-300"
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ 
-                          opacity: hoveredProject === project.id ? 1 : 0.6, 
-                          x: hoveredProject === project.id ? 0 : -10 
-                        }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <span className="text-sm tracking-widest uppercase">View Project</span>
-                        <svg 
-                          className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" 
-                          fill="none" 
-                          stroke="currentColor" 
-                          viewBox="0 0 24 24"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                        </svg>
-                      </motion.div>
-                      </div>
-
-                      {/* Decorative Corner Lines */}
-                      <div className="absolute bottom-0 right-0 w-20 h-20 opacity-20 group-hover:opacity-40 transition-opacity duration-300">
-                        <div className="absolute bottom-4 right-4 w-full h-[1px] bg-gradient-to-l from-off-white to-transparent" />
-                        <div className="absolute bottom-4 right-4 h-full w-[1px] bg-gradient-to-t from-off-white to-transparent" />
-                      </div>
-                    </div>
-
-                    {/* Shine Effect on Hover */}
-                    <motion.div
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
-                      style={{
-                        background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.03) 45%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.03) 55%, transparent 60%)",
-                        transform: "translateX(-100%)",
-                      }}
-                      animate={{
-                        transform: hoveredProject === project.id ? "translateX(100%)" : "translateX(-100%)",
-                      }}
-                      transition={{ duration: 0.7 }}
-                    />
-                  </div>
-                </Link>
-              </TiltCard>
-            </motion.article>
-          );
-        })}
-      </motion.section>
+        {/* Empty state */}
+        {filteredProjects.length === 0 && (
+          <motion.div 
+            className="text-center py-20"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <p className="text-off-white/40 text-lg">No projects found in this category.</p>
+          </motion.div>
+        )}
+      </section>
     </main>
   );
 }
