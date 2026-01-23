@@ -7,11 +7,11 @@ import { EXPERIENCES, Experience } from "@/lib/data";
 
 // Category styling
 const categoryStyles: Record<string, { icon: string; bg: string; text: string; border: string }> = {
-  education: { icon: "🎓", bg: "bg-blue-50", text: "text-blue-600", border: "border-blue-200" },
-  work: { icon: "💼", bg: "bg-emerald-50", text: "text-emerald-600", border: "border-emerald-200" },
-  award: { icon: "🏆", bg: "bg-amber-50", text: "text-amber-600", border: "border-amber-200" },
-  community: { icon: "🤝", bg: "bg-purple-50", text: "text-purple-600", border: "border-purple-200" },
-  volunteer: { icon: "🌱", bg: "bg-green-50", text: "text-green-600", border: "border-green-200" },
+  education: { icon: "🎓", bg: "bg-blue-500/10", text: "text-blue-400", border: "border-blue-500/30" },
+  work: { icon: "💼", bg: "bg-emerald-500/10", text: "text-emerald-400", border: "border-emerald-500/30" },
+  award: { icon: "🏆", bg: "bg-amber-500/10", text: "text-amber-400", border: "border-amber-500/30" },
+  community: { icon: "🤝", bg: "bg-purple-500/10", text: "text-purple-400", border: "border-purple-500/30" },
+  volunteer: { icon: "🌱", bg: "bg-green-500/10", text: "text-green-400", border: "border-green-500/30" },
 };
 
 // Format date display
@@ -20,8 +20,8 @@ function formatDate(dateStr: string): string {
   return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 }
 
-// Experience Card Component
-function ExperienceCard({ experience, index }: { experience: Experience; index: number }) {
+// Timeline Experience Card - Horizontal style
+function TimelineCard({ experience, index }: { experience: Experience; index: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: cardRef,
@@ -29,86 +29,96 @@ function ExperienceCard({ experience, index }: { experience: Experience; index: 
   });
 
   const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
-  const x = useTransform(
-    scrollYProgress,
-    [0, 0.5],
-    [index % 2 === 0 ? -100 : 100, 0]
-  );
-  const scale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1]);
+  const y = useTransform(scrollYProgress, [0, 0.5], [60, 0]);
 
   const style = categoryStyles[experience.category] || categoryStyles.work;
-  const isLeft = index % 2 === 0;
 
   return (
     <motion.div
       ref={cardRef}
-      style={{ opacity, x, scale }}
-      className={`relative flex items-center gap-8 ${isLeft ? "md:flex-row" : "md:flex-row-reverse"}`}
+      style={{ opacity, y }}
+      className="relative"
     >
-      {/* Timeline dot */}
-      <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center z-10">
-        <motion.div
-          initial={{ scale: 0 }}
-          whileInView={{ scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className={`w-12 h-12 rounded-full ${style.bg} ${style.border} border-2 flex items-center justify-center text-xl shadow-lg`}
-        >
-          {style.icon}
-        </motion.div>
-      </div>
-
-      {/* Card */}
-      <div className={`w-full md:w-5/12 ${isLeft ? "md:pr-16" : "md:pl-16"}`}>
-        <motion.div
-          className="bg-white rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100"
-          whileHover={{ y: -5 }}
-        >
-          {/* Category Badge */}
-          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide ${style.bg} ${style.text} ${style.border} border mb-4`}>
+      {/* Timeline connector dot */}
+      <div className="absolute -left-[41px] top-8 w-4 h-4 rounded-full bg-off-white/20 border-2 border-off-white/40 z-10" />
+      
+      <motion.div
+        className="bg-void-black/50 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-off-white/10 hover:border-off-white/20 transition-all duration-500 group"
+        whileHover={{ y: -5, borderColor: "rgba(255,255,255,0.3)" }}
+      >
+        {/* Top row: Category + Date */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide ${style.bg} ${style.text} ${style.border} border`}>
             <span>{style.icon}</span>
             <span className="capitalize">{experience.category}</span>
           </div>
-
-          {/* Date */}
-          <div className="text-off-white/40 text-sm font-medium mb-2">
+          <span className="text-off-white/40 text-sm font-mono">
             {formatDate(experience.dateStart)}
             {experience.dateEnd ? ` — ${formatDate(experience.dateEnd)}` : " — Present"}
+          </span>
+        </div>
+
+        {/* Title */}
+        <h3 className="font-display text-xl md:text-2xl text-off-white mb-2 group-hover:text-off-white/90 transition-colors">
+          {experience.title}
+        </h3>
+
+        {/* Role & Organization */}
+        <p className="text-off-white/60 font-medium mb-4">
+          {experience.role} · {experience.organization}
+        </p>
+
+        {/* Description */}
+        <p className="text-off-white/50 leading-relaxed mb-5">
+          {experience.description}
+        </p>
+
+        {/* Highlights */}
+        {experience.highlights && (
+          <div className="flex flex-wrap gap-2">
+            {experience.highlights.map((highlight, i) => (
+              <span
+                key={i}
+                className="px-3 py-1 bg-off-white/5 text-off-white/60 text-xs rounded-full border border-off-white/10"
+              >
+                {highlight}
+              </span>
+            ))}
           </div>
+        )}
+      </motion.div>
+    </motion.div>
+  );
+}
 
-          {/* Title */}
-          <h3 className="font-display text-xl md:text-2xl text-off-white mb-1">
-            {experience.title}
-          </h3>
-
-          {/* Role & Organization */}
-          <p className="text-off-white/60 font-medium mb-4">
-            {experience.role} · {experience.organization}
-          </p>
-
-          {/* Description */}
-          <p className="text-off-white/50 leading-relaxed mb-4">
-            {experience.description}
-          </p>
-
-          {/* Highlights */}
-          {experience.highlights && (
-            <div className="flex flex-wrap gap-2">
-              {experience.highlights.map((highlight, i) => (
-                <span
-                  key={i}
-                  className="px-3 py-1 bg-gray-100 text-off-white/60 text-xs rounded-full"
-                >
-                  {highlight}
-                </span>
-              ))}
-            </div>
-          )}
-        </motion.div>
+// Section Header Component
+function SectionHeader({ 
+  title, 
+  subtitle, 
+  icon 
+}: { 
+  title: string; 
+  subtitle: string; 
+  icon: string;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.8 }}
+      className="mb-12 md:mb-16"
+    >
+      <div className="flex items-center gap-4 mb-4">
+        <span className="text-4xl">{icon}</span>
+        <div className="h-px flex-1 bg-gradient-to-r from-off-white/20 to-transparent" />
       </div>
-
-      {/* Empty space for the other side */}
-      <div className="hidden md:block w-5/12" />
+      <h2 className="font-display text-3xl md:text-5xl lg:text-6xl text-off-white mb-3">
+        {title}
+      </h2>
+      <p className="text-off-white/50 text-lg max-w-2xl">
+        {subtitle}
+      </p>
     </motion.div>
   );
 }
@@ -120,10 +130,10 @@ function ScrollProgress() {
 
   return (
     <div className="fixed left-8 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-2 z-50">
-      <div className="w-1 h-32 bg-gray-200 rounded-full overflow-hidden">
+      <div className="w-1 h-32 bg-off-white/10 rounded-full overflow-hidden">
         <motion.div
           style={{ scaleY, transformOrigin: "top" }}
-          className="w-full h-full bg-off-white rounded-full"
+          className="w-full h-full bg-off-white/60 rounded-full"
         />
       </div>
       <span className="text-xs text-off-white/40 font-medium -rotate-90 whitespace-nowrap mt-4">
@@ -136,28 +146,36 @@ function ScrollProgress() {
 export default function ExperiencePage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: containerRef });
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
 
   // Sort experiences by date (newest first)
   const sortedExperiences = [...EXPERIENCES].sort(
     (a, b) => new Date(b.dateStart).getTime() - new Date(a.dateStart).getTime()
   );
 
+  // Separate into Professional and Volunteer/Community
+  const professionalExperiences = sortedExperiences.filter(
+    (exp) => ["work", "education", "award"].includes(exp.category)
+  );
+  const volunteerExperiences = sortedExperiences.filter(
+    (exp) => ["volunteer", "community"].includes(exp.category)
+  );
+
   return (
-    <main ref={containerRef} className="min-h-screen relative overflow-hidden">
+    <main ref={containerRef} className="min-h-screen relative overflow-hidden bg-void-black">
       {/* Parallax Background */}
       <motion.div
         style={{ y: backgroundY }}
         className="absolute inset-0 pointer-events-none"
       >
-        <div className="absolute top-20 right-20 w-96 h-96 bg-blue-100/30 rounded-full blur-3xl" />
-        <div className="absolute bottom-40 left-20 w-80 h-80 bg-purple-100/30 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-amber-100/30 rounded-full blur-3xl" />
+        <div className="absolute top-20 right-20 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-40 left-20 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl" />
       </motion.div>
 
       <ScrollProgress />
 
-      {/* Hero Section */}
+      {/* Hero Section - KEPT FROM ORIGINAL */}
       <section className="min-h-screen flex flex-col justify-center items-center px-6 relative">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -212,16 +230,54 @@ export default function ExperiencePage() {
         </motion.div>
       </section>
 
-      {/* Timeline Section */}
-      <section className="px-6 md:px-16 py-20 relative">
-        {/* Center Timeline Line */}
-        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent hidden md:block" />
+      {/* ============================================ */}
+      {/* PROFESSIONAL EXPERIENCE SECTION */}
+      {/* ============================================ */}
+      <section className="px-6 md:px-16 lg:px-24 py-20 relative">
+        <div className="max-w-4xl mx-auto">
+          <SectionHeader
+            title="Professional"
+            subtitle="Work experience, education milestones, and achievements that shaped my career."
+            icon="💼"
+          />
 
-        {/* Experience Cards */}
-        <div className="max-w-6xl mx-auto space-y-16 md:space-y-24">
-          {sortedExperiences.map((experience, index) => (
-            <ExperienceCard key={experience.id} experience={experience} index={index} />
-          ))}
+          {/* Timeline container with vertical line */}
+          <div className="relative pl-8 border-l-2 border-off-white/10 space-y-8">
+            {professionalExperiences.map((experience, index) => (
+              <TimelineCard key={experience.id} experience={experience} index={index} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Visual Divider */}
+      <motion.div
+        initial={{ opacity: 0, scaleX: 0 }}
+        whileInView={{ opacity: 1, scaleX: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1 }}
+        className="max-w-4xl mx-auto px-6 md:px-16 lg:px-24 py-12"
+      >
+        <div className="h-px bg-gradient-to-r from-transparent via-off-white/20 to-transparent" />
+      </motion.div>
+
+      {/* ============================================ */}
+      {/* VOLUNTEER & COMMUNITY SECTION */}
+      {/* ============================================ */}
+      <section className="px-6 md:px-16 lg:px-24 py-20 relative">
+        <div className="max-w-4xl mx-auto">
+          <SectionHeader
+            title="Volunteer & Community"
+            subtitle="Giving back through community service, environmental initiatives, and collaborative projects."
+            icon="🌱"
+          />
+
+          {/* Timeline container with vertical line */}
+          <div className="relative pl-8 border-l-2 border-off-white/10 space-y-8">
+            {volunteerExperiences.map((experience, index) => (
+              <TimelineCard key={experience.id} experience={experience} index={index} />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -250,23 +306,7 @@ export default function ExperiencePage() {
         </Link>
       </motion.section>
 
-      {/* Back Link */}
-      <div className="fixed top-8 left-6 md:left-16 z-50">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-off-white/50 hover:text-off-white transition-colors group"
-        >
-          <svg
-            className="w-5 h-5 transition-transform group-hover:-translate-x-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back
-        </Link>
-      </div>
+      {/* Back Link - hidden since navbar handles this */}
     </main>
   );
 }
