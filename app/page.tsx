@@ -1,7 +1,6 @@
 import Hero from "@/components/Hero";
 import AboutMe from "@/components/AboutMe";
 import Marquee from "@/components/Marquee";
-import JourneyTimeline from "@/components/JourneyTimeline";
 import WorkList from "@/components/WorkList";
 import Footer from "@/components/Footer";
 import { PROJECTS } from "@/lib/data";
@@ -19,9 +18,6 @@ export default function Home() {
       <div className="py-16">
         <Marquee />
       </div>
-
-      {/* Journey Timeline */}
-      <JourneyTimeline />
 
       {/* Work Section */}
       <div className="py-24">
