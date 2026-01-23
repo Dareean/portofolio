@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence, useScroll } from "framer-motion";
+import { motion, useTransform, useScroll } from "framer-motion";
 import Link from "next/link";
 import { useState, useRef } from "react";
 import { PROJECTS } from "@/lib/data";
@@ -13,11 +13,9 @@ const categories = ["All", ...Array.from(new Set(allCategories))];
 
 // Minimal Project Card with scroll animation
 function ProjectCard({ 
-  project, 
-  index 
+  project 
 }: { 
   project: typeof PROJECTS[0]; 
-  index: number;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -96,8 +94,6 @@ function ProjectCard({
 
 export default function WorkPage() {
   const [activeFilter, setActiveFilter] = useState("All");
-  const [hoveredProject, setHoveredProject] = useState<number | null>(null);
-  const [expandedDescriptions, setExpandedDescriptions] = useState<Set<number>>(new Set());
 
   // Hero scroll effects
   const heroRef = useRef<HTMLElement>(null);
@@ -108,19 +104,7 @@ export default function WorkPage() {
   const heroOpacity = useTransform(heroScrollProgress, [0, 0.8], [1, 0]);
   const heroY = useTransform(heroScrollProgress, [0, 1], [0, -100]);
 
-  const toggleDescription = (id: number, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setExpandedDescriptions(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id);
-      } else {
-        newSet.add(id);
-      }
-      return newSet;
-    });
-  };
+
 
   const filteredProjects = activeFilter === "All" 
     ? PROJECTS 
@@ -281,11 +265,10 @@ export default function WorkPage() {
       {/* ============================================ */}
       <section className="px-6 md:px-12 lg:px-20 py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-          {filteredProjects.map((project, index) => (
+          {filteredProjects.map((project) => (
             <ProjectCard 
               key={project.id} 
               project={project} 
-              index={index} 
             />
           ))}
         </div>

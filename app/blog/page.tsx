@@ -21,7 +21,7 @@ function formatDate(dateStr: string): string {
 }
 
 // Timeline Experience Card - Horizontal style
-function TimelineCard({ experience, index }: { experience: Experience; index: number }) {
+function TimelineCard({ experience }: { experience: Experience }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: cardRef,
@@ -244,7 +244,7 @@ export default function ExperiencePage() {
           {/* Timeline container with vertical line */}
           <div className="relative pl-8 border-l-2 border-off-white/10 space-y-8">
             {professionalExperiences.map((experience, index) => (
-              <TimelineCard key={experience.id} experience={experience} index={index} />
+              <TimelineCard key={experience.id} experience={experience} />
             ))}
           </div>
         </div>
@@ -275,7 +275,7 @@ export default function ExperiencePage() {
           {/* Timeline container with vertical line */}
           <div className="relative pl-8 border-l-2 border-off-white/10 space-y-8">
             {volunteerExperiences.map((experience, index) => (
-              <TimelineCard key={experience.id} experience={experience} index={index} />
+              <TimelineCard key={experience.id} experience={experience} />
             ))}
           </div>
         </div>
