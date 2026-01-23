@@ -177,6 +177,34 @@ export default function ExperiencePage() {
 
       {/* Hero Section - KEPT FROM ORIGINAL */}
       <section className="min-h-screen flex flex-col justify-center items-center px-6 relative">
+        {/* Home Link */}
+        <motion.div
+          className="absolute top-6 left-6 md:left-16 z-20"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-off-white/50 hover:text-off-white transition-colors group"
+          >
+            <svg
+              className="w-5 h-5 transition-transform group-hover:-translate-x-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            <span className="text-sm tracking-wide">Home</span>
+          </Link>
+        </motion.div>
+        
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
