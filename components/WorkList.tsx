@@ -35,7 +35,7 @@ export default function WorkList({ projects }: WorkListProps) {
 
   return (
     <section className="relative py-32 px-8 md:px-16" ref={containerRef}>
-      {/* Section Header */}
+      {/* Section Header of work */}
       <motion.div
         className="mb-16"
         initial={{ opacity: 0, y: 40 }}
