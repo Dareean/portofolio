@@ -40,10 +40,10 @@ function TimelineCard({ experience }: { experience: Experience }) {
       className="relative"
     >
       {/* Timeline connector dot */}
-      <div className="absolute -left-[41px] top-8 w-4 h-4 rounded-full bg-off-white/20 border-2 border-off-white/40 z-10" />
+      <div className="absolute -left-[33px] sm:-left-[37px] md:-left-[41px] top-6 sm:top-8 w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-off-white/20 border-2 border-off-white/40 z-10" />
       
       <motion.div
-        className="bg-void-black/50 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-off-white/10 hover:border-off-white/20 transition-all duration-500 group"
+        className="bg-void-black/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 border border-off-white/10 hover:border-off-white/20 transition-all duration-500 group"
         whileHover={{ y: -5, borderColor: "rgba(255,255,255,0.3)" }}
       >
         {/* Top row: Category + Date */}
@@ -107,16 +107,16 @@ function SectionHeader({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.8 }}
-      className="mb-12 md:mb-16"
+      className="mb-8 sm:mb-12 md:mb-16"
     >
-      <div className="flex items-center gap-4 mb-4">
-        <span className="text-4xl">{icon}</span>
+      <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+        <span className="text-2xl sm:text-3xl md:text-4xl">{icon}</span>
         <div className="h-px flex-1 bg-gradient-to-r from-off-white/20 to-transparent" />
       </div>
-      <h2 className="font-display text-3xl md:text-5xl lg:text-6xl text-off-white mb-3">
+      <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-off-white mb-2 sm:mb-3">
         {title}
       </h2>
-      <p className="text-off-white/50 text-lg max-w-2xl">
+      <p className="text-off-white/50 text-sm sm:text-base md:text-lg max-w-2xl">
         {subtitle}
       </p>
     </motion.div>
@@ -129,8 +129,8 @@ function ScrollProgress() {
   const scaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
-    <div className="fixed left-8 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-2 z-50">
-      <div className="w-1 h-32 bg-off-white/10 rounded-full overflow-hidden">
+    <div className="fixed left-4 sm:left-6 md:left-8 top-1/2 -translate-y-1/2 hidden md:flex flex-col items-center gap-2 z-50">
+      <div className="w-0.5 sm:w-1 h-24 sm:h-32 bg-off-white/10 rounded-full overflow-hidden">
         <motion.div
           style={{ scaleY, transformOrigin: "top" }}
           className="w-full h-full bg-off-white/60 rounded-full"
@@ -176,10 +176,10 @@ export default function ExperiencePage() {
       <ScrollProgress />
 
       {/* Hero Section - KEPT FROM ORIGINAL */}
-      <section className="min-h-screen flex flex-col justify-center items-center px-6 relative">
+      <section className="min-h-screen flex flex-col justify-center items-center px-4 sm:px-6 relative">
         {/* Home Link */}
         <motion.div
-          className="absolute top-6 left-6 md:left-16 z-20"
+          className="absolute top-4 sm:top-6 left-4 sm:left-6 md:left-16 z-20"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
@@ -224,7 +224,7 @@ export default function ExperiencePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.8 }}
-            className="font-display text-5xl md:text-7xl lg:text-8xl text-off-white mb-6"
+            className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-off-white mb-4 sm:mb-6"
           >
             Experience
           </motion.h1>
@@ -233,7 +233,7 @@ export default function ExperiencePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.8 }}
-            className="text-off-white/50 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto"
+            className="text-off-white/50 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed max-w-2xl mx-auto px-2"
           >
             A timeline of my growth — from learning to code to contributing to communities, 
             competing in hackathons, and building meaningful projects.
@@ -261,7 +261,7 @@ export default function ExperiencePage() {
       {/* ============================================ */}
       {/* PROFESSIONAL EXPERIENCE SECTION */}
       {/* ============================================ */}
-      <section className="px-6 md:px-16 lg:px-24 py-20 relative">
+      <section className="px-4 sm:px-6 md:px-12 lg:px-16 xl:px-24 py-12 sm:py-16 md:py-20 relative">
         <div className="max-w-4xl mx-auto">
           <SectionHeader
             title="Professional"
@@ -270,7 +270,7 @@ export default function ExperiencePage() {
           />
 
           {/* Timeline container with vertical line */}
-          <div className="relative pl-8 border-l-2 border-off-white/10 space-y-8">
+          <div className="relative pl-6 sm:pl-7 md:pl-8 border-l-2 border-off-white/10 space-y-6 sm:space-y-8">
             {professionalExperiences.map((experience) => (
               <TimelineCard key={experience.id} experience={experience} />
             ))}
@@ -292,7 +292,7 @@ export default function ExperiencePage() {
       {/* ============================================ */}
       {/* VOLUNTEER & COMMUNITY SECTION */}
       {/* ============================================ */}
-      <section className="px-6 md:px-16 lg:px-24 py-20 relative">
+      <section className="px-4 sm:px-6 md:px-12 lg:px-16 xl:px-24 py-12 sm:py-16 md:py-20 relative">
         <div className="max-w-4xl mx-auto">
           <SectionHeader
             title="Volunteer & Community"
@@ -301,7 +301,7 @@ export default function ExperiencePage() {
           />
 
           {/* Timeline container with vertical line */}
-          <div className="relative pl-8 border-l-2 border-off-white/10 space-y-8">
+          <div className="relative pl-6 sm:pl-7 md:pl-8 border-l-2 border-off-white/10 space-y-6 sm:space-y-8">
             {volunteerExperiences.map((experience) => (
               <TimelineCard key={experience.id} experience={experience} />
             ))}
@@ -315,12 +315,12 @@ export default function ExperiencePage() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 1 }}
-        className="px-6 md:px-16 py-32 text-center"
+        className="px-4 sm:px-6 md:px-16 py-16 sm:py-24 md:py-32 text-center"
       >
-        <h2 className="font-display text-3xl md:text-5xl text-off-white mb-6">
+        <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-off-white mb-4 sm:mb-6">
           Want to work together?
         </h2>
-        <p className="text-off-white/50 text-lg mb-8 max-w-xl mx-auto">
+        <p className="text-off-white/50 text-sm sm:text-base md:text-lg mb-6 sm:mb-8 max-w-xl mx-auto px-2">
           I&apos;m always open to discussing new opportunities, collaborations, or just having a chat.
         </p>
         <Link

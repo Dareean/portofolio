@@ -10,11 +10,11 @@ export default function Marquee({
   const repeatedText = `${text} • `.repeat(6);
 
   return (
-    <section className="py-24 overflow-hidden border-y border-off-white/10">
+    <section className="py-12 sm:py-16 md:py-24 overflow-hidden border-y border-off-white/10">
       <div className="marquee-container">
         <div className="marquee-content">
           <span
-            className="font-display text-[8vw] md:text-[6vw] uppercase tracking-wider"
+            className="font-display text-[10vw] sm:text-[9vw] md:text-[7vw] lg:text-[6vw] uppercase tracking-wider"
             style={{
               color: "rgba(0, 0, 0, 0.7)",
             }}
@@ -22,7 +22,7 @@ export default function Marquee({
             {repeatedText}
           </span>
           <span
-            className="font-display text-[8vw] md:text-[6vw] uppercase tracking-wider"
+            className="font-display text-[10vw] sm:text-[9vw] md:text-[7vw] lg:text-[6vw] uppercase tracking-wider"
             style={{
               color: "rgba(0, 0, 0, 0.7)",
             }}

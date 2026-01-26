@@ -60,7 +60,7 @@ export default function FloatingNav() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 50, scale: 0.9 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
+          className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-50"
         >
           {/* Main Pill Container */}
           <motion.div
@@ -80,7 +80,7 @@ export default function FloatingNav() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="flex items-center gap-1 px-2 py-2"
+                  className="flex items-center gap-1 px-1.5 sm:px-2 py-1.5 sm:py-2"
                 >
                   {navItems.map((item, index) => (
                     <motion.div
@@ -91,15 +91,15 @@ export default function FloatingNav() {
                     >
                       <Link
                         href={item.href}
-                        className={`relative flex items-center gap-2 px-4 py-2.5 rounded-full transition-all duration-300 ${
+                        className={`relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-full transition-all duration-300 ${
                           pathname === item.href
                             ? "bg-off-white text-void-black"
                             : "text-off-white/60 hover:text-off-white hover:bg-off-white/10"
                         }`}
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <span className="text-sm">{item.icon}</span>
-                        <span className="text-sm font-medium tracking-wide">
+                        <span className="text-xs sm:text-sm">{item.icon}</span>
+                        <span className="text-xs sm:text-sm font-medium tracking-wide">
                           {item.label}
                         </span>
                       </Link>
@@ -131,12 +131,12 @@ export default function FloatingNav() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="flex items-center gap-3 px-5 py-3 cursor-pointer group"
+                  className="flex items-center gap-2 sm:gap-3 px-4 sm:px-5 py-2.5 sm:py-3 cursor-pointer group"
                   aria-label="Open navigation"
                 >
                   {/* Current page indicator */}
-                  <span className="text-off-white/60 text-sm">{currentPage.icon}</span>
-                  <span className="text-off-white font-medium text-sm tracking-wide">
+                  <span className="text-off-white/60 text-xs sm:text-sm">{currentPage.icon}</span>
+                  <span className="text-off-white font-medium text-xs sm:text-sm tracking-wide">
                     {currentPage.label}
                   </span>
                   

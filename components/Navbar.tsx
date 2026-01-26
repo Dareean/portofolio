@@ -102,7 +102,7 @@ export default function Navbar() {
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`fixed top-6 right-6 md:right-16 z-50 w-12 h-12 flex flex-col items-center justify-center gap-1.5 focus:outline-none rounded-full transition-colors duration-300 ${
+              className={`fixed top-4 sm:top-6 right-4 sm:right-6 md:right-16 z-50 w-10 h-10 sm:w-12 sm:h-12 flex flex-col items-center justify-center gap-1 sm:gap-1.5 focus:outline-none rounded-full transition-colors duration-300 ${
                 isMenuOpen 
                   ? "bg-void-black/10" 
                   : isScrolled 
@@ -118,7 +118,7 @@ export default function Navbar() {
                   backgroundColor: isMenuOpen ? "#F5F5F5" : "#1A1A1A",
                 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="block w-6 h-0.5 rounded-full"
+                className="block w-5 sm:w-6 h-0.5 rounded-full"
               />
               <motion.span
                 animate={{
@@ -127,7 +127,7 @@ export default function Navbar() {
                   backgroundColor: isMenuOpen ? "#F5F5F5" : "#1A1A1A",
                 }}
                 transition={{ duration: 0.2 }}
-                className="block w-6 h-0.5 rounded-full"
+                className="block w-5 sm:w-6 h-0.5 rounded-full"
               />
               <motion.span
                 animate={{
@@ -136,7 +136,7 @@ export default function Navbar() {
                   backgroundColor: isMenuOpen ? "#F5F5F5" : "#1A1A1A",
                 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="block w-6 h-0.5 rounded-full"
+                className="block w-5 sm:w-6 h-0.5 rounded-full"
               />
             </motion.button>
           )}
@@ -171,7 +171,7 @@ export default function Navbar() {
               </div>
 
               {/* Navigation Links */}
-              <nav className="flex flex-col items-center gap-4 md:gap-6">
+              <nav className="flex flex-col items-center gap-3 sm:gap-4 md:gap-6">
                 {navLinks.map((link, index) => (
                   <motion.div
                     key={link.href}
@@ -184,7 +184,7 @@ export default function Navbar() {
                       onClick={() => setIsMenuOpen(false)}
                     >
                       <span
-                        className={`font-display text-4xl md:text-6xl lg:text-7xl tracking-tight transition-all duration-300 ${
+                        className={`font-display text-3xl sm:text-4xl md:text-6xl lg:text-7xl tracking-tight transition-all duration-300 ${
                           pathname === link.href
                             ? "text-void-black"
                             : "text-void-black/40 hover:text-void-black"
@@ -207,7 +207,7 @@ export default function Navbar() {
               {/* Footer info */}
               <motion.div
                 variants={linkVariants}
-                className="absolute bottom-12 flex flex-col md:flex-row items-center gap-4 md:gap-8 text-void-black/40 text-sm"
+                className="absolute bottom-8 sm:bottom-12 flex flex-col md:flex-row items-center gap-2 sm:gap-4 md:gap-8 text-void-black/40 text-xs sm:text-sm px-4 text-center"
               >
                 <span>Let&apos;s work together</span>
                 <span className="hidden md:block">•</span>
@@ -239,11 +239,11 @@ export default function Navbar() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, delay: 0.1 }}
     >
-      <nav className="flex items-center justify-between px-8 md:px-16 py-6">
+      <nav className="flex items-center justify-between px-4 sm:px-6 md:px-12 lg:px-16 py-4 sm:py-5 md:py-6">
         {/* Logo */}
         <Link href="/" className="group">
           <motion.span
-            className="font-display text-xl md:text-2xl text-off-white tracking-tight"
+            className="font-display text-lg sm:text-xl md:text-2xl text-off-white tracking-tight"
             whileHover={{ opacity: 0.7 }}
           >
             DAREEAN
@@ -251,7 +251,7 @@ export default function Navbar() {
         </Link>
 
         {/* Navigation Links */}
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-4 sm:gap-6 md:gap-8">
           {navLinks.slice(0, 3).map((link) => (
             <Link
               key={link.href}

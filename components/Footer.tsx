@@ -7,8 +7,8 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="py-24 px-8 md:px-16 border-t border-off-white/10">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12">
+    <footer className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 md:px-12 lg:px-16 border-t border-off-white/10">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 sm:gap-10 md:gap-12">
         {/* Left - Brand */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -16,24 +16,24 @@ export default function Footer() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="font-display text-4xl md:text-5xl text-off-white mb-4">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl text-off-white mb-2 sm:mb-4">
             DAREEAN
           </h2>
-          <p className="text-off-white/40 text-sm tracking-widest uppercase">
+          <p className="text-off-white/40 text-xs sm:text-sm tracking-widest uppercase">
             Logic meets Aesthetics
           </p>
         </motion.div>
 
         {/* Right - Links & Copyright */}
         <motion.div
-          className="flex flex-col items-start md:items-end gap-6"
+          className="flex flex-col items-start md:items-end gap-4 sm:gap-6"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           {/* Navigation Links */}
-          <div className="flex gap-8">
+          <div className="flex flex-wrap gap-4 sm:gap-6 md:gap-8">
             <Link
               href="/blog"
               className="text-off-white/60 hover:text-off-white text-sm tracking-widest uppercase transition-colors duration-300"

@@ -28,22 +28,22 @@ export default function JourneyTimeline() {
   );
 
   return (
-    <section className="py-24 px-8 md:px-16">
+    <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 md:px-12 lg:px-16">
       {/* Section Header */}
       <motion.div
-        className="mb-20 max-w-2xl"
+        className="mb-12 sm:mb-16 md:mb-20 max-w-2xl"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
       >
-        <span className="text-off-white/40 text-sm tracking-widest uppercase mb-4 block">
+        <span className="text-off-white/40 text-xs sm:text-sm tracking-widest uppercase mb-3 sm:mb-4 block">
           My Path
         </span>
-        <h2 className="font-display text-4xl md:text-6xl text-off-white mb-4">
+        <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-off-white mb-3 sm:mb-4">
           Journey
         </h2>
-        <p className="text-off-white/60 text-lg">
+        <p className="text-off-white/60 text-sm sm:text-base md:text-lg">
           A timeline of my career milestones, projects, and growth as a developer.
         </p>
       </motion.div>
@@ -51,20 +51,20 @@ export default function JourneyTimeline() {
       {/* Timeline */}
       <div className="relative max-w-3xl mx-auto">
         {/* Center Line */}
-        <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-off-white/10 md:-translate-x-px" />
+        <div className="absolute left-6 sm:left-8 md:left-1/2 top-0 bottom-0 w-px bg-off-white/10 md:-translate-x-px" />
 
         {/* Start Point - The Beginning */}
         <motion.div
-          className="relative flex items-center mb-16"
+          className="relative flex items-center mb-10 sm:mb-12 md:mb-16"
           initial={{ opacity: 0, scale: 0 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <div className="absolute left-8 md:left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-off-white/10 border border-off-white/20 flex items-center justify-center">
-            <span className="text-off-white/60 text-xs">✦</span>
+          <div className="absolute left-6 sm:left-8 md:left-1/2 -translate-x-1/2 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-full bg-off-white/10 border border-off-white/20 flex items-center justify-center">
+            <span className="text-off-white/60 text-[10px] sm:text-xs">✦</span>
           </div>
-          <span className="ml-20 md:ml-0 md:absolute md:left-1/2 md:translate-x-8 text-off-white/40 text-sm tracking-widest uppercase">
+          <span className="ml-14 sm:ml-16 md:ml-0 md:absolute md:left-1/2 md:translate-x-8 text-off-white/40 text-xs sm:text-sm tracking-widest uppercase">
             The Beginning
           </span>
         </motion.div>
@@ -72,7 +72,7 @@ export default function JourneyTimeline() {
         {sortedJourney.map((item, index) => (
           <motion.div
             key={item.id}
-            className={`relative flex items-start gap-8 mb-16 ${
+            className={`relative flex items-start gap-4 sm:gap-6 md:gap-8 mb-10 sm:mb-12 md:mb-16 ${
               index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
             }`}
             initial={{ opacity: 0, y: 40 }}
@@ -81,11 +81,11 @@ export default function JourneyTimeline() {
             transition={{ duration: 0.6, delay: index * 0.1 }}
           >
             {/* Timeline Node */}
-            <div className="absolute left-8 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-void-black border-2 border-off-white/40 z-10" />
+            <div className="absolute left-6 sm:left-8 md:left-1/2 -translate-x-1/2 w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-void-black border-2 border-off-white/40 z-10" />
 
             {/* Content Card */}
             <div
-              className={`ml-16 md:ml-0 md:w-[calc(50%-2rem)] p-6 bg-off-white/5 border ${
+              className={`ml-12 sm:ml-14 md:ml-0 md:w-[calc(50%-2rem)] p-4 sm:p-5 md:p-6 bg-off-white/5 border ${
                 typeColors[item.type]
               } hover:bg-off-white/10 transition-colors duration-300`}
             >
@@ -104,12 +104,12 @@ export default function JourneyTimeline() {
               </div>
 
               {/* Title */}
-              <h3 className="font-display text-xl md:text-2xl text-off-white mb-2">
+              <h3 className="font-display text-lg sm:text-xl md:text-2xl text-off-white mb-1.5 sm:mb-2">
                 {item.title}
               </h3>
 
               {/* Description */}
-              <p className="text-off-white/60 text-sm leading-relaxed">
+              <p className="text-off-white/60 text-xs sm:text-sm leading-relaxed">
                 {item.description}
               </p>
             </div>
@@ -124,10 +124,10 @@ export default function JourneyTimeline() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <div className="absolute left-8 md:left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-off-white text-void-black flex items-center justify-center">
-            <span className="text-sm">→</span>
+          <div className="absolute left-6 sm:left-8 md:left-1/2 -translate-x-1/2 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-full bg-off-white text-void-black flex items-center justify-center">
+            <span className="text-xs sm:text-sm">→</span>
           </div>
-          <span className="ml-20 md:ml-0 md:absolute md:left-1/2 md:translate-x-8 text-off-white text-sm tracking-widest uppercase font-medium">
+          <span className="ml-14 sm:ml-16 md:ml-0 md:absolute md:left-1/2 md:translate-x-8 text-off-white text-xs sm:text-sm tracking-widest uppercase font-medium">
             Will Keep Going...
           </span>
         </motion.div>

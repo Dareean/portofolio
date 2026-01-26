@@ -79,12 +79,12 @@ export default function AboutMe() {
   return (
     <section
       ref={containerRef}
-      className="py-32 md:py-48 px-8 md:px-16 relative overflow-hidden"
+      className="py-16 sm:py-24 md:py-32 lg:py-48 px-4 sm:px-6 md:px-12 lg:px-16 relative overflow-hidden"
     >
       {/* Subtle background accent */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] sm:w-[600px] md:w-[800px] h-[400px] sm:h-[600px] md:h-[800px] rounded-full"
           style={{
             background:
               "radial-gradient(circle, rgba(255, 255, 255, 0.02) 0%, transparent 70%)",
@@ -103,14 +103,14 @@ export default function AboutMe() {
       <div className="max-w-6xl mx-auto relative">
         {/* Large background text */}
         <motion.div
-          className="absolute -top-20 left-0 right-0 font-display text-[20vw] text-off-white/[0.02] uppercase tracking-tighter pointer-events-none select-none text-center"
+          className="absolute -top-10 sm:-top-16 md:-top-20 left-0 right-0 font-display text-[25vw] sm:text-[22vw] md:text-[20vw] text-off-white/[0.02] uppercase tracking-tighter pointer-events-none select-none text-center"
           style={{ y: textY }}
         >
           ABOUT
         </motion.div>
 
         {/* Main content - Typography focused */}
-        <div className="relative space-y-16">
+        <div className="relative space-y-8 sm:space-y-12 md:space-y-16">
           {/* Intro label */}
           <motion.div
             className="flex items-center justify-center gap-4"
@@ -139,10 +139,10 @@ export default function AboutMe() {
           </motion.div>
 
           {/* Large typographic intro */}
-          <div className="text-center space-y-6">
+          <div className="text-center space-y-3 sm:space-y-4 md:space-y-6">
             <div className="overflow-hidden">
               <motion.h2
-                className="font-display text-5xl md:text-7xl lg:text-8xl xl:text-9xl text-off-white leading-[0.9]"
+                className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl 2xl:text-9xl text-off-white leading-[0.9]"
                 initial={{ y: "100%" }}
                 whileInView={{ y: 0 }}
                 viewport={{ once: true }}
@@ -153,7 +153,7 @@ export default function AboutMe() {
             </div>
             <div className="overflow-hidden">
               <motion.h2
-                className="font-display text-6xl md:text-8xl lg:text-9xl xl:text-[10rem] text-off-white leading-[0.9]"
+                className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-8xl xl:text-9xl 2xl:text-[10rem] text-off-white leading-[0.9]"
                 initial={{ y: "100%" }}
                 whileInView={{ y: 0 }}
                 viewport={{ once: true }}
@@ -166,20 +166,20 @@ export default function AboutMe() {
 
           {/* Typewriter role display */}
           <motion.div
-            className="text-center"
+            className="text-center px-2"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.5 }}
           >
-            <p className="text-2xl md:text-3xl lg:text-4xl text-off-white/80 font-display">
+            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-off-white/80 font-display">
               I am a <Typewriter texts={roles} speed={80} deleteSpeed={40} pauseDuration={2500} />
             </p>
           </motion.div>
 
           {/* Role tags */}
           <motion.div
-            className="flex flex-wrap justify-center gap-4"
+            className="flex flex-wrap justify-center gap-2 sm:gap-3 md:gap-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -188,7 +188,7 @@ export default function AboutMe() {
             {["Developer", "Designer", "Creator"].map((role, i) => (
               <motion.span
                 key={role}
-                className="px-6 py-3 border border-off-white/20 text-off-white/70 text-sm tracking-widest uppercase hover:bg-off-white hover:text-void-black transition-all duration-300 cursor-default"
+                className="px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 border border-off-white/20 text-off-white/70 text-xs sm:text-sm tracking-widest uppercase hover:bg-off-white hover:text-void-black transition-all duration-300 cursor-default"
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
@@ -202,20 +202,20 @@ export default function AboutMe() {
 
           {/* Bio text - large and centered */}
           <motion.div
-            className="max-w-3xl mx-auto text-center space-y-6"
+            className="max-w-3xl mx-auto text-center space-y-4 sm:space-y-5 md:space-y-6 px-2"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.8, duration: 0.8 }}
           >
-            <p className="text-off-white/60 text-xl md:text-2xl leading-relaxed">
+            <p className="text-off-white/60 text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed">
               I&apos;m a developer and designer based in{" "}
               <span className="text-off-white font-medium">Indonesia</span>,
               passionate about crafting digital experiences that blend{" "}
               <span className="text-off-white font-medium">aesthetics</span> with{" "}
               <span className="text-off-white font-medium">functionality</span>.
             </p>
-            <p className="text-off-white/50 text-lg md:text-xl leading-relaxed">
+            <p className="text-off-white/50 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed">
               With expertise in full-stack development and UI/UX design, I build
               modern applications that solve real problems while delivering
               exceptional user experiences.
@@ -252,7 +252,7 @@ export default function AboutMe() {
 
           {/* Stats row */}
           <motion.div
-            className="flex flex-wrap justify-center gap-12 md:gap-20 pt-12 border-t border-off-white/10"
+            className="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-12 lg:gap-20 pt-8 sm:pt-10 md:pt-12 border-t border-off-white/10"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -272,7 +272,7 @@ export default function AboutMe() {
                 transition={{ delay: 1.1 + i * 0.1 }}
                 whileHover={{ y: -5 }}
               >
-                <motion.span className="font-display text-5xl md:text-6xl text-off-white block">
+                <motion.span className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-off-white block">
                   {stat.value}
                 </motion.span>
                 <span className="text-off-white/40 text-sm tracking-widest uppercase mt-2 block">

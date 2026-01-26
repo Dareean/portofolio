@@ -84,17 +84,17 @@ export default function ContactPage() {
   ];
 
   return (
-    <main className="min-h-screen py-24 md:py-32">
+    <main className="min-h-screen py-16 sm:py-20 md:py-24 lg:py-32">
       {/* Header */}
       <motion.div
-        className="px-6 md:px-16 mb-12 md:mb-20"
+        className="px-4 sm:px-6 md:px-12 lg:px-16 mb-8 sm:mb-12 md:mb-16 lg:mb-20"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-off-white/50 hover:text-off-white mb-8 transition-colors group"
+          className="inline-flex items-center gap-1.5 sm:gap-2 text-off-white/50 hover:text-off-white mb-6 sm:mb-8 transition-colors group"
         >
           <svg
             className="w-5 h-5 transition-transform group-hover:-translate-x-1"
@@ -114,7 +114,7 @@ export default function ContactPage() {
 
         <div className="max-w-3xl">
           <motion.h1
-            className="font-display text-5xl md:text-7xl lg:text-8xl text-off-white mb-6"
+            className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl text-off-white mb-4 sm:mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -122,7 +122,7 @@ export default function ContactPage() {
             Let&apos;s Connect
           </motion.h1>
           <motion.p
-            className="text-off-white/50 text-lg md:text-xl leading-relaxed"
+            className="text-off-white/50 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
@@ -133,8 +133,8 @@ export default function ContactPage() {
       </motion.div>
 
       {/* Content Grid */}
-      <div className="px-6 md:px-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+      <div className="px-4 sm:px-6 md:px-12 lg:px-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 lg:gap-20">
           {/* Contact Form */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -143,12 +143,12 @@ export default function ContactPage() {
           >
             {isSubmitted ? (
               <motion.div
-                className="bg-white rounded-2xl p-8 md:p-12 text-center"
+                className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-12 text-center"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-emerald-100 flex items-center justify-center">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mx-auto mb-4 sm:mb-6 rounded-full bg-emerald-100 flex items-center justify-center">
                   <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
@@ -165,7 +165,7 @@ export default function ContactPage() {
                 </button>
               </motion.div>
             ) : (
-              <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-8 md:p-12 shadow-sm">
+              <form onSubmit={handleSubmit} className="bg-white rounded-xl sm:rounded-2xl p-5 sm:p-6 md:p-8 lg:p-12 shadow-sm">
                 {error && (
                   <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">
                     {error}
@@ -277,36 +277,36 @@ export default function ContactPage() {
 
           {/* Contact Info */}
           <motion.div
-            className="space-y-10"
+            className="space-y-6 sm:space-y-8 md:space-y-10"
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
           >
             {/* Quick Info */}
             <div>
-              <h3 className="font-display text-2xl text-off-white mb-6">Get in Touch</h3>
-              <div className="space-y-4">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center flex-shrink-0">
+              <h3 className="font-display text-xl sm:text-2xl text-off-white mb-4 sm:mb-6">Get in Touch</h3>
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-white flex items-center justify-center flex-shrink-0">
                     <svg className="w-5 h-5 text-off-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                   </div>
                   <div>
-                    <p className="text-off-white font-medium">Location</p>
-                    <p className="text-off-white/50">Palu, Central Sulawesi, Indonesia</p>
+                    <p className="text-off-white font-medium text-sm sm:text-base">Location</p>
+                    <p className="text-off-white/50 text-xs sm:text-sm">Palu, Central Sulawesi, Indonesia</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center flex-shrink-0">
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-white flex items-center justify-center flex-shrink-0">
                     <svg className="w-5 h-5 text-off-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                   <div>
-                    <p className="text-off-white font-medium">Availability</p>
-                    <p className="text-off-white/50">Open for freelance & collaborations</p>
+                    <p className="text-off-white font-medium text-sm sm:text-base">Availability</p>
+                    <p className="text-off-white/50 text-xs sm:text-sm">Open for freelance & collaborations</p>
                   </div>
                 </div>
               </div>
@@ -314,15 +314,15 @@ export default function ContactPage() {
 
             {/* Social Links */}
             <div>
-              <h3 className="font-display text-2xl text-off-white mb-6">Connect With Me</h3>
-              <div className="flex flex-wrap gap-4">
+              <h3 className="font-display text-xl sm:text-2xl text-off-white mb-4 sm:mb-6">Connect With Me</h3>
+              <div className="flex flex-wrap gap-3 sm:gap-4">
                 {socialLinks.map((social) => (
                   <a
                     key={social.name}
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 px-5 py-3 bg-white rounded-xl text-off-white/70 hover:text-off-white hover:shadow-lg transition-all duration-300 group"
+                    className="flex items-center gap-2 sm:gap-3 px-4 sm:px-5 py-2.5 sm:py-3 bg-white rounded-lg sm:rounded-xl text-off-white/70 hover:text-off-white hover:shadow-lg transition-all duration-300 group text-sm sm:text-base"
                   >
                     <span className="group-hover:scale-110 transition-transform">{social.icon}</span>
                     <span className="font-medium">{social.name}</span>
@@ -332,9 +332,9 @@ export default function ContactPage() {
             </div>
 
             {/* Fun Fact */}
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-6 md:p-8 border border-off-white/5">
-              <div className="flex items-start gap-4">
-                <span className="text-3xl">💡</span>
+            <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 border border-off-white/5">
+              <div className="flex items-start gap-3 sm:gap-4">
+                <span className="text-2xl sm:text-3xl">💡</span>
                 <div>
                   <h4 className="font-display text-lg text-off-white mb-2">Fun Fact</h4>
                   <p className="text-off-white/60 text-sm leading-relaxed">
@@ -349,14 +349,14 @@ export default function ContactPage() {
 
       {/* Bottom Decoration */}
       <motion.div
-        className="mt-20 md:mt-32 px-6 md:px-16"
+        className="mt-12 sm:mt-16 md:mt-20 lg:mt-32 px-4 sm:px-6 md:px-12 lg:px-16"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 1 }}
       >
-        <div className="border-t border-off-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-off-white/30 text-sm">
+        <div className="border-t border-off-white/10 pt-6 sm:pt-8 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
+          <p className="text-off-white/30 text-xs sm:text-sm text-center md:text-left">
             Looking forward to hearing from you!
           </p>
           <Link

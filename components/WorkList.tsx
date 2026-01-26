@@ -34,16 +34,16 @@ export default function WorkList({ projects }: WorkListProps) {
   }, [mouseX, mouseY]);
 
   return (
-    <section className="relative py-32 px-8 md:px-16" ref={containerRef}>
+    <section className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 lg:px-16" ref={containerRef}>
       {/* Section Header of work */}
       <motion.div
-        className="mb-16"
+        className="mb-8 sm:mb-12 md:mb-16"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8 }}
       >
-        <h2 className="font-display text-5xl md:text-7xl text-off-white">
+        <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-off-white">
           Selected Work
         </h2>
       </motion.div>
@@ -62,28 +62,28 @@ export default function WorkList({ projects }: WorkListProps) {
             transition={{ duration: 0.6, delay: index * 0.1 }}
           >
             <motion.div
-              className="py-8 md:py-12 flex items-center justify-between transition-opacity duration-300"
+              className="py-6 sm:py-8 md:py-12 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 transition-opacity duration-300"
               animate={{
                 opacity:
                   hoveredIndex === null || hoveredIndex === index ? 1 : 0.3,
               }}
             >
               {/* Project Info */}
-              <div className="flex items-baseline gap-4 md:gap-8">
-                <span className="text-sm text-off-white/40 font-mono">
+              <div className="flex items-baseline gap-2 sm:gap-4 md:gap-8">
+                <span className="text-xs sm:text-sm text-off-white/40 font-mono">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                <h3 className="font-display text-3xl md:text-5xl lg:text-6xl text-off-white tracking-tight">
+                <h3 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-5xl xl:text-6xl text-off-white tracking-tight">
                   {project.title}
                 </h3>
               </div>
 
               {/* Project Meta */}
-              <div className="hidden md:flex items-center gap-12">
-                <span className="text-off-white/60 uppercase tracking-widest text-sm">
+              <div className="flex sm:hidden md:flex items-center gap-4 sm:gap-8 md:gap-12 ml-6 sm:ml-0">
+                <span className="text-off-white/60 uppercase tracking-widest text-xs sm:text-sm">
                   {Array.isArray(project.category) ? project.category.join(" / ") : project.category}
                 </span>
-                <span className="text-off-white/40 font-mono text-sm">
+                <span className="text-off-white/40 font-mono text-xs sm:text-sm">
                   {project.year}
                 </span>
               </div>
@@ -104,7 +104,7 @@ export default function WorkList({ projects }: WorkListProps) {
       >
         <Link
           href="/work"
-          className="inline-flex items-center gap-3 px-8 py-4 border border-off-white/30 text-off-white text-sm tracking-widest uppercase hover:bg-off-white hover:text-void-black transition-all duration-300"
+          className="inline-flex items-center gap-2 sm:gap-3 px-5 sm:px-6 md:px-8 py-3 sm:py-4 border border-off-white/30 text-off-white text-xs sm:text-sm tracking-widest uppercase hover:bg-off-white hover:text-void-black transition-all duration-300"
         >
           View All Projects
           <svg
@@ -123,9 +123,9 @@ export default function WorkList({ projects }: WorkListProps) {
         </Link>
       </motion.div>
 
-      {/* Floating Image Preview */}
+      {/* Floating Image Preview - Hidden on touch devices */}
       <motion.div
-        className="fixed top-0 left-0 w-72 h-96 pointer-events-none z-40 will-change-transform"
+        className="fixed top-0 left-0 w-48 sm:w-56 md:w-72 h-64 sm:h-80 md:h-96 pointer-events-none z-40 will-change-transform hidden lg:block"
         style={{
           x: smoothX,
           y: smoothY,

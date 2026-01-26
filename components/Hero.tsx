@@ -47,16 +47,16 @@ export default function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative h-[150vh] flex items-start justify-center overflow-hidden"
+      className="relative h-[120vh] sm:h-[130vh] md:h-[150vh] flex items-start justify-center overflow-hidden px-4 sm:px-6"
     >
       <motion.div
         style={{ y, opacity }}
-        className="sticky top-0 h-screen w-full flex flex-col items-center justify-center will-change-transform"
+        className="sticky top-0 h-screen w-full flex flex-col items-center justify-center will-change-transform px-4"
       >
         {/* Main Title with Mask Reveal */}
         <div className="overflow-hidden">
           <motion.h1
-            className="font-display text-[15vw] leading-none tracking-tighter text-off-white will-change-transform"
+            className="font-display text-[18vw] sm:text-[16vw] md:text-[15vw] leading-none tracking-tighter text-off-white will-change-transform text-center"
             variants={textRevealVariants}
             initial="hidden"
             animate="visible"
@@ -67,7 +67,7 @@ export default function Hero() {
 
         {/* Subtitle */}
         <motion.p
-          className="mt-8 text-lg md:text-xl text-off-white/60 font-sans tracking-widest uppercase"
+          className="mt-4 sm:mt-6 md:mt-8 text-sm sm:text-base md:text-lg lg:text-xl text-off-white/60 font-sans tracking-widest uppercase text-center px-4"
           variants={subtitleVariants}
           initial="hidden"
           animate="visible"
@@ -77,16 +77,16 @@ export default function Hero() {
 
         {/* Scroll Indicator */}
         <motion.div
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+          className="absolute bottom-8 sm:bottom-10 md:bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5, duration: 1 }}
         >
-          <span className="text-xs text-off-white/40 tracking-widest uppercase">
+          <span className="text-[10px] sm:text-xs text-off-white/40 tracking-widest uppercase">
             Scroll
           </span>
           <motion.div
-            className="w-px h-12 bg-gradient-to-b from-off-white/40 to-transparent"
+            className="w-px h-8 sm:h-10 md:h-12 bg-gradient-to-b from-off-white/40 to-transparent"
             animate={{ scaleY: [1, 0.5, 1] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           />
