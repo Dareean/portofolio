@@ -164,6 +164,34 @@ export default function AboutMe() {
             </div>
           </div>
 
+          {/* Profile Photo */}
+          <motion.div
+            className="flex justify-center"
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+          >
+            <motion.div
+              className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 rounded-full overflow-hidden border border-off-white/20 bg-off-white/5"
+              whileHover={{ scale: 1.05, borderColor: "rgba(26, 26, 26, 0.4)" }}
+              transition={{ duration: 0.3 }}
+            >
+              {/* Placeholder - replace src with your actual photo */}
+              <div className="w-full h-full bg-gradient-to-br from-off-white/10 to-off-white/5 flex items-center justify-center">
+                <span className="text-off-white/30 text-4xl sm:text-5xl md:text-6xl font-display">D</span>
+              </div>
+              {/* Uncomment and use this when you have your photo:
+              <Image
+                src="/profile.jpg"
+                alt="Dareean"
+                fill
+                className="object-cover grayscale hover:grayscale-0 transition-all duration-500"
+              />
+              */}
+            </motion.div>
+          </motion.div>
+
           {/* Typewriter role display */}
           <motion.div
             className="text-center px-2"
