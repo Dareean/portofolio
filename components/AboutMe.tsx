@@ -75,7 +75,12 @@ export default function AboutMe() {
 
   const textY = useTransform(scrollYProgress, [0, 1], [50, -50]);
 
-  const roles = ["Developer", "Designer", "Creator", "Problem Solver"];
+  const roles = [
+    "Building Digital Solutions",
+    "Crafting User Experiences",
+    "Turning Ideas into Reality",
+    "A Curious Developer"
+  ];
 
   return (
     <section
@@ -213,7 +218,7 @@ export default function AboutMe() {
             viewport={{ once: true }}
             transition={{ delay: 0.6 }}
           >
-            {["Developer", "Designer", "Creator"].map((role, i) => (
+            {["Build", "Design", "Innovate"].map((role, i) => (
               <motion.span
                 key={role}
                 className="px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 border border-off-white/20 text-off-white/70 text-xs sm:text-sm tracking-widest uppercase hover:bg-off-white hover:text-void-black transition-all duration-300 cursor-default"
@@ -237,16 +242,15 @@ export default function AboutMe() {
             transition={{ delay: 0.8, duration: 0.8 }}
           >
             <p className="text-off-white/60 text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed">
-              I&apos;m a developer and designer based in{" "}
-              <span className="text-off-white font-medium">Indonesia</span>,
-              passionate about crafting digital experiences that blend{" "}
-              <span className="text-off-white font-medium">aesthetics</span> with{" "}
-              <span className="text-off-white font-medium">functionality</span>.
+              I&apos;m a developer based in{" "}
+              <span className="text-off-white font-medium">Palu, Indonesia</span> —
+              driven by{" "}
+              <span className="text-off-white font-medium">curiosity</span> and a constant desire to{" "}
+              <span className="text-off-white font-medium">learn and grow</span>.
             </p>
             <p className="text-off-white/50 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed">
-              With expertise in full-stack development and UI/UX design, I build
-              modern applications that solve real problems while delivering
-              exceptional user experiences.
+              Currently studying Informatics, I believe in learning by doing.
+              Every project is a chance to push my limits and create something meaningful.
             </p>
           </motion.div>
 

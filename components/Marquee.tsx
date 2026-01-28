@@ -5,7 +5,7 @@ interface MarqueeProps {
 }
 
 export default function Marquee({
-    text = "DEVELOPER • UI/UX DESIGN • LEADERSHIP • COMMUNITY",    
+    text = "DRIVEN • CREATIVE • DEDICATED • EVOLVING",    
 }: MarqueeProps) {
   const repeatedText = `${text} • `.repeat(6);
 
