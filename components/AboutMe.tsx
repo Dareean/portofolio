@@ -206,7 +206,7 @@ export default function AboutMe() {
             transition={{ delay: 0.5 }}
           >
             <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-off-white/80 font-display">
-              I am a <Typewriter texts={roles} speed={80} deleteSpeed={40} pauseDuration={2500} />
+              I am <Typewriter texts={roles} speed={80} deleteSpeed={40} pauseDuration={2500} />
             </p>
           </motion.div>
 
