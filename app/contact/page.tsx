@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import FloatingNav from "@/components/FloatingNav";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -85,6 +86,7 @@ export default function ContactPage() {
 
   return (
     <main className="min-h-screen py-16 sm:py-20 md:py-24 lg:py-32">
+      <FloatingNav />
       {/* Header */}
       <motion.div
         className="px-4 sm:px-6 md:px-12 lg:px-16 mb-8 sm:mb-12 md:mb-16 lg:mb-20"

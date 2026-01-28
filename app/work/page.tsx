@@ -4,6 +4,7 @@ import { motion, useTransform, useScroll } from "framer-motion";
 import Link from "next/link";
 import { useState, useRef } from "react";
 import { PROJECTS } from "@/lib/data";
+import FloatingNav from "@/components/FloatingNav";
 
 // Generate categories dynamically
 const allCategories = PROJECTS.flatMap(p => 
@@ -115,6 +116,7 @@ export default function WorkPage() {
 
   return (
     <main className="min-h-screen overflow-hidden bg-void-black">
+      <FloatingNav />
       {/* ============================================ */}
       {/* HERO - Horizontal Marquee */}
       {/* ============================================ */}

@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
 
 // Typewriter component
 function Typewriter({ 
@@ -177,18 +178,17 @@ export default function AboutMe() {
               whileHover={{ scale: 1.05, borderColor: "rgba(26, 26, 26, 0.4)" }}
               transition={{ duration: 0.3 }}
             >
-              {/* Placeholder - replace src with your actual photo */}
+              {/* Placeholder - replace src with your actual photo
               <div className="w-full h-full bg-gradient-to-br from-off-white/10 to-off-white/5 flex items-center justify-center">
                 <span className="text-off-white/30 text-4xl sm:text-5xl md:text-6xl font-display">D</span>
-              </div>
-              {/* Uncomment and use this when you have your photo:
+              </div> */}
               <Image
-                src="/profile.jpg"
+                src="/assets/foto_closeup.jpg"
                 alt="Dareean"
                 fill
-                className="object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                // className="object-cover grayscale hover:grayscale-0 transition-all duration-500"
               />
-              */}
+             
             </motion.div>
           </motion.div>
 
@@ -258,10 +258,19 @@ export default function AboutMe() {
             viewport={{ once: true }}
             transition={{ delay: 0.9 }}
           >
-            <motion.a
-              href="/resume.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
+            <motion.button
+              onClick={() => {
+                const pdfUrl = "/assets/CV-Rafi(English).pdf";
+                // Open in new tab
+                window.open(pdfUrl, "_blank");
+                // Trigger download
+                const link = document.createElement("a");
+                link.href = pdfUrl;
+                link.download = "Dareean_Resume.pdf";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }}
               className="group inline-flex items-center gap-3 px-8 py-4 border border-off-white/30 text-off-white text-sm tracking-widest uppercase hover:bg-off-white hover:text-void-black transition-all duration-300"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -275,39 +284,7 @@ export default function AboutMe() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               Download Resume
-            </motion.a>
-          </motion.div>
-
-          {/* Stats row */}
-          <motion.div
-            className="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-12 lg:gap-20 pt-8 sm:pt-10 md:pt-12 border-t border-off-white/10"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 1 }}
-          >
-            {[
-              { value: "20+", label: "Projects" },
-              { value: "10+", label: "Clients" },
-              { value: "5+", label: "Years" },
-            ].map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                className="text-center group cursor-default"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 1.1 + i * 0.1 }}
-                whileHover={{ y: -5 }}
-              >
-                <motion.span className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-off-white block">
-                  {stat.value}
-                </motion.span>
-                <span className="text-off-white/40 text-sm tracking-widest uppercase mt-2 block">
-                  {stat.label}
-                </span>
-              </motion.div>
-            ))}
+            </motion.button>
           </motion.div>
         </div>
       </div>

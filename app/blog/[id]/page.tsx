@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { STORIES } from "@/lib/data";
+import FloatingNav from "@/components/FloatingNav";
 
 export default function BlogPostPage() {
   const params = useParams();
@@ -30,6 +31,7 @@ export default function BlogPostPage() {
 
   return (
     <main className="min-h-screen py-32 px-8 md:px-16 lg:px-32">
+      <FloatingNav />
       {/* Back Link */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}

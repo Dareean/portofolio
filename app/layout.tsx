@@ -3,7 +3,6 @@ import { Inter, Syne } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import LoadingScreen from "@/components/LoadingScreen";
-import FloatingNav from "@/components/FloatingNav";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const syne = Syne({
@@ -28,7 +27,6 @@ export default function RootLayout({
         className={`${inter.variable} ${syne.variable} font-sans bg-void-black text-off-white selection:bg-off-white selection:text-void-black antialiased`}
       >
         <LoadingScreen />
-        <FloatingNav />
         <SmoothScroll>{children}</SmoothScroll>
         <div className="noise-bg" />
       </body>

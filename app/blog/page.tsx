@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import { EXPERIENCES, Experience } from "@/lib/data";
+import FloatingNav from "@/components/FloatingNav";
 
 // Category styling
 const categoryStyles: Record<string, { icon: string; bg: string; text: string; border: string }> = {
@@ -163,6 +164,7 @@ export default function ExperiencePage() {
 
   return (
     <main ref={containerRef} className="min-h-screen relative overflow-hidden bg-void-black">
+      <FloatingNav />
       {/* Parallax Background */}
       <motion.div
         style={{ y: backgroundY }}
