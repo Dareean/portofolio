@@ -9,7 +9,6 @@ export default function Footer() {
   return (
     <footer className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 md:px-12 lg:px-16 border-t border-off-white/10">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 sm:gap-10 md:gap-12">
-        {/* Left - Brand */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
