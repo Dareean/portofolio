@@ -133,7 +133,7 @@ export interface Experience {
   dateEnd?: string; // undefined means "Present"
   description: string;
   highlights?: string[];
-  category: "education" | "work" | "award" | "community" | "volunteer";
+  category: "education" | "work" | "award" | "community" | "volunteer" | "committee";
   image?: string;
 }
 
@@ -197,7 +197,7 @@ export const EXPERIENCES: Experience[] = [
     title: "Programming Tadulako",
     role: "Community Member",
     organization: "Programming Community",
-    dateStart: "2025-03",
+    dateStart: "2025-01",
     description: "Joined a programming-focused community to enhance skills and connect with fellow developers.",
     highlights: ["Networking", "Knowledge Sharing", "Skill Development"],
     category: "community",
@@ -222,6 +222,48 @@ export const EXPERIENCES: Experience[] = [
     highlights: ["IoT Development", "Safety Innovation", "Competition Finals"],
     category: "award",
     image: "/assets/rsict_2025.jpeg",
+  },
+  {
+    id: 9,
+    title: "Commemoration Day - Faculty of Engineering, Tadulako University",
+    role: "Volunteer & Exhibitor",
+    organization: "Faculty of Engineering, Tadulako University",
+    dateStart: "2025-06",
+    dateEnd: "2025-10",
+    description: "Contributed to the annual commemoration event of the Faculty of Engineering by showcasing innovative student projects at the Expo Innovation exhibition. Collaborated with fellow students and lecture to help demonstrate technological solutions and engage visitors with interactive displays.",
+    highlights: ["Innovation Showcase", "Project Exhibition", "Team Collaboration", "Public Engagement"],
+    category: "volunteer",
+  },
+  {
+    id: 10,
+    title: "HammerCode - Programming Community",
+    role: "Community Member",
+    organization: "HammerCode",
+    dateStart: "2025-12",
+    description: "Recently an active member of HammerCode, a passionate programming community focused on collaborative learning, code sharing, and building innovative projects together. Engaging in workshops, code reviews, and hackathon preparations with fellow developers.",
+    highlights: ["Collaborative Learning", "Code Reviews", "Open Source", "Hackathons"],
+    category: "community",
+  },
+  {
+    id: 11,
+    title: "I-Fest 2025",
+    role: "Liason Officer",
+    organization: "Computer Science Student Association (HMTI) of Tadulako University",
+    dateStart: "2025-11",
+    dateEnd: "2025-12",
+    description: "Served as Liaison Officer for I-Fest 2025, the annual informatics festival organized by HMTI. Coordinated communication between committee divisions, managed external partnerships, and ensured smooth information flow between stakeholders throughout the event preparation and execution.",
+    highlights: ["Cross-team Coordination", "Stakeholder Management", "Event Logistics", "Communication"],
+    category: "volunteer",
+  },
+  {
+    id: 12,
+    title: "I-Fest 2026",
+    role: "PIC - Person In Charge",
+    organization: "Computer Science Student Association (HMTI) of Tadulako University",
+    dateStart: "2026-01",
+    description: "Leading as Person In Charge (PIC) for I-Fest 2026, taking on greater responsibility in organizing the annual informatics festival. Overseeing event planning, managing committee teams, coordinating with sponsors and speakers, and driving the vision for an impactful student-led tech event.",
+    highlights: ["Leadership", "Event Management", "Team Coordination", "Strategic Planning"],
+    category: "committee",
   },
 ];
 

@@ -7,12 +7,13 @@ import { EXPERIENCES, Experience } from "@/lib/data";
 import FloatingNav from "@/components/FloatingNav";
 
 // Category styling
-const categoryStyles: Record<string, { icon: string; bg: string; text: string; border: string }> = {
-  education: { icon: "🎓", bg: "bg-blue-500/10", text: "text-blue-400", border: "border-blue-500/30" },
-  work: { icon: "💼", bg: "bg-emerald-500/10", text: "text-emerald-400", border: "border-emerald-500/30" },
-  award: { icon: "🏆", bg: "bg-amber-500/10", text: "text-amber-400", border: "border-amber-500/30" },
-  community: { icon: "🤝", bg: "bg-purple-500/10", text: "text-purple-400", border: "border-purple-500/30" },
-  volunteer: { icon: "🌱", bg: "bg-green-500/10", text: "text-green-400", border: "border-green-500/30" },
+const categoryStyles: Record<string, { bg: string; text: string; border: string }> = {
+  education: { bg: "bg-blue-500/10", text: "text-blue-400", border: "border-blue-500/30" },
+  work: { bg: "bg-emerald-500/10", text: "text-emerald-400", border: "border-emerald-500/30" },
+  award: { bg: "bg-amber-500/10", text: "text-amber-400", border: "border-amber-500/30" },
+  community: { bg: "bg-purple-500/10", text: "text-purple-400", border: "border-purple-500/30" },
+  volunteer: { bg: "bg-green-500/10", text: "text-green-400", border: "border-green-500/30" },
+  committee: { bg: "bg-orange-500/10", text: "text-orange-400", border: "border-orange-500/30" },
 };
 
 // Format date display
@@ -50,7 +51,6 @@ function TimelineCard({ experience }: { experience: Experience }) {
         {/* Top row: Category + Date */}
         <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
           <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide ${style.bg} ${style.text} ${style.border} border`}>
-            <span>{style.icon}</span>
             <span className="capitalize">{experience.category}</span>
           </div>
           <span className="text-off-white/40 text-sm font-mono">
@@ -160,7 +160,7 @@ export default function ExperiencePage() {
     (exp) => ["work", "education", "award"].includes(exp.category)
   ).reverse();
   const volunteerExperiences = sortedExperiences.filter(
-    (exp) => ["volunteer", "community"].includes(exp.category)
+    (exp) => ["volunteer", "community", "committee"].includes(exp.category)
   );
 
   return (
