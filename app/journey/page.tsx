@@ -155,9 +155,10 @@ export default function ExperiencePage() {
   );
 
   // Separate into Professional and Volunteer/Community
+  // Professional: reversed order (oldest first - started journey at top)
   const professionalExperiences = sortedExperiences.filter(
     (exp) => ["work", "education", "award"].includes(exp.category)
-  );
+  ).reverse();
   const volunteerExperiences = sortedExperiences.filter(
     (exp) => ["volunteer", "community"].includes(exp.category)
   );
