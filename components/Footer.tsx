@@ -34,7 +34,7 @@ export default function Footer() {
           {/* Navigation Links */}
           <div className="flex flex-wrap gap-4 sm:gap-6 md:gap-8">
             <Link
-              href="/blog"
+              href="/journey"
               className="text-off-white/60 hover:text-off-white text-sm tracking-widest uppercase transition-colors duration-300"
             >
               Journey

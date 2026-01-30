@@ -15,7 +15,7 @@ const exploreItems: ExploreItem[] = [
   {
     id: "journey",
     title: "My Journey",
-    href: "/blog",
+    href: "/journey",
     category: "Experience & Story",
   },
   {

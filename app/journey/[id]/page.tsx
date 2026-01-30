@@ -19,10 +19,10 @@ export default function BlogPostPage() {
             Post Not Found
           </h1>
           <Link
-            href="/blog"
+            href="/journey"
             className="text-off-white/60 hover:text-off-white transition-colors"
           >
-            ← Back to Blog
+            ← Back to Journey
           </Link>
         </div>
       </main>
@@ -39,7 +39,7 @@ export default function BlogPostPage() {
         transition={{ duration: 0.5 }}
       >
         <Link
-          href="/blog"
+          href="/journey"
           className="inline-flex items-center gap-2 text-off-white/60 hover:text-off-white mb-12 transition-colors"
         >
           <svg
@@ -55,7 +55,7 @@ export default function BlogPostPage() {
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          Back to Blog
+          Back to Journey
         </Link>
       </motion.div>
 
@@ -148,7 +148,7 @@ export default function BlogPostPage() {
             .map((relatedPost) => (
               <Link
                 key={relatedPost.id}
-                href={`/blog/${relatedPost.id}`}
+                href={`/journey/${relatedPost.id}`}
                 className="group"
               >
                 <div className="relative aspect-video mb-4 overflow-hidden bg-off-white/5 border border-off-white/10">
