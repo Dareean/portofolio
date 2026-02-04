@@ -5,6 +5,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import LoadingScreen from "@/components/LoadingScreen";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import WaveTransition from "@/components/WaveTransition";
+import FixedLogo from "@/components/FixedLogo";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const syne = Syne({
@@ -35,6 +36,7 @@ export default function RootLayout({
         <ThemeProvider>
           <WaveTransition />
           <LoadingScreen />
+          <FixedLogo />
           <SmoothScroll>{children}</SmoothScroll>
           <div className="noise-bg" />
         </ThemeProvider>

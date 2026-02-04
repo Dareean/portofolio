@@ -66,11 +66,84 @@ export default function Hero() {
     },
   };
 
+  // Aurora colors based on theme
+  const auroraColors = theme === "dark" 
+    ? {
+        blob1: "rgba(87, 136, 108, 0.4)", // Jungle Mist green
+        blob2: "rgba(129, 166, 132, 0.3)", // Muted Leaf
+        blob3: "rgba(70, 96, 96, 0.35)", // Sargasso
+      }
+    : {
+        blob1: "rgba(87, 136, 108, 0.25)", // Softer for light mode
+        blob2: "rgba(129, 166, 132, 0.2)",
+        blob3: "rgba(248, 199, 204, 0.25)", // Cotton Rose pink
+      };
+
   return (
     <section
       ref={containerRef}
       className="relative h-[120vh] sm:h-[130vh] md:h-[150vh] flex items-start justify-center overflow-hidden px-4 sm:px-6"
     >
+      {/* Aurora Background Effect */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Aurora Blob 1 - Top Right */}
+        <motion.div
+          className="absolute -top-1/4 -right-1/4 w-[80vw] h-[80vw] rounded-full"
+          style={{
+            background: `radial-gradient(circle, ${auroraColors.blob1} 0%, transparent 70%)`,
+            filter: "blur(80px)",
+          }}
+          animate={{
+            x: [0, 50, -30, 0],
+            y: [0, -40, 20, 0],
+            scale: [1, 1.1, 0.95, 1],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        {/* Aurora Blob 2 - Bottom Left */}
+        <motion.div
+          className="absolute -bottom-1/4 -left-1/4 w-[70vw] h-[70vw] rounded-full"
+          style={{
+            background: `radial-gradient(circle, ${auroraColors.blob2} 0%, transparent 70%)`,
+            filter: "blur(100px)",
+          }}
+          animate={{
+            x: [0, -40, 60, 0],
+            y: [0, 50, -30, 0],
+            scale: [1, 0.9, 1.15, 1],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        {/* Aurora Blob 3 - Center */}
+        <motion.div
+          className="absolute top-1/3 left-1/3 w-[60vw] h-[60vw] rounded-full"
+          style={{
+            background: `radial-gradient(circle, ${auroraColors.blob3} 0%, transparent 60%)`,
+            filter: "blur(120px)",
+          }}
+          animate={{
+            x: [0, 80, -50, 30, 0],
+            y: [0, -60, 40, -20, 0],
+            scale: [1, 1.2, 0.85, 1.1, 1],
+          }}
+          transition={{
+            duration: 30,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      </div>
+
       {/* Floating Particles Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {particles.map((particle) => (
