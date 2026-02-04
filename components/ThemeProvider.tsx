@@ -6,6 +6,7 @@ type Theme = "light" | "dark";
 
 interface ThemeContextType {
   theme: Theme;
+  pendingTheme: Theme;
   toggleTheme: () => void;
   isTransitioning: boolean;
 }
@@ -26,6 +27,7 @@ interface ThemeProviderProps {
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>("dark");
+  const [pendingTheme, setPendingTheme] = useState<Theme>("dark");
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -35,6 +37,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     const savedTheme = localStorage.getItem("theme") as Theme | null;
     if (savedTheme) {
       setTheme(savedTheme);
+      setPendingTheme(savedTheme);
     }
   }, []);
 
@@ -47,14 +50,18 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   }, [theme, mounted]);
 
   const toggleTheme = () => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    
+    // Set pending theme immediately (for wave color)
+    setPendingTheme(newTheme);
     setIsTransitioning(true);
     
-    // Delay theme change to sync with wave covering screen
+    // Change actual theme when wave is at 50% - covering the entire viewport
     setTimeout(() => {
-      setTheme((prev) => (prev === "dark" ? "light" : "dark"));
-    }, 300);
+      setTheme(newTheme);
+    }, 375);
 
-    // End transition after animation completes
+    // End transition when wave has fully passed (match animation duration)
     setTimeout(() => {
       setIsTransitioning(false);
     }, 800);
@@ -63,15 +70,17 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   // Prevent hydration mismatch
   if (!mounted) {
     return (
-      <ThemeContext.Provider value={{ theme: "dark", toggleTheme: () => {}, isTransitioning: false }}>
+      <ThemeContext.Provider value={{ theme: "dark", pendingTheme: "dark", toggleTheme: () => {}, isTransitioning: false }}>
         {children}
       </ThemeContext.Provider>
     );
   }
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, isTransitioning }}>
+    <ThemeContext.Provider value={{ theme, pendingTheme, toggleTheme, isTransitioning }}>
       {children}
     </ThemeContext.Provider>
   );
 }
+
+

@@ -4,46 +4,89 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "./ThemeProvider";
 
 export default function WaveTransition() {
-  const { isTransitioning, theme } = useTheme();
+  const { isTransitioning, pendingTheme } = useTheme();
+
+  // Target color - always the theme we're going TO
+  const targetColor = pendingTheme === "light" 
+    ? "#f5f5f5" 
+    : "#0e0f19";
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isTransitioning && (
         <motion.div
-          className="fixed inset-0 z-[9999] pointer-events-none overflow-hidden"
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          key="wave-container"
+          className="fixed inset-0 z-[9999] pointer-events-none"
         >
-          {/* Smooth wave layers */}
-          {[0, 1, 2].map((index) => (
-            <motion.div
-              key={index}
-              className="absolute inset-x-0 bottom-0 w-full"
-              style={{
-                height: "120vh",
-                background: theme === "dark" 
-                  ? `rgba(245, 245, 245, ${1 - index * 0.1})`
-                  : `rgba(26, 26, 26, ${1 - index * 0.1})`,
-                borderTopLeftRadius: "50% 8%",
-                borderTopRightRadius: "50% 8%",
-              }}
-              initial={{ 
-                y: "100%",
-              }}
-              animate={{ 
-                y: "-20%",
-              }}
-              exit={{ 
-                y: "-120%",
-              }}
-              transition={{
-                duration: 0.6,
-                delay: index * 0.05,
-                ease: [0.33, 1, 0.68, 1], // cubic-bezier for smooth ease-out
-              }}
-            />
-          ))}
+          {/* Main wave - single continuous sweep */}
+          <motion.div
+            className="absolute w-full"
+            style={{
+              height: "130vh",
+              background: targetColor,
+              borderRadius: "0 0 50% 50% / 0 0 5% 5%",
+              left: 0,
+              right: 0,
+            }}
+            initial={{ 
+              top: "100%",
+            }}
+            animate={{ 
+              top: "-130%",
+            }}
+            transition={{
+              duration: 0.75,
+              ease: [0.65, 0, 0.35, 1], // Smooth ease-in-out cubic
+            }}
+          />
+
+          {/* Secondary wave for depth */}
+          <motion.div
+            className="absolute w-full"
+            style={{
+              height: "130vh",
+              background: targetColor,
+              opacity: 0.7,
+              borderRadius: "0 0 50% 50% / 0 0 8% 8%",
+              left: 0,
+              right: 0,
+            }}
+            initial={{ 
+              top: "100%",
+            }}
+            animate={{ 
+              top: "-130%",
+            }}
+            transition={{
+              duration: 0.75,
+              delay: 0.03,
+              ease: [0.65, 0, 0.35, 1],
+            }}
+          />
+
+          {/* Third wave for extra smoothness */}
+          <motion.div
+            className="absolute w-full"
+            style={{
+              height: "130vh",
+              background: targetColor,
+              opacity: 0.4,
+              borderRadius: "0 0 50% 50% / 0 0 12% 12%",
+              left: 0,
+              right: 0,
+            }}
+            initial={{ 
+              top: "100%",
+            }}
+            animate={{ 
+              top: "-130%",
+            }}
+            transition={{
+              duration: 0.75,
+              delay: 0.06,
+              ease: [0.65, 0, 0.35, 1],
+            }}
+          />
         </motion.div>
       )}
     </AnimatePresence>
