@@ -131,7 +131,7 @@ export default function Hero() {
             animate={{ scaleX: 1, opacity: 1 }}
             transition={{ delay: 5.8, duration: 1, ease: "easeInOut" }}
           />
-          
+
           {/* Corner Markers - Mathematical precision */}
           <motion.div
             className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-white/60"
@@ -198,7 +198,11 @@ export default function Hero() {
               className="w-12 h-12 border border-white/30 rotate-45"
               animate={{
                 rotate: [45, 225, 45],
-                borderColor: ["rgba(255,255,255,0.3)", "rgba(255,255,255,0.6)", "rgba(255,255,255,0.3)"],
+                borderColor: [
+                  "rgba(255,255,255,0.3)",
+                  "rgba(255,255,255,0.6)",
+                  "rgba(255,255,255,0.3)",
+                ],
               }}
               transition={{
                 duration: 4,
@@ -218,7 +222,7 @@ export default function Hero() {
               <div className="w-1 h-1 bg-white/60 rounded-full" />
             </motion.div>
           </div>
-          
+
           {/* Mathematical Notation */}
           <div className="flex flex-col items-center gap-1">
             <span className="text-[10px] text-white/40 font-mono tracking-widest">

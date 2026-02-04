@@ -35,7 +35,10 @@ export default function MoireEffect() {
   const lines = Array.from({ length: lineCount }, (_, i) => i);
 
   return (
-    <div ref={containerRef} className="absolute inset-0 overflow-hidden bg-black">
+    <div
+      ref={containerRef}
+      className="absolute inset-0 overflow-hidden bg-black"
+    >
       {/* Pattern Layer 1 - Vertical Lines */}
       <motion.div
         className="absolute inset-0"
