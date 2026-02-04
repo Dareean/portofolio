@@ -1,10 +1,32 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { motion, useScroll, useTransform, Variants } from "framer-motion";
+import { useTheme } from "./ThemeProvider";
+
+// Generate floating particles
+const generateParticles = (count: number) => {
+  return Array.from({ length: count }, (_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    size: Math.random() * 4 + 2, // 2-6px
+    duration: Math.random() * 7 + 8, // 8-15s - faster float
+    delay: Math.random() * 3, // 0-3s - appear quickly
+    opacity: Math.random() * 0.4 + 0.3, // 0.3-0.7 - brighter
+    xOffset: (Math.random() - 0.5) * 80, // Horizontal drift range
+  }));
+};
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { theme } = useTheme();
+
+  // Memoize particles
+  const particles = useMemo(() => generateParticles(80), []);
+
+  // Theme-aware colors
+  const particleColor = theme === "dark" ? "255,255,255" : "14,15,25";
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -49,6 +71,74 @@ export default function Hero() {
       ref={containerRef}
       className="relative h-[120vh] sm:h-[130vh] md:h-[150vh] flex items-start justify-center overflow-hidden px-4 sm:px-6"
     >
+      {/* Floating Particles Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {particles.map((particle) => (
+          <motion.div
+            key={particle.id}
+            className="absolute rounded-full"
+            style={{
+              left: `${particle.x}%`,
+              width: particle.size,
+              height: particle.size,
+              background: `radial-gradient(circle, rgba(${particleColor},${particle.opacity + 0.3}) 0%, rgba(${particleColor},${particle.opacity}) 50%, transparent 100%)`,
+              boxShadow: `0 0 ${particle.size * 2}px rgba(${particleColor},${particle.opacity * 0.5})`,
+            }}
+            initial={{
+              y: "100vh",
+              x: 0,
+              opacity: 0,
+            }}
+            animate={{
+              y: "-20vh",
+              x: [0, particle.xOffset, 0],
+              opacity: [0, particle.opacity, particle.opacity, 0],
+            }}
+            transition={{
+              duration: particle.duration,
+              delay: particle.delay,
+              repeat: Infinity,
+              ease: "linear",
+              x: {
+                duration: particle.duration / 2,
+                repeat: Infinity,
+                repeatType: "reverse",
+                ease: "easeInOut",
+              },
+            }}
+          />
+        ))}
+
+        {/* Larger glowing orbs */}
+        {particles.slice(0, 8).map((particle) => (
+          <motion.div
+            key={`orb-${particle.id}`}
+            className="absolute rounded-full"
+            style={{
+              left: `${particle.x}%`,
+              width: particle.size * 8,
+              height: particle.size * 8,
+              background: `radial-gradient(circle, rgba(${particleColor},0.15) 0%, rgba(${particleColor},0.05) 40%, transparent 70%)`,
+              filter: "blur(2px)",
+            }}
+            initial={{
+              y: "100vh",
+              opacity: 0,
+            }}
+            animate={{
+              y: "-30vh",
+              opacity: [0, 0.6, 0.6, 0],
+            }}
+            transition={{
+              duration: particle.duration * 0.9,
+              delay: particle.delay,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+          />
+        ))}
+      </div>
+
       <motion.div
         style={{ y, opacity }}
         className="sticky top-0 h-screen w-full flex flex-col items-center justify-center will-change-transform px-4"
@@ -95,3 +185,5 @@ export default function Hero() {
     </section>
   );
 }
+
+
