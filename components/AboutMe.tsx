@@ -120,13 +120,23 @@ export default function AboutMe() {
   const containerRef = useRef<HTMLElement>(null);
   const { theme } = useTheme();
 
-  // Detect mobile for performance optimization
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  // Detect mobile for performance optimization - Use state to prevent hydration mismatch
+  const [isMobile, setIsMobile] = useState(false);
 
-  const particles = useMemo(
-    () => generateParticles(isMobile ? 15 : 30),
-    [isMobile],
-  );
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const [particles, setParticles] = useState<any[]>([]);
+
+  useEffect(() => {
+    setParticles(generateParticles(isMobile ? 15 : 30));
+  }, [isMobile]);
   const particleColor = theme === "dark" ? "255,255,255" : "14,15,25";
 
   const { scrollYProgress } = useScroll({
@@ -349,6 +359,7 @@ export default function AboutMe() {
                       src="/assets/foto_closeup.jpg"
                       alt="Dareean"
                       fill
+                      sizes="(max-width: 640px) 112px, (max-width: 768px) 144px, 160px"
                       className="object-cover transition-all duration-500 group-hover:scale-110"
                     />
                     {/* Subtle glow overlay on hover */}

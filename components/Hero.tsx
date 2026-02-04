@@ -55,8 +55,21 @@ export default function Hero() {
     setPerformance(detectPerformance());
   }, []);
 
-  // Detect mobile for basic optimization
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  // Detect mobile for basic optimization - Use state to prevent hydration mismatch
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Check initially
+    checkMobile();
+    
+    // Add resize listener
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   // Particle count based on performance - twinkling is lighter than floating
   const particleCount = useMemo(() => {
@@ -66,10 +79,11 @@ export default function Hero() {
   }, [performance, isMobile]);
 
   // Reduce particles based on performance
-  const particles = useMemo(
-    () => generateParticles(particleCount),
-    [particleCount],
-  );
+  const [particles, setParticles] = useState<any[]>([]);
+
+  useEffect(() => {
+    setParticles(generateParticles(particleCount));
+  }, [particleCount]);
 
   // Theme-aware colors
   const particleColor = theme === "dark" ? "255,255,255" : "14,15,25";
