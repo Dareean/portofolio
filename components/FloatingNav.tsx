@@ -1,25 +1,132 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useTheme } from "./ThemeProvider";
+
+// SVG Icons as components
+const HomeIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+    <polyline points="9 22 9 12 15 12 15 22" />
+  </svg>
+);
+
+const UserIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
+
+const CodeIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="16 18 22 12 16 6" />
+    <polyline points="8 6 2 12 8 18" />
+  </svg>
+);
+
+const GitHubIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+  </svg>
+);
+
+const LinkedInIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+  </svg>
+);
+
+const SunIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="5" />
+    <line x1="12" y1="1" x2="12" y2="3" />
+    <line x1="12" y1="21" x2="12" y2="23" />
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+    <line x1="1" y1="12" x2="3" y2="12" />
+    <line x1="21" y1="12" x2="23" y2="12" />
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+  </svg>
+);
+
+const MoonIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+  </svg>
+);
 
 const navItems = [
-  { href: "/", label: "Home", icon: "⌂" },
-  { href: "/work", label: "Work", icon: "◈" },
-  { href: "/journey", label: "Journey", icon: "◉" },
-  { href: "/contact", label: "Contact", icon: "✉" },
+  { href: "/", label: "Home", icon: HomeIcon },
+  { href: "/journey", label: "Journey", icon: UserIcon },
+  { href: "/work", label: "Work", icon: CodeIcon },
 ];
 
+const socialItems = [
+  { href: "https://github.com/Dareean", label: "GitHub", icon: GitHubIcon, external: true },
+  { href: "https://linkedin.com/in/dareean", label: "LinkedIn", icon: LinkedInIcon, external: true },
+];
+
+// Cartoonish bouncy animation variants
+const bounceAnimation: Variants = {
+  hover: {
+    scale: 1.25,
+    y: -8,
+    rotate: [0, -10, 10, -5, 5, 0],
+    transition: {
+      scale: { type: "spring", stiffness: 400, damping: 10 },
+      y: { type: "spring", stiffness: 400, damping: 10 },
+      rotate: { duration: 0.5 }
+    }
+  },
+  tap: {
+    scale: 0.85,
+    y: 0,
+    transition: { type: "spring", stiffness: 400, damping: 10 }
+  }
+};
+
+const wiggleAnimation: Variants = {
+  hover: {
+    scale: 1.2,
+    rotate: [0, 15, -15, 10, -10, 5, -5, 0],
+    transition: {
+      scale: { type: "spring", stiffness: 400, damping: 10 },
+      rotate: { duration: 0.6 }
+    }
+  },
+  tap: {
+    scale: 0.9,
+    transition: { type: "spring", stiffness: 400, damping: 10 }
+  }
+};
+
+const jumpAnimation: Variants = {
+  hover: {
+    scale: 1.3,
+    y: [0, -12, 0, -6, 0],
+    transition: {
+      scale: { type: "spring", stiffness: 500, damping: 15 },
+      y: { duration: 0.4, times: [0, 0.4, 0.6, 0.8, 1] }
+    }
+  },
+  tap: {
+    scale: 0.85,
+    y: 2,
+    transition: { type: "spring", stiffness: 400, damping: 10 }
+  }
+};
+
 export default function FloatingNav() {
-  const [isExpanded, setIsExpanded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const pathname = usePathname();
-
-  // Get current page info
-  const currentPage = navItems.find((item) => item.href === pathname) || navItems[0];
   const isHomePage = pathname === "/";
+  const { theme, toggleTheme, isTransitioning } = useTheme();
 
   // Show nav after loading animation delay
   useEffect(() => {
@@ -29,28 +136,11 @@ export default function FloatingNav() {
     return () => clearTimeout(timer);
   }, [isHomePage]);
 
-  // Close when clicking outside
-  useEffect(() => {
-    const handleClick = () => {
-      if (isExpanded) setIsExpanded(false);
-    };
-    
-    if (isExpanded) {
-      // Delay to prevent immediate close
-      const timer = setTimeout(() => {
-        document.addEventListener("click", handleClick);
-      }, 100);
-      return () => {
-        clearTimeout(timer);
-        document.removeEventListener("click", handleClick);
-      };
-    }
-  }, [isExpanded]);
-
-  // Close on route change
-  useEffect(() => {
-    setIsExpanded(false);
-  }, [pathname]);
+  // Different animations for each icon type
+  const getAnimation = (index: number) => {
+    const animations = [bounceAnimation, wiggleAnimation, jumpAnimation];
+    return animations[index % animations.length];
+  };
 
   return (
     <AnimatePresence>
@@ -60,99 +150,154 @@ export default function FloatingNav() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 50, scale: 0.9 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-50"
+          className="fixed bottom-6 sm:bottom-8 inset-x-0 z-50 flex justify-center pointer-events-none"
         >
           {/* Main Pill Container */}
           <motion.div
             layout
-            className="relative bg-void-black/80 backdrop-blur-xl border border-off-white/20 rounded-full shadow-2xl overflow-hidden"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsExpanded(!isExpanded);
-            }}
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            className="flex items-center gap-1 bg-void-black/95 backdrop-blur-xl border border-off-white/10 rounded-full shadow-2xl px-2 py-2 pointer-events-auto"
           >
-            <AnimatePresence mode="wait">
-              {isExpanded ? (
-                // Expanded State - Show all nav items
+            {/* Logo */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ 
+                scale: 1.2, 
+                rotate: [0, -10, 10, 0],
+                transition: { 
+                  scale: { type: "spring", stiffness: 400, damping: 10 },
+                  rotate: { duration: 0.5 }
+                }
+              }}
+              whileTap={{ scale: 0.9 }}
+              className="cursor-pointer"
+            >
+              <Link
+                href="/"
+                className="relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full"
+                aria-label="Home - Dareean"
+              >
+                <Image
+                  src="/assets/logo_lambang_dareean.png"
+                  alt="Dareean Logo"
+                  width={40}
+                  height={40}
+                  className="w-8 h-8 sm:w-9 sm:h-9 logo-adaptive"
+                />
+              </Link>
+            </motion.div>
+
+            {/* Divider after logo */}
+            <motion.div 
+              className="w-px h-6 bg-off-white/20 mx-1"
+              whileHover={{ scaleY: 1.3, opacity: 0.5 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            />
+
+            {/* Navigation Items */}
+            {navItems.map((item, index) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
+              return (
                 <motion.div
-                  key="expanded"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="flex items-center gap-1 px-1.5 sm:px-2 py-1.5 sm:py-2"
+                  key={item.href}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  whileHover="hover"
+                  whileTap="tap"
+                  variants={getAnimation(index)}
+                  transition={{ delay: index * 0.05 }}
+                  className="cursor-pointer"
                 >
-                  {navItems.map((item, index) => (
-                    <motion.div
-                      key={item.href}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: index * 0.05 }}
-                    >
-                      <Link
-                        href={item.href}
-                        className={`relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-full transition-all duration-300 ${
-                          pathname === item.href
-                            ? "bg-off-white text-void-black"
-                            : "text-off-white/60 hover:text-off-white hover:bg-off-white/10"
-                        }`}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <span className="text-xs sm:text-sm">{item.icon}</span>
-                        <span className="text-xs sm:text-sm font-medium tracking-wide">
-                          {item.label}
-                        </span>
-                      </Link>
-                    </motion.div>
-                  ))}
-                  
-                  {/* Close button */}
-                  <motion.button
-                    initial={{ opacity: 0, rotate: -90 }}
-                    animate={{ opacity: 1, rotate: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="ml-1 p-2.5 rounded-full text-off-white/40 hover:text-off-white hover:bg-off-white/10 transition-colors"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsExpanded(false);
-                    }}
-                    aria-label="Close menu"
+                  <Link
+                    href={item.href}
+                    className={`relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full transition-colors duration-300 ${
+                      isActive
+                        ? "bg-off-white/15 text-off-white"
+                        : "text-off-white/50 hover:text-off-white hover:bg-off-white/10"
+                    }`}
+                    aria-label={item.label}
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </motion.button>
+                    <Icon />
+                  </Link>
                 </motion.div>
-              ) : (
-                // Collapsed State - Show current page
-                <motion.button
-                  key="collapsed"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="flex items-center gap-2 sm:gap-3 px-4 sm:px-5 py-2.5 sm:py-3 cursor-pointer group"
-                  aria-label="Open navigation"
+              );
+            })}
+
+            {/* Divider */}
+            <motion.div 
+              className="w-px h-6 bg-off-white/20 mx-1"
+              whileHover={{ scaleY: 1.3, opacity: 0.5 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            />
+
+            {/* Social Links */}
+            {socialItems.map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <motion.div
+                  key={item.href}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  whileHover="hover"
+                  whileTap="tap"
+                  variants={wiggleAnimation}
+                  transition={{ delay: (navItems.length + index) * 0.05 }}
+                  className="cursor-pointer"
                 >
-                  {/* Current page indicator */}
-                  <span className="text-off-white/60 text-xs sm:text-sm">{currentPage.icon}</span>
-                  <span className="text-off-white font-medium text-xs sm:text-sm tracking-wide">
-                    {currentPage.label}
-                  </span>
-                  
-                  {/* Expand indicator */}
-                  <motion.div
-                    className="flex items-center gap-0.5 ml-1"
-                    animate={{ opacity: [0.4, 1, 0.4] }}
-                    transition={{ duration: 2, repeat: Infinity }}
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full text-off-white/50 hover:text-off-white hover:bg-off-white/10 transition-colors duration-300"
+                    aria-label={item.label}
                   >
-                    <span className="w-1 h-1 rounded-full bg-off-white/40" />
-                    <span className="w-1 h-1 rounded-full bg-off-white/40" />
-                    <span className="w-1 h-1 rounded-full bg-off-white/40" />
-                  </motion.div>
-                </motion.button>
-              )}
-            </AnimatePresence>
+                    <Icon />
+                  </a>
+                </motion.div>
+              );
+            })}
+
+            {/* Divider */}
+            <motion.div 
+              className="w-px h-6 bg-off-white/20 mx-1"
+              whileHover={{ scaleY: 1.3, opacity: 0.5 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            />
+
+            {/* Theme Toggle with spin animation */}
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ 
+                scale: 1.25, 
+                rotate: 180,
+                transition: { 
+                  scale: { type: "spring", stiffness: 400, damping: 10 },
+                  rotate: { duration: 0.4, ease: "easeInOut" }
+                }
+              }}
+              whileTap={{ scale: 0.85, rotate: 360 }}
+              transition={{ delay: (navItems.length + socialItems.length) * 0.05 }}
+              className="relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full text-off-white/50 hover:text-off-white hover:bg-off-white/10 transition-colors duration-300 cursor-pointer"
+              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+              onClick={toggleTheme}
+              disabled={isTransitioning}
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={theme}
+                  initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
+                  animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                  exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+                </motion.div>
+              </AnimatePresence>
+            </motion.button>
           </motion.div>
 
           {/* Subtle glow effect */}

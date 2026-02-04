@@ -4,16 +4,88 @@
 
 :root {
   --foreground-rgb: 26, 26, 26; /* #1A1A1A */
-  --background-start-rgb: 245, 245, 245; /* #F5F5F5 */
-  --background-end-rgb: 245, 245, 245;
+  --background-rgb: 245, 245, 245; /* #F5F5F5 */
+  --accent-color: 100, 100, 100;
+}
+
+/* Dark theme (default) */
+[data-theme="dark"] {
+  --foreground-rgb: 245, 245, 245; /* #F5F5F5 */
+  --background-rgb: 26, 26, 26; /* #1A1A1A */
+  --accent-color: 180, 180, 180;
+}
+
+/* Light theme */
+[data-theme="light"] {
+  --foreground-rgb: 26, 26, 26; /* #1A1A1A */
+  --background-rgb: 245, 245, 245; /* #F5F5F5 */
+  --accent-color: 100, 100, 100;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-start-rgb));
+  background: rgb(var(--background-rgb));
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
+/* Dynamic color classes for theme support */
 @layer utilities {
+  .bg-void-black {
+    background-color: rgb(var(--background-rgb));
+  }
+  
+  .text-off-white {
+    color: rgb(var(--foreground-rgb));
+  }
+  
+  .text-off-white\/30 {
+    color: rgba(var(--foreground-rgb), 0.3);
+  }
+  
+  .text-off-white\/40 {
+    color: rgba(var(--foreground-rgb), 0.4);
+  }
+  
+  .text-off-white\/50 {
+    color: rgba(var(--foreground-rgb), 0.5);
+  }
+  
+  .text-off-white\/60 {
+    color: rgba(var(--foreground-rgb), 0.6);
+  }
+  
+  .text-off-white\/70 {
+    color: rgba(var(--foreground-rgb), 0.7);
+  }
+  
+  .border-off-white\/10 {
+    border-color: rgba(var(--foreground-rgb), 0.1);
+  }
+  
+  .border-off-white\/20 {
+    border-color: rgba(var(--foreground-rgb), 0.2);
+  }
+  
+  .bg-off-white\/5 {
+    background-color: rgba(var(--foreground-rgb), 0.05);
+  }
+  
+  .bg-off-white\/10 {
+    background-color: rgba(var(--foreground-rgb), 0.1);
+  }
+  
+  .bg-off-white\/15 {
+    background-color: rgba(var(--foreground-rgb), 0.15);
+  }
+  
+  .bg-off-white\/20 {
+    background-color: rgba(var(--foreground-rgb), 0.2);
+  }
+  
+  .bg-void-black\/95 {
+    background-color: rgba(var(--background-rgb), 0.95);
+  }
+
   .noise-bg {
     position: fixed;
     top: 0;
@@ -25,4 +97,14 @@ body {
     opacity: 0.05;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   }
+  
+  /* Invert filter for logo based on theme */
+  [data-theme="dark"] .logo-adaptive {
+    filter: invert(1);
+  }
+  
+  [data-theme="light"] .logo-adaptive {
+    filter: invert(0);
+  }
 }
+

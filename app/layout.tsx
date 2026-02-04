@@ -3,6 +3,8 @@ import { Inter, Syne } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import LoadingScreen from "@/components/LoadingScreen";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import WaveTransition from "@/components/WaveTransition";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const syne = Syne({
@@ -14,6 +16,10 @@ const syne = Syne({
 export const metadata: Metadata = {
   title: "Dareean - Logic meets Creativity",
   description: "Logic meets Aesthetics. Portfolio of Dareean.",
+  icons: {
+    icon: "/assets/logo_lambang_dareean.png",
+    apple: "/assets/logo_lambang_dareean.png",
+  },
 };
 
 export default function RootLayout({
@@ -22,14 +28,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${syne.variable} font-sans bg-void-black text-off-white selection:bg-off-white selection:text-void-black antialiased`}
       >
-        <LoadingScreen />
-        <SmoothScroll>{children}</SmoothScroll>
-        <div className="noise-bg" />
+        <ThemeProvider>
+          <WaveTransition />
+          <LoadingScreen />
+          <SmoothScroll>{children}</SmoothScroll>
+          <div className="noise-bg" />
+        </ThemeProvider>
       </body>
     </html>
   );
 }
+

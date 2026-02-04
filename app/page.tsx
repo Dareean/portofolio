@@ -4,11 +4,15 @@ import Marquee from "@/components/Marquee";
 import WorkList from "@/components/WorkList";
 import ExploreLinks from "@/components/ExploreLinks";
 import Footer from "@/components/Footer";
+import FloatingNav from "@/components/FloatingNav";
 import { PROJECTS } from "@/lib/data";
 
 export default function Home() {
   return (
     <main className="min-h-screen">
+      {/* Floating Navigation */}
+      <FloatingNav />
+
       {/* Hero Section */}
       <Hero />
 

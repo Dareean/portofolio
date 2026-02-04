@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -15,9 +16,23 @@ export default function Footer() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl text-off-white mb-2 sm:mb-4">
-            DAREEAN
-          </h2>
+          <div className="flex items-center gap-3 sm:gap-4 mb-2 sm:mb-4">
+            <motion.div
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
+              <Image
+                src="/assets/logo_lambang_dareean.png"
+                alt="Dareean Logo"
+                width={72}
+                height={72}
+                className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 logo-adaptive"
+              />
+            </motion.div>
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl text-off-white">
+              DAREEAN
+            </h2>
+          </div>
           <p className="text-off-white/40 text-xs sm:text-sm tracking-widest uppercase">
             Logic meets Aesthetics
           </p>
