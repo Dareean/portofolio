@@ -7,13 +7,40 @@ import { EXPERIENCES, Experience } from "@/lib/data";
 import FloatingNav from "@/components/FloatingNav";
 
 // Category styling
-const categoryStyles: Record<string, { bg: string; text: string; border: string }> = {
-  education: { bg: "bg-blue-500/10", text: "text-blue-400", border: "border-blue-500/30" },
-  work: { bg: "bg-emerald-500/10", text: "text-emerald-400", border: "border-emerald-500/30" },
-  award: { bg: "bg-amber-500/10", text: "text-amber-400", border: "border-amber-500/30" },
-  community: { bg: "bg-purple-500/10", text: "text-purple-400", border: "border-purple-500/30" },
-  volunteer: { bg: "bg-green-500/10", text: "text-green-400", border: "border-green-500/30" },
-  committee: { bg: "bg-orange-500/10", text: "text-orange-400", border: "border-orange-500/30" },
+const categoryStyles: Record<
+  string,
+  { bg: string; text: string; border: string }
+> = {
+  education: {
+    bg: "bg-blue-500/10",
+    text: "text-blue-400",
+    border: "border-blue-500/30",
+  },
+  work: {
+    bg: "bg-emerald-500/10",
+    text: "text-emerald-400",
+    border: "border-emerald-500/30",
+  },
+  award: {
+    bg: "bg-amber-500/10",
+    text: "text-amber-400",
+    border: "border-amber-500/30",
+  },
+  community: {
+    bg: "bg-purple-500/10",
+    text: "text-purple-400",
+    border: "border-purple-500/30",
+  },
+  volunteer: {
+    bg: "bg-green-500/10",
+    text: "text-green-400",
+    border: "border-green-500/30",
+  },
+  committee: {
+    bg: "bg-orange-500/10",
+    text: "text-orange-400",
+    border: "border-orange-500/30",
+  },
 };
 
 // Format date display
@@ -36,26 +63,26 @@ function TimelineCard({ experience }: { experience: Experience }) {
   const style = categoryStyles[experience.category] || categoryStyles.work;
 
   return (
-    <motion.div
-      ref={cardRef}
-      style={{ opacity, y }}
-      className="relative"
-    >
+    <motion.div ref={cardRef} style={{ opacity, y }} className="relative">
       {/* Timeline connector dot */}
       <div className="absolute -left-[33px] sm:-left-[37px] md:-left-[41px] top-6 sm:top-8 w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-off-white/20 border-2 border-off-white/40 z-10" />
-      
+
       <motion.div
         className="bg-void-black/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 border border-off-white/10 hover:border-off-white/20 transition-all duration-500 group"
         whileHover={{ y: -5, borderColor: "rgba(255,255,255,0.3)" }}
       >
         {/* Top row: Category + Date */}
         <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide ${style.bg} ${style.text} ${style.border} border`}>
+          <div
+            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide ${style.bg} ${style.text} ${style.border} border`}
+          >
             <span className="capitalize">{experience.category}</span>
           </div>
           <span className="text-off-white/40 text-sm font-mono">
             {formatDate(experience.dateStart)}
-            {experience.dateEnd ? ` — ${formatDate(experience.dateEnd)}` : " — Present"}
+            {experience.dateEnd
+              ? ` — ${formatDate(experience.dateEnd)}`
+              : " — Present"}
           </span>
         </div>
 
@@ -93,13 +120,13 @@ function TimelineCard({ experience }: { experience: Experience }) {
 }
 
 // Section Header Component
-function SectionHeader({ 
-  title, 
-  subtitle, 
-  icon 
-}: { 
-  title: string; 
-  subtitle: string; 
+function SectionHeader({
+  title,
+  subtitle,
+  icon,
+}: {
+  title: string;
+  subtitle: string;
   icon: string;
 }) {
   return (
@@ -151,20 +178,23 @@ export default function ExperiencePage() {
 
   // Sort experiences by date (newest first)
   const sortedExperiences = [...EXPERIENCES].sort(
-    (a, b) => new Date(b.dateStart).getTime() - new Date(a.dateStart).getTime()
+    (a, b) => new Date(b.dateStart).getTime() - new Date(a.dateStart).getTime(),
   );
 
   // Separate into Professional and Volunteer/Community
   // Professional: reversed order (oldest first - started journey at top)
-  const professionalExperiences = sortedExperiences.filter(
-    (exp) => ["work", "education", "award"].includes(exp.category)
-  ).reverse();
-  const volunteerExperiences = sortedExperiences.filter(
-    (exp) => ["volunteer", "community", "committee"].includes(exp.category)
+  const professionalExperiences = sortedExperiences
+    .filter((exp) => ["work", "education", "award"].includes(exp.category))
+    .reverse();
+  const volunteerExperiences = sortedExperiences.filter((exp) =>
+    ["volunteer", "community", "committee"].includes(exp.category),
   );
 
   return (
-    <main ref={containerRef} className="min-h-screen relative overflow-hidden bg-void-black">
+    <main
+      ref={containerRef}
+      className="min-h-screen relative overflow-hidden bg-void-black"
+    >
       <FloatingNav />
       {/* Parallax Background */}
       <motion.div
@@ -207,7 +237,7 @@ export default function ExperiencePage() {
             <span className="text-sm tracking-wide">Home</span>
           </Link>
         </motion.div>
-        
+
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -238,8 +268,9 @@ export default function ExperiencePage() {
             transition={{ delay: 0.6, duration: 0.8 }}
             className="text-off-white/50 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed max-w-2xl mx-auto px-2"
           >
-            A timeline of my growth — from learning to code to contributing to communities, 
-            competing in hackathons, and building meaningful projects.
+            A timeline of my growth — from learning to code to contributing to
+            communities, competing in hackathons, and building meaningful
+            projects.
           </motion.p>
         </motion.div>
 
@@ -324,15 +355,26 @@ export default function ExperiencePage() {
           Want to work together?
         </h2>
         <p className="text-off-white/50 text-sm sm:text-base md:text-lg mb-6 sm:mb-8 max-w-xl mx-auto px-2">
-          I&apos;m always open to discussing new opportunities, collaborations, or just having a chat.
+          I&apos;m always open to discussing new opportunities, collaborations,
+          or just having a chat.
         </p>
         <Link
           href="/contact"
           className="inline-flex items-center gap-2 px-8 py-4 bg-off-white text-void-black font-medium rounded-full hover:bg-off-white/90 transition-all duration-300 shadow-lg hover:shadow-xl"
         >
           Get in Touch
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 8l4 4m0 0l-4 4m4-4H3"
+            />
           </svg>
         </Link>
       </motion.section>
