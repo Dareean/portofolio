@@ -209,8 +209,12 @@ export default function FloatingNav() {
                   whileTap="tap"
                   variants={getAnimation(index)}
                   transition={{ delay: index * 0.05 }}
-                  className="cursor-pointer"
+                  className="cursor-pointer relative group"
                 >
+                  {/* Tooltip */}
+                  <span className="absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-void-black/90 text-off-white text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none scale-90 group-hover:scale-100 border border-off-white/10">
+                    {item.label}
+                  </span>
                   <Link
                     href={item.href}
                     className={`relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full transition-colors duration-300 ${
@@ -245,8 +249,12 @@ export default function FloatingNav() {
                   whileTap="tap"
                   variants={wiggleAnimation}
                   transition={{ delay: (navItems.length + index) * 0.05 }}
-                  className="cursor-pointer"
+                  className="cursor-pointer relative group"
                 >
+                  {/* Tooltip */}
+                  <span className="absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-void-black/90 text-off-white text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none scale-90 group-hover:scale-100 border border-off-white/10">
+                    {item.label}
+                  </span>
                   <a
                     href={item.href}
                     target="_blank"
