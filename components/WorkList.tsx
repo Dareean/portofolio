@@ -5,8 +5,6 @@ import { motion, useSpring, useMotionValue } from "framer-motion";
 import Link from "next/link";
 import { Project } from "@/lib/data";
 
-
-
 interface WorkListProps {
   projects: Project[];
 }
@@ -14,6 +12,7 @@ interface WorkListProps {
 export default function WorkList({ projects }: WorkListProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Mouse position with spring for smooth cursor following
   const mouseX = useMotionValue(0);
@@ -24,17 +23,33 @@ export default function WorkList({ projects }: WorkListProps) {
   const smoothY = useSpring(mouseY, springConfig);
 
   useEffect(() => {
+    // Check if mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
     const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
+      if (!isMobile) {
+        mouseX.set(e.clientX);
+        mouseY.set(e.clientY);
+      }
     };
 
     window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [mouseX, mouseY]);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("resize", checkMobile);
+    };
+  }, [mouseX, mouseY, isMobile]);
 
   return (
-    <section className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 lg:px-16" ref={containerRef}>
+    <section
+      className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 lg:px-16"
+      ref={containerRef}
+    >
       {/* Section Header of work */}
       <motion.div
         className="mb-8 sm:mb-12 md:mb-16"
@@ -81,7 +96,9 @@ export default function WorkList({ projects }: WorkListProps) {
               {/* Project Meta */}
               <div className="flex sm:hidden md:flex items-center gap-4 sm:gap-8 md:gap-12 ml-6 sm:ml-0">
                 <span className="text-off-white/60 uppercase tracking-widest text-xs sm:text-sm">
-                  {Array.isArray(project.category) ? project.category.join(" / ") : project.category}
+                  {Array.isArray(project.category)
+                    ? project.category.join(" / ")
+                    : project.category}
                 </span>
                 <span className="text-off-white/40 font-mono text-xs sm:text-sm">
                   {project.year}

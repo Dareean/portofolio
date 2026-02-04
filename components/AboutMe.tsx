@@ -120,7 +120,13 @@ export default function AboutMe() {
   const containerRef = useRef<HTMLElement>(null);
   const { theme } = useTheme();
 
-  const particles = useMemo(() => generateParticles(30), []);
+  // Detect mobile for performance optimization
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
+  const particles = useMemo(
+    () => generateParticles(isMobile ? 15 : 30),
+    [isMobile],
+  );
   const particleColor = theme === "dark" ? "255,255,255" : "14,15,25";
 
   const { scrollYProgress } = useScroll({
@@ -165,10 +171,10 @@ export default function AboutMe() {
       {/* Aurora Background Effect */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
-          className="absolute -top-1/2 -right-1/4 w-[60vw] h-[60vw] rounded-full"
+          className="absolute -top-1/2 -right-1/4 w-[60vw] h-[60vw] rounded-full will-change-transform"
           style={{
             background: `radial-gradient(circle, ${auroraColors.blob1} 0%, transparent 70%)`,
-            filter: "blur(60px)",
+            filter: isMobile ? "blur(30px)" : "blur(60px)",
           }}
           animate={{
             x: [0, 30, -20, 0],
@@ -182,10 +188,10 @@ export default function AboutMe() {
           }}
         />
         <motion.div
-          className="absolute -bottom-1/4 -left-1/4 w-[50vw] h-[50vw] rounded-full"
+          className="absolute -bottom-1/4 -left-1/4 w-[50vw] h-[50vw] rounded-full will-change-transform"
           style={{
             background: `radial-gradient(circle, ${auroraColors.blob2} 0%, transparent 70%)`,
-            filter: "blur(80px)",
+            filter: isMobile ? "blur(40px)" : "blur(80px)",
           }}
           animate={{
             x: [0, -30, 40, 0],
@@ -199,10 +205,10 @@ export default function AboutMe() {
           }}
         />
         <motion.div
-          className="absolute top-1/3 left-1/2 w-[40vw] h-[40vw] rounded-full"
+          className="absolute top-1/3 left-1/2 w-[45vw] h-[45vw] rounded-full will-change-transform"
           style={{
             background: `radial-gradient(circle, ${auroraColors.blob3} 0%, transparent 60%)`,
-            filter: "blur(100px)",
+            filter: isMobile ? "blur(35px)" : "blur(70px)",
           }}
           animate={{
             x: [0, 50, -30, 20, 0],

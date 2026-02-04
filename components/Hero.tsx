@@ -22,8 +22,14 @@ export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
 
-  // Memoize particles
-  const particles = useMemo(() => generateParticles(80), []);
+  // Detect mobile for performance optimization
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
+  // Reduce particles on mobile for better performance
+  const particles = useMemo(
+    () => generateParticles(isMobile ? 30 : 80),
+    [isMobile],
+  );
 
   // Theme-aware colors
   const particleColor = theme === "dark" ? "255,255,255" : "14,15,25";
@@ -98,10 +104,10 @@ export default function Hero() {
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Aurora Blob 1 - Top Right */}
         <motion.div
-          className="absolute -top-1/4 -right-1/4 w-[80vw] h-[80vw] rounded-full"
+          className="absolute -top-1/4 -right-1/4 w-[80vw] h-[80vw] rounded-full will-change-transform"
           style={{
             background: `radial-gradient(circle, ${auroraColors.blob1} 0%, transparent 70%)`,
-            filter: "blur(80px)",
+            filter: isMobile ? "blur(40px)" : "blur(80px)",
           }}
           animate={{
             x: [0, 50, -30, 0],
@@ -117,10 +123,10 @@ export default function Hero() {
 
         {/* Aurora Blob 2 - Bottom Left */}
         <motion.div
-          className="absolute -bottom-1/4 -left-1/4 w-[70vw] h-[70vw] rounded-full"
+          className="absolute -bottom-1/4 -left-1/4 w-[70vw] h-[70vw] rounded-full will-change-transform"
           style={{
             background: `radial-gradient(circle, ${auroraColors.blob2} 0%, transparent 70%)`,
-            filter: "blur(100px)",
+            filter: isMobile ? "blur(50px)" : "blur(100px)",
           }}
           animate={{
             x: [0, -40, 60, 0],
@@ -136,10 +142,10 @@ export default function Hero() {
 
         {/* Aurora Blob 3 - Center */}
         <motion.div
-          className="absolute top-1/3 left-1/3 w-[60vw] h-[60vw] rounded-full"
+          className="absolute top-1/3 left-1/3 w-[60vw] h-[60vw] rounded-full will-change-transform"
           style={{
             background: `radial-gradient(circle, ${auroraColors.blob3} 0%, transparent 60%)`,
-            filter: "blur(120px)",
+            filter: isMobile ? "blur(60px)" : "blur(120px)",
           }}
           animate={{
             x: [0, 80, -50, 30, 0],

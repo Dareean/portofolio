@@ -11,6 +11,13 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
+    // Disable smooth scroll on mobile for better performance
+    const isMobile = window.innerWidth < 768;
+
+    if (isMobile) {
+      return; // Skip Lenis initialization on mobile
+    }
+
     const lenis = new Lenis({
       lerp: 0.1,
       duration: 1.5,
