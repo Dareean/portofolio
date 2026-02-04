@@ -33,8 +33,8 @@ export default function Footer() {
               DAREEAN
             </h2>
           </div>
-          <p className="text-off-white/40 text-xs sm:text-sm tracking-widest uppercase">
-            Logic meets Aesthetics
+          <p className="text-off-white/40 text-xs sm:text-sm tracking-wide">
+            Bringing stories to life, one pixel at a time
           </p>
         </motion.div>
 
@@ -56,8 +56,14 @@ export default function Footer() {
             </Link>
             {[
               { name: "GitHub", href: "https://github.com/Dareean" },
-              { name: "LinkedIn", href: "https://www.linkedin.com/in/dareean-ahmad-raffi-mardin-72247a229/" },
-              { name: "Instagram", href: "https://www.instagram.com/darenrafi/" },
+              {
+                name: "LinkedIn",
+                href: "https://www.linkedin.com/in/dareean-ahmad-raffi-mardin-72247a229/",
+              },
+              {
+                name: "Instagram",
+                href: "https://www.instagram.com/darenrafi/",
+              },
             ].map((link) => (
               <a
                 key={link.name}

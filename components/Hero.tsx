@@ -67,23 +67,32 @@ export default function Hero() {
   };
 
   // Aurora colors based on theme
-  const auroraColors = theme === "dark" 
-    ? {
-        blob1: "rgba(87, 136, 108, 0.4)", // Jungle Mist green
-        blob2: "rgba(129, 166, 132, 0.3)", // Muted Leaf
-        blob3: "rgba(70, 96, 96, 0.35)", // Sargasso
-      }
-    : {
-        blob1: "rgba(87, 136, 108, 0.25)", // Softer for light mode
-        blob2: "rgba(129, 166, 132, 0.2)",
-        blob3: "rgba(248, 199, 204, 0.25)", // Cotton Rose pink
-      };
+  const auroraColors =
+    theme === "dark"
+      ? {
+          blob1: "rgba(87, 136, 108, 0.4)", // Jungle Mist green
+          blob2: "rgba(129, 166, 132, 0.3)", // Muted Leaf
+          blob3: "rgba(70, 96, 96, 0.35)", // Sargasso
+        }
+      : {
+          blob1: "rgba(87, 136, 108, 0.25)", // Softer for light mode
+          blob2: "rgba(129, 166, 132, 0.2)",
+          blob3: "rgba(248, 199, 204, 0.25)", // Cotton Rose pink
+        };
 
   return (
     <section
       ref={containerRef}
       className="relative h-[120vh] sm:h-[130vh] md:h-[150vh] flex items-start justify-center overflow-hidden px-4 sm:px-6"
     >
+      {/* Bottom Gradient Fade - Smooth transition to next section */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 h-[40vh] pointer-events-none z-10"
+        style={{
+          background: 'linear-gradient(to bottom, transparent 0%, rgb(var(--background-rgb)) 100%)',
+        }}
+      />
+
       {/* Aurora Background Effect */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Aurora Blob 1 - Top Right */}
@@ -230,12 +239,12 @@ export default function Hero() {
 
         {/* Subtitle */}
         <motion.p
-          className="mt-4 sm:mt-6 md:mt-8 text-sm sm:text-base md:text-lg lg:text-xl text-off-white/60 font-sans tracking-widest uppercase text-center px-4"
+          className="mt-4 sm:mt-6 md:mt-8 text-sm sm:text-base md:text-lg lg:text-xl text-off-white/60 font-sans tracking-wide text-center px-4"
           variants={subtitleVariants}
           initial="hidden"
           animate="visible"
         >
-          Logic meets Aesthetics
+          Bringing stories to life, one pixel at a time
         </motion.p>
 
         {/* Scroll Indicator */}
@@ -258,5 +267,3 @@ export default function Hero() {
     </section>
   );
 }
-
-

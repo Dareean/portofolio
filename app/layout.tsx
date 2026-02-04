@@ -15,8 +15,9 @@ const syne = Syne({
 });
 
 export const metadata: Metadata = {
-  title: "Dareean - Logic meets Creativity",
-  description: "Logic meets Aesthetics. Portfolio of Dareean.",
+  title: "Dareean - Portfolio",
+  description:
+    "Bringing stories to life, one pixel at a time. Portfolio of Dareean.",
   icons: {
     icon: "/assets/logo_lambang_dareean.png",
     apple: "/assets/logo_lambang_dareean.png",
@@ -44,4 +45,3 @@ export default function RootLayout({
     </html>
   );
 }
-

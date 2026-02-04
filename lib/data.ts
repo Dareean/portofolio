@@ -1,7 +1,7 @@
 export interface Project {
   id: number;
   title: string;
-  category: string | string[];  // Can be single or multiple categories
+  category: string | string[]; // Can be single or multiple categories
   year: string;
   image: string;
   description?: string;
@@ -17,7 +17,8 @@ export const PROJECTS: Project[] = [
     category: "Web Platform",
     year: "2025",
     image: "/assets/medicflow-showcase2.png",
-    description: "Medicflow is a comprehensive medical record platform designed to streamline clinical workflows and facilitate interaction between patients and doctors. It allows users to effortlessly handle patient records, history, and appointments in one place, reducing paperwork and increasing time for patient care.",
+    description:
+      "Medicflow is a comprehensive medical record platform designed to streamline clinical workflows and facilitate interaction between patients and doctors. It allows users to effortlessly handle patient records, history, and appointments in one place, reducing paperwork and increasing time for patient care.",
     featured: true,
   },
   {
@@ -27,7 +28,8 @@ export const PROJECTS: Project[] = [
     category: ["Mobile App", "Web Platform"],
     year: "2025",
     image: "/assets/sorot-dummy_showcase.png",
-    description: "Developed a comprehensive prototype geospatial reporting system enabling citizens to report environmental issues with automatic GPS mapping. The platform features real-time monitoring through QGIS integration and a responsive admin dashboard for efficient issue management.",
+    description:
+      "Developed a comprehensive prototype geospatial reporting system enabling citizens to report environmental issues with automatic GPS mapping. The platform features real-time monitoring through QGIS integration and a responsive admin dashboard for efficient issue management.",
     featured: true,
   },
   {
@@ -37,7 +39,8 @@ export const PROJECTS: Project[] = [
     category: ["UI/UX Design", "Mobile App", "Tournament"],
     year: "2025",
     image: "/assets/jasakita_showcase.png",
-    description: "A solution designed for migrants in Palu City who experience difficulty finding trusted local service providers.",
+    description:
+      "A solution designed for migrants in Palu City who experience difficulty finding trusted local service providers.",
     featured: true,
   },
   {
@@ -47,20 +50,27 @@ export const PROJECTS: Project[] = [
     category: "Tournament",
     year: "2025",
     image: "/assets/rsict_2025.jpeg",
-    description: "Joined the 'Guard Riders' team to tackle road safety challenges. We designed a multifunctional smart helmet aimed at reducing accident rates by preventing their primary causes.",
+    description:
+      "Joined the 'Guard Riders' team to tackle road safety challenges. We designed a multifunctional smart helmet aimed at reducing accident rates by preventing their primary causes.",
     featured: false,
   },
 ];
 
 export const ABOUT_TEXT =
-  "Logic meets Aesthetics. I build digital experiences that are as functional as they are beautiful.";
+  "Bringing stories to life, one pixel at a time. I build digital experiences that are as functional as they are beautiful.";
 
 export interface JourneyItem {
   id: number;
   title: string;
   description: string;
   date: string;
-  type: "milestone" | "project" | "education" | "award" | "experience" | "community";
+  type:
+    | "milestone"
+    | "project"
+    | "education"
+    | "award"
+    | "experience"
+    | "community";
   image?: string;
 }
 
@@ -68,56 +78,64 @@ export const JOURNEY_ITEMS: JourneyItem[] = [
   {
     id: 1,
     title: "Started My Development Journey",
-    description: "Began learning web development, exploring HTML, CSS, and JavaScript fundamentals.",
+    description:
+      "Began learning web development, exploring HTML, CSS, and JavaScript fundamentals.",
     date: "2021-06",
     type: "milestone",
   },
   {
     id: 2,
     title: "First Internship",
-    description: "Completed my first internship at PT. Educa Studio as a web programmer",
+    description:
+      "Completed my first internship at PT. Educa Studio as a web programmer",
     date: "2023-07",
     type: "experience",
   },
   {
     id: 3,
     title: "Teaching Factory Program Trainee",
-    description: "Assigned to follow Teaching Factory Program at PT. Educa Studio, Gamelab Indonesia as a web programmer",
+    description:
+      "Assigned to follow Teaching Factory Program at PT. Educa Studio, Gamelab Indonesia as a web programmer",
     date: "2023-09",
     type: "experience",
   },
   {
     id: 4,
     title: "Started my first year at university",
-    description: "Started my first year at university, majoring in Informatics.",
+    description:
+      "Started my first year at university, majoring in Informatics.",
     date: "2024-08",
     type: "education",
   },
   {
     id: 5,
     title: "First attempt on competing as a team",
-    description: "Competing in a campus level competition on UI/UX Design category",
+    description:
+      "Competing in a campus level competition on UI/UX Design category",
     date: "2025-01",
     type: "award",
   },
   {
     id: 6,
     title: "Programming Tadulako",
-    description: "Joined a community based on programming to enhance my programming skills",
+    description:
+      "Joined a community based on programming to enhance my programming skills",
     date: "2025-03",
     type: "community",
   },
   {
     id: 7,
     title: "Green Generation Central Sulawesi",
-    description: "Participated in a green community program to raise awareness about environmental issues",
+    description:
+      "Participated in a green community program to raise awareness about environmental issues",
     date: "2025-01",
     type: "community",
   },
   {
     id: 8,
     title: "Innovation in Road Safety: Smart Helmet Project (Guard Riders)",
-    description: "Collaborated on the design of a smart helmet to enhance road safety; advanced to the competition finals",
+    description:
+      "Collaborated on the design of a smart helmet to enhance road safety; advanced to the competition finals",
     date: "2025-07",
     type: "award",
   },
@@ -133,7 +151,13 @@ export interface Experience {
   dateEnd?: string; // undefined means "Present"
   description: string;
   highlights?: string[];
-  category: "education" | "work" | "award" | "community" | "volunteer" | "committee";
+  category:
+    | "education"
+    | "work"
+    | "award"
+    | "community"
+    | "volunteer"
+    | "committee";
   image?: string;
 }
 
@@ -145,7 +169,8 @@ export const EXPERIENCES: Experience[] = [
     organization: "Personal Learning",
     dateStart: "2021-06",
     dateEnd: "2023-06",
-    description: "Began learning web development, exploring HTML, CSS, and JavaScript fundamentals. Built small projects to solidify understanding.",
+    description:
+      "Began learning web development, exploring HTML, CSS, and JavaScript fundamentals. Built small projects to solidify understanding.",
     highlights: ["HTML/CSS", "JavaScript", "Responsive Design"],
     category: "education",
   },
@@ -156,8 +181,13 @@ export const EXPERIENCES: Experience[] = [
     organization: "PT. Educa Studio",
     dateStart: "2023-07",
     dateEnd: "2023-09",
-    description: "Completed my first internship focusing on web development. Gained hands-on experience with real-world projects and professional workflows.",
-    highlights: ["Professional Development", "Team Collaboration", "Web Development"],
+    description:
+      "Completed my first internship focusing on web development. Gained hands-on experience with real-world projects and professional workflows.",
+    highlights: [
+      "Professional Development",
+      "Team Collaboration",
+      "Web Development",
+    ],
     category: "work",
   },
   {
@@ -167,8 +197,13 @@ export const EXPERIENCES: Experience[] = [
     organization: "Gamelab Indonesia",
     dateStart: "2023-09",
     dateEnd: "2024-06",
-    description: "Assigned to follow Teaching Factory Program at PT. Educa Studio, Gamelab Indonesia. Developed production-ready web applications.",
-    highlights: ["Production Environment", "Industry Standards", "Full-Stack Development"],
+    description:
+      "Assigned to follow Teaching Factory Program at PT. Educa Studio, Gamelab Indonesia. Developed production-ready web applications.",
+    highlights: [
+      "Production Environment",
+      "Industry Standards",
+      "Full-Stack Development",
+    ],
     category: "work",
   },
   {
@@ -177,7 +212,8 @@ export const EXPERIENCES: Experience[] = [
     role: "Informatics Student",
     organization: "University",
     dateStart: "2024-08",
-    description: "Began my bachelor's degree in Informatics, combining formal education with practical development experience.",
+    description:
+      "Began my bachelor's degree in Informatics, combining formal education with practical development experience.",
     highlights: ["Computer Science", "Software Engineering", "Algorithms"],
     category: "education",
   },
@@ -188,7 +224,8 @@ export const EXPERIENCES: Experience[] = [
     organization: "Campus Level Competition",
     dateStart: "2025-01",
     dateEnd: "2025-01",
-    description: "First attempt competing as a team in a campus-level UI/UX Design competition. Developed innovative solutions for user experience challenges.",
+    description:
+      "First attempt competing as a team in a campus-level UI/UX Design competition. Developed innovative solutions for user experience challenges.",
     highlights: ["User Research", "Interface Design", "Prototyping"],
     category: "award",
   },
@@ -198,7 +235,8 @@ export const EXPERIENCES: Experience[] = [
     role: "Community Member",
     organization: "Programming Community",
     dateStart: "2025-01",
-    description: "Joined a programming-focused community to enhance skills and connect with fellow developers.",
+    description:
+      "Joined a programming-focused community to enhance skills and connect with fellow developers.",
     highlights: ["Networking", "Knowledge Sharing", "Skill Development"],
     category: "community",
   },
@@ -208,8 +246,13 @@ export const EXPERIENCES: Experience[] = [
     role: "Volunteer",
     organization: "Environmental Community",
     dateStart: "2025-01",
-    description: "Participated in a green community program to raise awareness about environmental issues and sustainable practices.",
-    highlights: ["Environmental Awareness", "Community Service", "Sustainability"],
+    description:
+      "Participated in a green community program to raise awareness about environmental issues and sustainable practices.",
+    highlights: [
+      "Environmental Awareness",
+      "Community Service",
+      "Sustainability",
+    ],
     category: "volunteer",
   },
   {
@@ -218,7 +261,8 @@ export const EXPERIENCES: Experience[] = [
     role: "Team Member",
     organization: "Road Safety Innovation",
     dateStart: "2025-07",
-    description: "Collaborated on the design of a smart helmet to enhance road safety. Advanced to the competition finals with innovative safety features.",
+    description:
+      "Collaborated on the design of a smart helmet to enhance road safety. Advanced to the competition finals with innovative safety features.",
     highlights: ["IoT Development", "Safety Innovation", "Competition Finals"],
     category: "award",
     image: "/assets/rsict_2025.jpeg",
@@ -230,8 +274,14 @@ export const EXPERIENCES: Experience[] = [
     organization: "Faculty of Engineering, Tadulako University",
     dateStart: "2025-06",
     dateEnd: "2025-10",
-    description: "Contributed to the annual commemoration event of the Faculty of Engineering by showcasing innovative student projects at the Expo Innovation exhibition. Collaborated with fellow students and lecture to help demonstrate technological solutions and engage visitors with interactive displays.",
-    highlights: ["Innovation Showcase", "Project Exhibition", "Team Collaboration", "Public Engagement"],
+    description:
+      "Contributed to the annual commemoration event of the Faculty of Engineering by showcasing innovative student projects at the Expo Innovation exhibition. Collaborated with fellow students and lecture to help demonstrate technological solutions and engage visitors with interactive displays.",
+    highlights: [
+      "Innovation Showcase",
+      "Project Exhibition",
+      "Team Collaboration",
+      "Public Engagement",
+    ],
     category: "volunteer",
   },
   {
@@ -240,29 +290,49 @@ export const EXPERIENCES: Experience[] = [
     role: "Community Member",
     organization: "HammerCode",
     dateStart: "2025-12",
-    description: "Recently an active member of HammerCode, a passionate programming community focused on collaborative learning, code sharing, and building innovative projects together. Engaging in workshops, code reviews, and hackathon preparations with fellow developers.",
-    highlights: ["Collaborative Learning", "Code Reviews", "Open Source", "Hackathons"],
+    description:
+      "Recently an active member of HammerCode, a passionate programming community focused on collaborative learning, code sharing, and building innovative projects together. Engaging in workshops, code reviews, and hackathon preparations with fellow developers.",
+    highlights: [
+      "Collaborative Learning",
+      "Code Reviews",
+      "Open Source",
+      "Hackathons",
+    ],
     category: "community",
   },
   {
     id: 11,
     title: "I-Fest 2025",
     role: "Liason Officer",
-    organization: "Computer Science Student Association (HMTI) of Tadulako University",
+    organization:
+      "Computer Science Student Association (HMTI) of Tadulako University",
     dateStart: "2025-11",
     dateEnd: "2025-12",
-    description: "Served as Liaison Officer for I-Fest 2025, the annual informatics festival organized by HMTI. Coordinated communication between committee divisions, managed external partnerships, and ensured smooth information flow between stakeholders throughout the event preparation and execution.",
-    highlights: ["Cross-team Coordination", "Stakeholder Management", "Event Logistics", "Communication"],
+    description:
+      "Served as Liaison Officer for I-Fest 2025, the annual informatics festival organized by HMTI. Coordinated communication between committee divisions, managed external partnerships, and ensured smooth information flow between stakeholders throughout the event preparation and execution.",
+    highlights: [
+      "Cross-team Coordination",
+      "Stakeholder Management",
+      "Event Logistics",
+      "Communication",
+    ],
     category: "volunteer",
   },
   {
     id: 12,
     title: "I-Fest 2026",
     role: "PIC - Person In Charge",
-    organization: "Computer Science Student Association (HMTI) of Tadulako University",
+    organization:
+      "Computer Science Student Association (HMTI) of Tadulako University",
     dateStart: "2026-01",
-    description: "Leading as Person In Charge (PIC) for I-Fest 2026, taking on greater responsibility in organizing the annual informatics festival. Overseeing event planning, managing committee teams, coordinating with sponsors and speakers, and driving the vision for an impactful student-led tech event.",
-    highlights: ["Leadership", "Event Management", "Team Coordination", "Strategic Planning"],
+    description:
+      "Leading as Person In Charge (PIC) for I-Fest 2026, taking on greater responsibility in organizing the annual informatics festival. Overseeing event planning, managing committee teams, coordinating with sponsors and speakers, and driving the vision for an impactful student-led tech event.",
+    highlights: [
+      "Leadership",
+      "Event Management",
+      "Team Coordination",
+      "Strategic Planning",
+    ],
     category: "committee",
   },
 ];
@@ -281,7 +351,8 @@ export const STORIES: Story[] = [
   {
     id: 1,
     title: "Weekend in Bali",
-    excerpt: "Exploring the hidden temples and rice terraces of Ubud. A journey through ancient traditions and breathtaking landscapes.",
+    excerpt:
+      "Exploring the hidden temples and rice terraces of Ubud. A journey through ancient traditions and breathtaking landscapes.",
     date: "2025-01-10",
     category: "travel",
     images: [
@@ -289,12 +360,14 @@ export const STORIES: Story[] = [
       "https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800",
       "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=800",
     ],
-    content: "Ubud is a place where time seems to slow down. From the emerald green rice terraces of Tegalalang to the sacred Monkey Forest, every corner of this town tells a story of culture and spirituality. During my weekend here, I explored ancient temples, tasted authentic Balinese cuisine, and witnessed traditional dance performances that have been preserved for generations."
+    content:
+      "Ubud is a place where time seems to slow down. From the emerald green rice terraces of Tegalalang to the sacred Monkey Forest, every corner of this town tells a story of culture and spirituality. During my weekend here, I explored ancient temples, tasted authentic Balinese cuisine, and witnessed traditional dance performances that have been preserved for generations.",
   },
   {
     id: 2,
     title: "My Home Office Setup",
-    excerpt: "After months of iteration, I finally achieved the perfect workspace. Here's the story behind every decision.",
+    excerpt:
+      "After months of iteration, I finally achieved the perfect workspace. Here's the story behind every decision.",
     date: "2024-12-15",
     category: "life",
     images: [
@@ -302,12 +375,14 @@ export const STORIES: Story[] = [
       "https://images.unsplash.com/photo-1616628188859-7a11abb6fcc9?w=800",
       "https://images.unsplash.com/photo-1598300056393-4aac492f4344?w=800",
     ],
-    content: "Creating a productive workspace is an art. It's not just about buying expensive gear, but about understanding your workflow. I chose a minimalist setup with a focus on ergonomics and lighting. The standing desk allows me to stay active, while the ambient lighting creates a focused atmosphere for late-night coding sessions."
+    content:
+      "Creating a productive workspace is an art. It's not just about buying expensive gear, but about understanding your workflow. I chose a minimalist setup with a focus on ergonomics and lighting. The standing desk allows me to stay active, while the ambient lighting creates a focused atmosphere for late-night coding sessions.",
   },
   {
     id: 3,
     title: "Building SOROT",
-    excerpt: "The challenges and learnings from developing an AI-powered photography app from scratch.",
+    excerpt:
+      "The challenges and learnings from developing an AI-powered photography app from scratch.",
     date: "2024-11-20",
     category: "tech",
     images: [
@@ -315,12 +390,14 @@ export const STORIES: Story[] = [
       "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800",
       "https://images.unsplash.com/photo-1555774698-0b77e0d5fac6?w=800",
     ],
-    content: "Building SOROT was a journey of discovery. We started with a simple idea: how can we make photography more accessible? The answer lay in AI. By integrating advanced machine learning models, we were able to create an app that understands the scene and suggests the best settings. The road wasn't easy, but the result was worth it."
+    content:
+      "Building SOROT was a journey of discovery. We started with a simple idea: how can we make photography more accessible? The answer lay in AI. By integrating advanced machine learning models, we were able to create an app that understands the scene and suggests the best settings. The road wasn't easy, but the result was worth it.",
   },
   {
     id: 4,
     title: "Tokyo at Night",
-    excerpt: "Neon lights, quiet alleys, and the electric energy of Shibuya. A visual diary of my first trip to Japan.",
+    excerpt:
+      "Neon lights, quiet alleys, and the electric energy of Shibuya. A visual diary of my first trip to Japan.",
     date: "2024-10-05",
     category: "travel",
     images: [
@@ -329,19 +406,21 @@ export const STORIES: Story[] = [
       "https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?w=800",
       "https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=800",
     ],
-    content: "Tokyo is a city of contrasts. The quiet discipline of the tea ceremony coexists with the chaotic energy of Shibuya Crossing. My nights in Tokyo were filled with neon lights, delicious street food, and endless exploration. Each alleyway revealed a new secret, a new perspective on this futuristic yet deeply traditional metropolis."
+    content:
+      "Tokyo is a city of contrasts. The quiet discipline of the tea ceremony coexists with the chaotic energy of Shibuya Crossing. My nights in Tokyo were filled with neon lights, delicious street food, and endless exploration. Each alleyway revealed a new secret, a new perspective on this futuristic yet deeply traditional metropolis.",
   },
   {
     id: 5,
     title: "Design System Deep Dive",
-    excerpt: "Lessons learned building a scalable design system for enterprise applications.",
+    excerpt:
+      "Lessons learned building a scalable design system for enterprise applications.",
     date: "2024-08-12",
     category: "creative",
     images: [
       "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800",
       "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800",
     ],
-    content: "Design systems are the backbone of consistent user experiences. In this deep dive, I share my process for creating a scalable system that serves both designers and developers. From tokenizing colors to building atomic components, I cover the strategies that ensure your design system grows with your product."
+    content:
+      "Design systems are the backbone of consistent user experiences. In this deep dive, I share my process for creating a scalable system that serves both designers and developers. From tokenizing colors to building atomic components, I cover the strategies that ensure your design system grows with your product.",
   },
 ];
-
