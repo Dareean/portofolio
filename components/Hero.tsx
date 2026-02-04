@@ -30,17 +30,16 @@ const detectPerformance = () => {
   return "high";
 };
 
-// Generate floating particles
+// Generate twinkling star particles (static position, opacity only)
 const generateParticles = (count: number) => {
   return Array.from({ length: count }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
     y: Math.random() * 100,
-    size: Math.random() * 4 + 2, // 2-6px
-    duration: Math.random() * 7 + 8, // 8-15s - faster float
-    delay: Math.random() * 3, // 0-3s - appear quickly
-    opacity: Math.random() * 0.4 + 0.3, // 0.3-0.7 - brighter
-    xOffset: (Math.random() - 0.5) * 80, // Horizontal drift range
+    size: Math.random() * 4 + 2, // 2-6px (bigger for visibility)
+    twinkleDuration: Math.random() * 2 + 1.5, // 1.5-3.5s twinkling speed
+    delay: Math.random() * 3, // 0-3s - stagger start
+    baseOpacity: Math.random() * 0.4 + 0.5, // 0.5-0.9 (brighter base)
   }));
 };
 
@@ -59,11 +58,11 @@ export default function Hero() {
   // Detect mobile for basic optimization
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
-  // Particle count based on performance
+  // Particle count based on performance - twinkling is lighter than floating
   const particleCount = useMemo(() => {
-    if (performance === "low") return 0; // No particles for low-end
-    if (performance === "mid") return 15;
-    return isMobile ? 30 : 80;
+    if (performance === "low") return 30; // Even low-end can handle twinkling
+    if (performance === "mid") return 60;
+    return isMobile ? 80 : 120; // More stars for desktop
   }, [performance, isMobile]);
 
   // Reduce particles based on performance
@@ -230,75 +229,37 @@ export default function Hero() {
         />
       </div>
 
-      {/* Floating Particles Background - Skip on low-end devices */}
-      {performance !== "low" && (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {particles.map((particle) => (
-            <motion.div
-              key={particle.id}
-              className="absolute rounded-full"
-              style={{
-                left: `${particle.x}%`,
-                width: particle.size,
-                height: particle.size,
-                background: `radial-gradient(circle, rgba(${particleColor},${particle.opacity + 0.3}) 0%, rgba(${particleColor},${particle.opacity}) 50%, transparent 100%)`,
-                boxShadow: `0 0 ${particle.size * 2}px rgba(${particleColor},${particle.opacity * 0.5})`,
-              }}
-              initial={{
-                y: "100vh",
-                x: 0,
-                opacity: 0,
-              }}
-              animate={{
-                y: "-20vh",
-                x: [0, particle.xOffset, 0],
-                opacity: [0, particle.opacity, particle.opacity, 0],
-              }}
-              transition={{
-                duration: particle.duration,
-                delay: particle.delay,
-                repeat: Infinity,
-                ease: "linear",
-                x: {
-                  duration: particle.duration / 2,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                  ease: "easeInOut",
-                },
-              }}
-            />
-          ))}
-
-          {/* Larger glowing orbs */}
-          {particles.slice(0, 8).map((particle) => (
-            <motion.div
-              key={`orb-${particle.id}`}
-              className="absolute rounded-full"
-              style={{
-                left: `${particle.x}%`,
-                width: particle.size * 8,
-                height: particle.size * 8,
-                background: `radial-gradient(circle, rgba(${particleColor},0.15) 0%, rgba(${particleColor},0.05) 40%, transparent 70%)`,
-                filter: "blur(2px)",
-              }}
-              initial={{
-                y: "100vh",
-                opacity: 0,
-              }}
-              animate={{
-                y: "-30vh",
-                opacity: [0, 0.6, 0.6, 0],
-              }}
-              transition={{
-                duration: particle.duration * 0.9,
-                delay: particle.delay,
-                repeat: Infinity,
-                ease: "linear",
-              }}
-            />
-          ))}
-        </div>
-      )}
+      {/* Twinkling Stars Background - Lightweight animation */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {particles.map((particle) => (
+          <motion.div
+            key={particle.id}
+            className="absolute rounded-full"
+            style={{
+              left: `${particle.x}%`,
+              top: `${particle.y}%`,
+              width: particle.size,
+              height: particle.size,
+              background: `radial-gradient(circle, rgba(${particleColor},1) 0%, rgba(${particleColor},0.9) 50%, transparent 100%)`,
+              boxShadow: `0 0 ${particle.size * 5}px rgba(${particleColor},0.8), 0 0 ${particle.size * 2}px rgba(${particleColor},1)`,
+            }}
+            animate={{
+              opacity: [
+                particle.baseOpacity * 0.4,
+                particle.baseOpacity,
+                particle.baseOpacity * 0.4,
+              ],
+              scale: [1, 1.5, 1],
+            }}
+            transition={{
+              duration: particle.twinkleDuration,
+              delay: particle.delay,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+        ))}
+      </div>
 
       <motion.div
         style={{ y, opacity }}
