@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function LoadingScreen() {
+  // Disabled - using IntroTransition instead
+  return null;
+
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(0);
 

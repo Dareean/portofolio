@@ -3,6 +3,7 @@ import { Inter, Syne } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import LoadingScreen from "@/components/LoadingScreen";
+import IntroTransition from "@/components/IntroTransition";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import WaveTransition from "@/components/WaveTransition";
 import FixedLogo from "@/components/FixedLogo";
@@ -35,6 +36,7 @@ export default function RootLayout({
         className={`${inter.variable} ${syne.variable} font-sans bg-void-black text-off-white selection:bg-off-white selection:text-void-black antialiased`}
       >
         <ThemeProvider>
+          <IntroTransition />
           <WaveTransition />
           <LoadingScreen />
           <FixedLogo />

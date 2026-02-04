@@ -182,7 +182,7 @@ export default function ExperiencePage() {
       <section className="min-h-screen flex flex-col justify-center items-center px-4 sm:px-6 relative">
         {/* Home Link */}
         <motion.div
-          className="absolute top-4 sm:top-6 left-4 sm:left-6 md:left-16 z-20"
+          className="absolute top-6 sm:top-8 md:top-10 left-6 sm:left-8 md:left-20 z-20"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
@@ -248,15 +248,15 @@ export default function ExperiencePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2 }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
+          className="absolute bottom-24 sm:bottom-28 md:bottom-32 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
         >
           <span className="text-off-white/30 text-sm">Scroll to explore</span>
           <motion.div
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 1.5, repeat: Infinity }}
-            className="w-6 h-10 border-2 border-off-white/20 rounded-full flex justify-center pt-2"
+            className="w-5 h-9 sm:w-6 sm:h-10 border-2 border-off-white/20 rounded-full flex justify-center pt-2"
           >
-            <motion.div className="w-1.5 h-1.5 bg-off-white/40 rounded-full" />
+            <motion.div className="w-1 h-1.5 sm:w-1.5 sm:h-1.5 bg-off-white/40 rounded-full" />
           </motion.div>
         </motion.div>
       </section>

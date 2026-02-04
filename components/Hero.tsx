@@ -265,43 +265,153 @@ export default function Hero() {
         style={{ y, opacity }}
         className="sticky top-0 h-screen w-full flex flex-col items-center justify-center will-change-transform px-4"
       >
-        {/* Main Title with Mask Reveal */}
+        {/* Main Title with Slide Up Animation */}
         <div className="overflow-hidden">
           <motion.h1
             className="font-display text-[18vw] sm:text-[16vw] md:text-[15vw] leading-none tracking-tighter text-off-white will-change-transform text-center"
-            variants={textRevealVariants}
-            initial="hidden"
-            animate="visible"
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{
+              delay: 5, // Wait for intro animation to finish (~4.7s + buffer)
+              duration: 1.2,
+              ease: [0.22, 1, 0.36, 1], // Custom easing
+            }}
           >
             DAREEAN
           </motion.h1>
         </div>
 
-        {/* Subtitle */}
-        <motion.p
-          className="mt-4 sm:mt-6 md:mt-8 text-sm sm:text-base md:text-lg lg:text-xl text-off-white/60 font-sans tracking-wide text-center px-4"
-          variants={subtitleVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          Bringing stories to life, one pixel at a time
-        </motion.p>
+        {/* Subtitle with Highlighted Words and Staggered Animation */}
+        <div className="mt-4 sm:mt-6 md:mt-8 text-sm sm:text-base md:text-lg lg:text-xl text-off-white/60 font-sans tracking-wide text-center px-4">
+          <motion.span
+            className="inline-block"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.5 }}
+          >
+            Bringing
+          </motion.span>{" "}
+          <motion.span
+            className="relative inline-block text-off-white font-medium"
+            initial={{ opacity: 0, y: 20, rotateX: 90 }}
+            animate={{ opacity: 1, y: 0, rotateX: 0 }}
+            transition={{ delay: 1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <motion.span
+              className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 blur-lg"
+              animate={{
+                opacity: [0.3, 0.6, 0.3],
+                scale: [1, 1.1, 1],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+            <span className="relative">stories</span>
+          </motion.span>{" "}
+          <motion.span
+            className="inline-block"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2, duration: 0.5 }}
+          >
+            to
+          </motion.span>{" "}
+          <motion.span
+            className="relative inline-block text-off-white font-medium"
+            initial={{ opacity: 0, y: 20, rotateX: 90 }}
+            animate={{ opacity: 1, y: 0, rotateX: 0 }}
+            transition={{ delay: 1.4, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <motion.span
+              className="absolute inset-0 bg-gradient-to-r from-green-500/20 via-cyan-500/20 to-blue-500/20 blur-lg"
+              animate={{
+                opacity: [0.3, 0.6, 0.3],
+                scale: [1, 1.1, 1],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 1,
+              }}
+            />
+            <span className="relative">life</span>
+          </motion.span>
+          <motion.span
+            className="inline-block"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.6, duration: 0.5 }}
+          >
+            ,
+          </motion.span>{" "}
+          <motion.span
+            className="inline-block"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.7, duration: 0.5 }}
+          >
+            one
+          </motion.span>{" "}
+          <motion.span
+            className="inline-block text-off-white/80 font-medium"
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              delay: 1.8,
+              duration: 0.5,
+              type: "spring",
+              stiffness: 200,
+            }}
+          >
+            pixel
+          </motion.span>{" "}
+          <motion.span
+            className="inline-block"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.9, duration: 0.5 }}
+          >
+            at
+          </motion.span>{" "}
+          <motion.span
+            className="inline-block"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2, duration: 0.5 }}
+          >
+            a
+          </motion.span>{" "}
+          <motion.span
+            className="inline-block"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2.1, duration: 0.5 }}
+          >
+            time
+          </motion.span>
+        </div>
 
-        {/* Scroll Indicator */}
+        {/* Scroll Indicator - Mouse Design like /journey */}
         <motion.div
-          className="absolute bottom-8 sm:bottom-10 md:bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+          className="absolute bottom-24 sm:bottom-28 md:bottom-32 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 1 }}
+          transition={{ delay: 2.5, duration: 1 }}
         >
           <span className="text-[10px] sm:text-xs text-off-white/40 tracking-widest uppercase">
             Scroll
           </span>
           <motion.div
-            className="w-px h-8 sm:h-10 md:h-12 bg-gradient-to-b from-off-white/40 to-transparent"
-            animate={{ scaleY: [1, 0.5, 1] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          />
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            className="w-5 h-9 sm:w-6 sm:h-10 border-2 border-off-white/20 rounded-full flex justify-center pt-2"
+          >
+            <motion.div className="w-1 h-1.5 sm:w-1.5 sm:h-1.5 bg-off-white/40 rounded-full" />
+          </motion.div>
         </motion.div>
       </motion.div>
     </section>
