@@ -35,17 +35,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Hardware acceleration for smooth animations */
-* {
-  -webkit-transform: translateZ(0);
-  -moz-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  -o-transform: translateZ(0);
-  transform: translateZ(0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
 /* Reduce motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -153,6 +142,84 @@ body {
   @media (max-width: 768px) {
     .will-change-transform {
       will-change: auto;
+    }
+  }
+
+  /* Smooth gradient transitions - optimized for mobile */
+  .hero-bottom-fade {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 70vh;
+    pointer-events: none;
+    z-index: 30;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(var(--background-rgb), 0.3) 40%,
+      rgba(var(--background-rgb), 0.7) 70%,
+      rgb(var(--background-rgb)) 100%
+    );
+  }
+
+  /* Desktop - more gradient stops for smoother transition */
+  @media (min-width: 640px) {
+    .hero-bottom-fade {
+      height: 80vh;
+      background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(var(--background-rgb), 0.2) 25%,
+        rgba(var(--background-rgb), 0.5) 50%,
+        rgba(var(--background-rgb), 0.8) 75%,
+        rgb(var(--background-rgb)) 100%
+      );
+    }
+  }
+
+  @media (min-width: 768px) {
+    .hero-bottom-fade {
+      height: 90vh;
+    }
+  }
+
+  .about-top-fade {
+    position: absolute;
+    top: -20vh;
+    left: 0;
+    right: 0;
+    height: 80vh;
+    pointer-events: none;
+    z-index: 20;
+    background: linear-gradient(
+      to bottom,
+      rgb(var(--background-rgb)) 0%,
+      rgba(var(--background-rgb), 0.9) 20%,
+      rgba(var(--background-rgb), 0.5) 50%,
+      transparent 100%
+    );
+  }
+
+  /* Desktop - smoother gradient */
+  @media (min-width: 640px) {
+    .about-top-fade {
+      height: 90vh;
+      background: linear-gradient(
+        to bottom,
+        rgb(var(--background-rgb)) 0%,
+        rgba(var(--background-rgb), 0.95) 15%,
+        rgba(var(--background-rgb), 0.85) 30%,
+        rgba(var(--background-rgb), 0.6) 50%,
+        rgba(var(--background-rgb), 0.3) 70%,
+        transparent 100%
+      );
+    }
+  }
+
+  @media (min-width: 768px) {
+    .about-top-fade {
+      height: 100vh;
     }
   }
 }

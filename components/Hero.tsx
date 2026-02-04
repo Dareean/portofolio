@@ -92,13 +92,7 @@ export default function Hero() {
       className="relative h-[120vh] sm:h-[130vh] md:h-[150vh] flex items-start justify-center overflow-hidden px-4 sm:px-6"
     >
       {/* Bottom Gradient Fade to blend with AboutMe */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-[70vh] sm:h-[80vh] md:h-[90vh] pointer-events-none z-30"
-        style={{
-          background:
-            "linear-gradient(to bottom, transparent 0%, rgba(var(--background-rgb), 0.2) 25%, rgba(var(--background-rgb), 0.5) 50%, rgba(var(--background-rgb), 0.8) 75%, rgb(var(--background-rgb)) 100%)",
-        }}
-      />
+      <div className="hero-bottom-fade" />
 
       {/* Aurora Background Effect */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

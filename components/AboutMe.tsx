@@ -160,13 +160,7 @@ export default function AboutMe() {
       className="py-20 sm:py-28 md:py-36 px-4 sm:px-6 md:px-12 lg:px-16 relative overflow-hidden"
     >
       {/* Top Gradient Overlay - Covers Hero section smoothly */}
-      <div
-        className="absolute -top-[20vh] left-0 right-0 h-[100vh] pointer-events-none z-20"
-        style={{
-          background:
-            "linear-gradient(to bottom, rgb(var(--background-rgb)) 0%, rgba(var(--background-rgb), 0.95) 15%, rgba(var(--background-rgb), 0.85) 30%, rgba(var(--background-rgb), 0.6) 50%, rgba(var(--background-rgb), 0.3) 70%, transparent 100%)",
-        }}
-      />
+      <div className="about-top-fade" />
 
       {/* Aurora Background Effect */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
