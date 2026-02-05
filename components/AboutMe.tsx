@@ -150,18 +150,20 @@ export default function AboutMe() {
   const projectsCounter = useCountUp(10, 1500);
   const experienceCounter = useCountUp(2, 1500);
 
-  // Aurora colors based on theme
+  // Aurora colors based on theme - More visible for smooth transition
   const auroraColors =
     theme === "dark"
       ? {
-          blob1: "rgba(87, 136, 108, 0.15)",
-          blob2: "rgba(129, 166, 132, 0.1)",
-          blob3: "rgba(70, 96, 96, 0.12)",
+          blob1: "rgba(99, 102, 241, 0.35)", // Indigo
+          blob2: "rgba(34, 197, 94, 0.3)",   // Green
+          blob3: "rgba(168, 85, 247, 0.25)", // Purple
+          blob4: "rgba(14, 165, 233, 0.2)",  // Sky blue
         }
       : {
-          blob1: "rgba(87, 136, 108, 0.1)",
-          blob2: "rgba(129, 166, 132, 0.08)",
-          blob3: "rgba(248, 199, 204, 0.1)",
+          blob1: "rgba(99, 102, 241, 0.25)", // Indigo
+          blob2: "rgba(34, 197, 94, 0.2)",   // Green
+          blob3: "rgba(168, 85, 247, 0.18)", // Purple
+          blob4: "rgba(14, 165, 233, 0.15)", // Sky blue
         };
 
   return (
@@ -169,64 +171,6 @@ export default function AboutMe() {
       ref={containerRef}
       className="py-20 sm:py-28 md:py-36 px-4 sm:px-6 md:px-12 lg:px-16 relative overflow-hidden"
     >
-      {/* Top Gradient Overlay - Covers Hero section smoothly */}
-      <div className="about-top-fade" />
-
-      {/* Aurora Background Effect */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute -top-1/2 -right-1/4 w-[60vw] h-[60vw] rounded-full will-change-transform"
-          style={{
-            background: `radial-gradient(circle, ${auroraColors.blob1} 0%, transparent 70%)`,
-            filter: isMobile ? "blur(30px)" : "blur(60px)",
-          }}
-          animate={{
-            x: [0, 30, -20, 0],
-            y: [0, -25, 15, 0],
-            scale: [1, 1.1, 0.95, 1],
-          }}
-          transition={{
-            duration: 18,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-        <motion.div
-          className="absolute -bottom-1/4 -left-1/4 w-[50vw] h-[50vw] rounded-full will-change-transform"
-          style={{
-            background: `radial-gradient(circle, ${auroraColors.blob2} 0%, transparent 70%)`,
-            filter: isMobile ? "blur(40px)" : "blur(80px)",
-          }}
-          animate={{
-            x: [0, -30, 40, 0],
-            y: [0, 40, -20, 0],
-            scale: [1, 0.9, 1.1, 1],
-          }}
-          transition={{
-            duration: 22,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-        <motion.div
-          className="absolute top-1/3 left-1/2 w-[45vw] h-[45vw] rounded-full will-change-transform"
-          style={{
-            background: `radial-gradient(circle, ${auroraColors.blob3} 0%, transparent 60%)`,
-            filter: isMobile ? "blur(35px)" : "blur(70px)",
-          }}
-          animate={{
-            x: [0, 50, -30, 20, 0],
-            y: [0, -40, 30, -15, 0],
-            scale: [1, 1.15, 0.9, 1.05, 1],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      </div>
-
       {/* Floating Particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {particles.map((particle) => (

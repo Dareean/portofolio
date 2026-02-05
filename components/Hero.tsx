@@ -1,46 +1,16 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform, Variants } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useTheme } from "./ThemeProvider";
-import KineticTypography from "./KineticTypography";
-
-// Detect device performance capability
-const detectPerformance = () => {
-  if (typeof window === "undefined") return "high";
-
-  // Check hardware concurrency (CPU cores)
-  const cores = navigator.hardwareConcurrency || 2;
-
-  // Check device memory (if available)
-  const memory = (navigator as any).deviceMemory || 4;
-
-  // Check if mobile
-  const isMobile = window.innerWidth < 768;
-
-  // Low-end detection
-  if (isMobile && (cores <= 4 || memory <= 2)) {
-    return "low";
-  }
-
-  // Mid-range
-  if (isMobile && (cores <= 6 || memory <= 4)) {
-    return "mid";
-  }
-
-  return "high";
-};
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isMounted, setIsMounted] = useState(false);
   const { theme } = useTheme();
-  const [performance, setPerformance] = useState<"low" | "mid" | "high">(
-    "high",
-  );
 
-  // Detect device performance on mount
   useEffect(() => {
-    setPerformance(detectPerformance());
+    setIsMounted(true);
   }, []);
 
   const { scrollYProgress } = useScroll({
@@ -48,203 +18,210 @@ export default function Hero() {
     offset: ["start start", "end start"],
   });
 
-  // Disable parallax on low-end devices
-  const y = useTransform(
-    scrollYProgress,
-    [0, 1],
-    performance === "low" ? ["0%", "0%"] : ["0%", "50%"],
-  );
-  const opacity = useTransform(
-    scrollYProgress,
-    [0, 0.8],
-    performance === "low" ? [1, 1] : [1, 0],
-  );
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   return (
     <section
       ref={containerRef}
-      className="relative h-[120vh] sm:h-[130vh] md:h-[150vh] flex items-start justify-center overflow-hidden px-4 sm:px-6 bg-black"
+      className="relative h-[100vh] sm:h-[110vh] md:h-[120vh] flex items-center justify-center overflow-hidden bg-void-black"
     >
-      {/* Kinetic Typography Background */}
-      <KineticTypography />
+      {/* Aurora blur background - Enhanced for smooth transition */}
+      <div className="absolute inset-0 bg-void-black overflow-hidden">
+        {/* Aurora gradient orbs - More visible */}
+        <motion.div
+          className="absolute top-0 -left-1/4 w-[80vw] h-[80vw] rounded-full"
+          style={{
+            background: "radial-gradient(circle, rgba(99, 102, 241, 0.5) 0%, rgba(99, 102, 241, 0) 70%)",
+            filter: "blur(80px)",
+            opacity: 0.5,
+          }}
+          animate={{
+            x: [0, 60, 0],
+            y: [0, 40, 0],
+            scale: [1, 1.15, 1],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute top-1/4 -right-1/4 w-[70vw] h-[70vw] rounded-full"
+          style={{
+            background: "radial-gradient(circle, rgba(34, 197, 94, 0.45) 0%, rgba(34, 197, 94, 0) 70%)",
+            filter: "blur(100px)",
+            opacity: 0.45,
+          }}
+          animate={{
+            x: [0, -50, 0],
+            y: [0, 60, 0],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 18,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2,
+          }}
+        />
+        <motion.div
+          className="absolute bottom-0 left-1/4 w-[75vw] h-[75vw] rounded-full"
+          style={{
+            background: "radial-gradient(circle, rgba(168, 85, 247, 0.5) 0%, rgba(168, 85, 247, 0) 70%)",
+            filter: "blur(90px)",
+            opacity: 0.4,
+          }}
+          animate={{
+            x: [0, -40, 0],
+            y: [0, -50, 0],
+            scale: [1, 1.25, 1],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 4,
+          }}
+        />
+        <motion.div
+          className="absolute top-1/3 right-1/3 w-[60vw] h-[60vw] rounded-full"
+          style={{
+            background: "radial-gradient(circle, rgba(14, 165, 233, 0.45) 0%, rgba(14, 165, 233, 0) 70%)",
+            filter: "blur(80px)",
+            opacity: 0.35,
+          }}
+          animate={{
+            x: [0, 70, 0],
+            y: [0, -40, 0],
+            scale: [1, 1.15, 1],
+          }}
+          transition={{
+            duration: 22,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 6,
+          }}
+        />
+      </div>
 
-      {/* Bottom Gradient Fade to blend with AboutMe */}
+      {/* Minimal decorative elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Subtle corner accents */}
+        <motion.div
+          className="absolute top-8 left-8 w-16 h-16 border-l border-t border-off-white/10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 4.5, duration: 1 }}
+        />
+        <motion.div
+          className="absolute top-8 right-8 w-16 h-16 border-r border-t border-off-white/10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 4.6, duration: 1 }}
+        />
+        <motion.div
+          className="absolute bottom-8 left-8 w-16 h-16 border-l border-b border-off-white/10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 4.7, duration: 1 }}
+        />
+        <motion.div
+          className="absolute bottom-8 right-8 w-16 h-16 border-r border-b border-off-white/10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 4.8, duration: 1 }}
+        />
+      </div>
+
+      {/* Bottom Gradient Fade to blend with next section */}
       <div className="hero-bottom-fade" />
 
       <motion.div
         style={{ y, opacity }}
-        className="relative z-10 sticky top-0 h-screen w-full flex flex-col items-center justify-center will-change-transform px-4"
+        className="relative z-10 w-full h-full flex items-center justify-center px-6 sm:px-8"
       >
-        {/* Main Title - Bold Brutalist Statement */}
-        <div className="relative max-w-full w-full flex flex-col items-center">
-          {/* Top Marquee Section */}
-          <motion.div
-            className="w-full overflow-hidden mb-8 sm:mb-12 md:mb-16"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 4.5, duration: 1 }}
+        {/* Main Content Container - Perfectly Centered */}
+        <div className="flex flex-col items-center justify-center text-center w-full">
+          {/* Elegant Name - Blur to Focus Animation */}
+          <motion.h1
+            className="font-display text-[14vw] sm:text-[12vw] md:text-[10vw] lg:text-[8vw] leading-none text-off-white uppercase"
+            style={{
+              fontWeight: 700,
+              letterSpacing: "-0.03em",
+            }}
+            initial={{ 
+              opacity: 0, 
+              filter: "blur(20px)",
+              scale: 1.05
+            }}
+            animate={{ 
+              opacity: 1, 
+              filter: "blur(0px)",
+              scale: 1
+            }}
+            transition={{
+              delay: 4.8,
+              duration: 1.5,
+              ease: [0.22, 1, 0.36, 1],
+            }}
           >
-            <motion.div
-              animate={{ x: [0, -1500] }}
-              transition={{
-                duration: 25,
-                repeat: Infinity,
-                ease: "linear",
-              }}
-              className="flex gap-8 whitespace-nowrap"
-            >
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="flex items-center gap-8">
-                  <span className="text-white/20 font-mono text-xs sm:text-sm tracking-[0.3em] uppercase">
-                    Web Development
-                  </span>
-                  <span className="text-white/10">•</span>
-                  <span className="text-white/20 font-mono text-xs sm:text-sm tracking-[0.3em] uppercase">
-                    UI/UX Design
-                  </span>
-                  <span className="text-white/10">•</span>
-                  <span className="text-white/20 font-mono text-xs sm:text-sm tracking-[0.3em] uppercase">
-                    Creative Coding
-                  </span>
-                  <span className="text-white/10">•</span>
-                  <span className="text-white/20 font-mono text-xs sm:text-sm tracking-[0.3em] uppercase">
-                    Digital Experience
-                  </span>
-                  <span className="text-white/10">•</span>
-                </div>
-              ))}
-            </motion.div>
-          </motion.div>
+            Dareean
+          </motion.h1>
 
-          {/* Large Horizontal Marquee - Mobile Only */}
+          {/* Subtle divider line */}
           <motion.div
-            className="w-full overflow-hidden mb-4 sm:mb-6 md:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 4.7, duration: 1 }}
+            className="w-12 sm:w-16 h-px bg-off-white/40 my-5 sm:my-6"
+            initial={{ scaleX: 0, opacity: 0 }}
+            animate={{ scaleX: 1, opacity: 1 }}
+            transition={{ delay: 5.8, duration: 0.8 }}
+          />
+
+          {/* Tagline - Simple Fade Up */}
+          <motion.p
+            className="text-xs sm:text-sm md:text-base text-off-white/60 font-light tracking-[0.15em] uppercase"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 6.2, duration: 0.8, ease: "easeOut" }}
           >
-            <motion.div
-              animate={{ x: [-2000, 0] }}
-              transition={{
-                duration: 35,
-                repeat: Infinity,
-                ease: "linear",
-              }}
-              className="flex gap-4 whitespace-nowrap"
-            >
-              {[...Array(4)].map((_, i) => (
-                <span
-                  key={i}
-                  className="font-display text-[18vw] leading-none tracking-tighter text-white/[0.06] select-none uppercase"
-                >
-                  CREATIVE • DEVELOPER • DESIGNER • STORYTELLER
-                </span>
-              ))}
-            </motion.div>
-          </motion.div>
+            Creative Developer & Digital Storyteller
+          </motion.p>
 
-          <div className="relative inline-block">
-            {/* Dark backdrop for better text visibility */}
-            <motion.div
-              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 4.3, duration: 0.8 }}
-            />
-
-            {/* Brutalist Frame */}
-            <motion.div
-              className="absolute -inset-2 sm:-inset-3 md:-inset-4 border border-white/20"
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 4.5, duration: 1, ease: "easeOut" }}
-            />
-
-            <motion.h1
-              className="font-display text-[11.5vw] sm:text-[13vw] md:text-[12vw] lg:text-[10vw] xl:text-[9vw] leading-none text-white will-change-transform text-center py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-8 relative z-10"
-              style={{
-                fontWeight: 900,
-                letterSpacing: "-0.08em",
-                textTransform: "uppercase",
-                textShadow:
-                  "0 0 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 0, 0, 0.8), 0 4px 20px rgba(0, 0, 0, 0.7), 0 0 120px rgba(255, 255, 255, 0.2)",
-                WebkitTextStroke: "1px rgba(255, 255, 255, 0.1)",
-              }}
-              initial={{ y: 100, opacity: 0, scaleY: 0 }}
-              animate={{ y: 0, opacity: 1, scaleY: 1 }}
-              transition={{
-                delay: 5,
-                duration: 1.2,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-            >
-              DAREEAN
-            </motion.h1>
-
-            {/* Accent Lines - Editorial Style */}
-            <motion.div
-              className="absolute left-2 right-2 sm:left-3 sm:right-3 md:left-4 md:right-4 h-px bg-white"
-              style={{ top: "1rem" }}
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 5.5, duration: 0.8, ease: "easeOut" }}
-            />
-            <motion.div
-              className="absolute left-2 right-2 sm:left-3 sm:right-3 md:left-4 md:right-4 h-px bg-white"
-              style={{ bottom: "1rem" }}
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 5.5, duration: 0.8, ease: "easeOut" }}
-            />
+          {/* Descriptor - Word by Word Reveal */}
+          <div className="mt-3 sm:mt-4 flex flex-wrap justify-center gap-x-1.5">
+            {["Bringing", "stories", "to", "life", "one", "pixel", "at", "a", "time"].map((word, index) => (
+              <motion.span
+                key={word}
+                className="text-[10px] sm:text-xs text-off-white/35 font-light tracking-wide"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: 6.6 + index * 0.15,
+                  duration: 0.5,
+                  ease: "easeOut",
+                }}
+              >
+                {word}
+              </motion.span>
+            ))}
           </div>
         </div>
 
-        {/* Subtitle - Clean Editorial Style */}
-        <div className="mt-6 sm:mt-8 md:mt-10 lg:mt-12 text-[10px] sm:text-xs md:text-sm lg:text-base text-white/60 font-mono tracking-[0.15em] sm:tracking-[0.2em] text-center px-4 uppercase max-w-full">
-          <motion.div
-            className="border-l border-white/40 pl-3 sm:pl-4 inline-block"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 6, duration: 0.8 }}
-          >
-            <span className="text-white/80 inline-block">
-              Creative Developer
-            </span>
-            <span className="mx-2 sm:mx-3 text-white/30">/</span>
-            <span className="text-white/80 inline-block">
-              Digital Storyteller
-            </span>
-          </motion.div>
-        </div>
-
-        {/* Scroll Indicator - Brutalist Design */}
+        {/* Scroll Indicator */}
         <motion.div
-          className="absolute bottom-16 sm:bottom-20 md:bottom-24 lg:bottom-28 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 sm:gap-4"
+          className="absolute bottom-12 sm:bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 6.5, duration: 1 }}
+          transition={{ delay: 6.2, duration: 1 }}
         >
-          <div className="flex items-center gap-2 sm:gap-3">
-            <motion.div
-              className="h-px w-6 sm:w-8 bg-white/40"
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 7, duration: 0.5 }}
-            />
-            <span className="text-[9px] sm:text-[10px] md:text-xs text-white/60 tracking-[0.25em] sm:tracking-[0.3em] uppercase font-mono">
-              Scroll
-            </span>
-            <motion.div
-              className="h-px w-6 sm:w-8 bg-white/40"
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 7, duration: 0.5 }}
-            />
-          </div>
+          <span className="text-[10px] sm:text-xs text-off-white/40 tracking-[0.2em] uppercase font-light">
+            Scroll
+          </span>
           <motion.div
-            animate={{ y: [0, 10, 0] }}
+            animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="w-px h-10 sm:h-12 bg-gradient-to-b from-white/60 to-transparent"
+            className="w-px h-8 bg-gradient-to-b from-off-white/40 to-transparent"
           />
         </motion.div>
       </motion.div>
