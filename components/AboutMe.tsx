@@ -7,9 +7,11 @@ import {
   useSpring,
   useMotionValue,
 } from "framer-motion";
-import { useRef, useState, useEffect, useMemo } from "react";
+import { useRef, useState, useEffect, useMemo, useLayoutEffect } from "react";
 import Image from "next/image";
 import { useTheme } from "./ThemeProvider";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 // Generate floating particles
 const generateParticles = (count: number) => {
@@ -118,6 +120,13 @@ function TiltCard({
 
 export default function AboutMe() {
   const containerRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const profileCardRef = useRef<HTMLDivElement>(null);
+  const bioCardRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
 
   // Detect mobile for performance optimization - Use state to prevent hydration mismatch
@@ -148,7 +157,152 @@ export default function AboutMe() {
 
   // Counter states
   const projectsCounter = useCountUp(10, 1500);
-  const experienceCounter = useCountUp(2, 1500);
+  const experienceCounter = useCountUp(6, 1500);
+
+  // GSAP ScrollTrigger Animations
+  useLayoutEffect(() => {
+    // Register ScrollTrigger plugin
+    gsap.registerPlugin(ScrollTrigger);
+
+    const ctx = gsap.context(() => {
+      // Header animation - wave emoji and line
+      if (headerRef.current) {
+        gsap.fromTo(headerRef.current,
+          { opacity: 0, y: 60 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: headerRef.current,
+              start: "top 85%",
+              end: "top 50%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+
+      // Title animation - staggered letters effect
+      if (titleRef.current) {
+        gsap.fromTo(titleRef.current,
+          { opacity: 0, y: 80, scale: 0.9 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 1.2,
+            ease: "power4.out",
+            scrollTrigger: {
+              trigger: titleRef.current,
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+
+      // Subtitle animation
+      if (subtitleRef.current) {
+        gsap.fromTo(subtitleRef.current,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            delay: 0.3,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: subtitleRef.current,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+
+      // Profile card animation - slide from left
+      if (profileCardRef.current) {
+        gsap.fromTo(profileCardRef.current,
+          { opacity: 0, x: -100, rotateY: -15 },
+          {
+            opacity: 1,
+            x: 0,
+            rotateY: 0,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: profileCardRef.current,
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+
+      // Bio card animation - slide from right
+      if (bioCardRef.current) {
+        gsap.fromTo(bioCardRef.current,
+          { opacity: 0, x: 100, rotateY: 15 },
+          {
+            opacity: 1,
+            x: 0,
+            rotateY: 0,
+            duration: 1,
+            delay: 0.2,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: bioCardRef.current,
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+
+      // Stats animation - staggered scale up
+      if (statsRef.current) {
+        const statItems = statsRef.current.querySelectorAll('.stat-item');
+        gsap.fromTo(statItems,
+          { opacity: 0, y: 50, scale: 0.8 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.6,
+            stagger: 0.15,
+            ease: "back.out(1.7)",
+            scrollTrigger: {
+              trigger: statsRef.current,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+
+      // CTA animation
+      if (ctaRef.current) {
+        gsap.fromTo(ctaRef.current,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: ctaRef.current,
+              start: "top 90%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+    }, containerRef);
+
+    return () => ctx.revert(); // Cleanup
+  }, []);
 
   // Aurora colors based on theme - More visible for smooth transition
   const auroraColors =
@@ -214,14 +368,8 @@ export default function AboutMe() {
       </motion.div>
 
       <div className="max-w-6xl mx-auto relative z-10">
-        {/* Section Header - Journey style with icon + line */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-          className="mb-12 sm:mb-16 md:mb-20"
-        >
+        {/* Section Header - Journey style with icon + line (GSAP animated) */}
+        <div ref={headerRef} className="mb-12 sm:mb-16 md:mb-20">
           <div className="flex items-center gap-4 mb-4">
             <motion.span
               className="text-2xl sm:text-3xl"
@@ -230,32 +378,23 @@ export default function AboutMe() {
             >
               👋
             </motion.span>
-            <motion.div
-              className="h-px flex-1 bg-gradient-to-r from-off-white/20 to-transparent"
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, delay: 0.3 }}
-            />
+            <div className="h-px flex-1 bg-gradient-to-r from-off-white/20 to-transparent" />
           </div>
-          <h2 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-off-white mb-3">
+          <h2 ref={titleRef} className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-off-white mb-3">
             About Me
           </h2>
-          <p className="text-off-white/50 text-sm sm:text-base md:text-lg max-w-xl">
+          <p ref={subtitleRef} className="text-off-white/50 text-sm sm:text-base md:text-lg max-w-xl">
             Developer from Palu, Indonesia — driven by curiosity, learning by
             doing.
           </p>
-        </motion.div>
+        </div>
 
         {/* Bento Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-5 md:gap-6">
-          {/* Profile Card - Left Side */}
-          <motion.div
+          {/* Profile Card - Left Side (GSAP animated) */}
+          <div
+            ref={profileCardRef}
             className="md:col-span-5 lg:col-span-4"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
           >
             <TiltCard className="h-full">
               <div className="relative h-full min-h-[320px] sm:min-h-[380px] rounded-2xl border border-off-white/[0.06] bg-off-white/[0.015] backdrop-blur-sm p-6 sm:p-8 flex flex-col items-center justify-center group hover:border-off-white/15 transition-all duration-500 overflow-hidden">
@@ -350,17 +489,12 @@ export default function AboutMe() {
                 </motion.div>
               </div>
             </TiltCard>
-          </motion.div>
+          </div>
 
           {/* Right Side - Bio & Stats */}
           <div className="md:col-span-7 lg:col-span-8 flex flex-col gap-4 sm:gap-5 md:gap-6">
-            {/* Bio Quote Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
+            {/* Bio Quote Card (GSAP animated) */}
+            <div ref={bioCardRef}>
               <TiltCard>
                 <div className="relative rounded-2xl border border-off-white/[0.06] bg-off-white/[0.015] backdrop-blur-sm p-6 sm:p-8 hover:border-off-white/15 transition-all duration-500 overflow-hidden group">
                   {/* Animated corner accents */}
@@ -411,10 +545,10 @@ export default function AboutMe() {
                   </motion.span>
                 </div>
               </TiltCard>
-            </motion.div>
+            </div>
 
-            {/* Stats Row with Counter Animation */}
-            <div className="grid grid-cols-3 gap-3 sm:gap-4">
+            {/* Stats Row with Counter Animation (GSAP animated) */}
+            <div ref={statsRef} className="grid grid-cols-3 gap-3 sm:gap-4">
               {[
                 {
                   label: "Projects",
@@ -453,7 +587,7 @@ export default function AboutMe() {
                     scale: 1.03,
                     borderColor: "rgba(255,255,255,0.3)",
                   }}
-                  className="rounded-xl border border-off-white/[0.06] bg-off-white/[0.015] backdrop-blur-sm p-4 sm:p-5 text-center hover:border-off-white/15 transition-colors duration-500 cursor-default"
+                className="stat-item rounded-xl border border-off-white/[0.06] bg-off-white/[0.015] backdrop-blur-sm p-4 sm:p-5 text-center hover:border-off-white/15 transition-colors duration-500 cursor-default"
                 >
                   <motion.div className="font-display text-xl sm:text-2xl md:text-3xl text-off-white mb-1">
                     {stat.isText ? stat.value : stat.value}
@@ -466,12 +600,9 @@ export default function AboutMe() {
               ))}
             </div>
 
-            {/* CTA Row */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.5 }}
+            {/* CTA Row (GSAP animated) */}
+            <div
+              ref={ctaRef}
               className="flex flex-wrap items-center gap-3 sm:gap-4"
             >
               {/* Resume Button with hover effect */}
@@ -569,7 +700,7 @@ export default function AboutMe() {
                   </motion.a>
                 ))}
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>

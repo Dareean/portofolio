@@ -1,7 +1,10 @@
 "use client";
 
+import { useRef, useLayoutEffect } from "react";
 import { motion } from "framer-motion";
 import { JOURNEY_ITEMS } from "@/lib/data";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 const typeIcons: Record<string, string> = {
   milestone: "🚀",
@@ -22,21 +25,68 @@ const typeColors: Record<string, string> = {
 };
 
 export default function JourneyTimeline() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+
   // Sort by date ascending (oldest first)
   const sortedJourney = [...JOURNEY_ITEMS].sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
+  // GSAP ScrollTrigger Animations
+  useLayoutEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const ctx = gsap.context(() => {
+      // Header animation
+      if (headerRef.current) {
+        gsap.fromTo(headerRef.current,
+          { opacity: 0, y: 60 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power4.out",
+            scrollTrigger: {
+              trigger: headerRef.current,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+
+      // Timeline items alternating animation
+      if (timelineRef.current) {
+        const timelineItems = timelineRef.current.querySelectorAll('.timeline-item');
+        timelineItems.forEach((item, index) => {
+          const direction = index % 2 === 0 ? -80 : 80;
+          gsap.fromTo(item,
+            { opacity: 0, x: direction },
+            {
+              opacity: 1,
+              x: 0,
+              duration: 0.8,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: item,
+                start: "top 85%",
+                toggleActions: "play none none reverse",
+              }
+            }
+          );
+        });
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 md:px-12 lg:px-16">
-      {/* Section Header */}
-      <motion.div
-        className="mb-12 sm:mb-16 md:mb-20 max-w-2xl"
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      >
+    <section ref={sectionRef} className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 md:px-12 lg:px-16">
+      {/* Section Header (GSAP animated) */}
+      <div ref={headerRef} className="mb-12 sm:mb-16 md:mb-20 max-w-2xl">
         <span className="text-off-white/40 text-xs sm:text-sm tracking-widest uppercase mb-3 sm:mb-4 block">
           My Path
         </span>
@@ -46,16 +96,16 @@ export default function JourneyTimeline() {
         <p className="text-off-white/60 text-sm sm:text-base md:text-lg">
           A timeline of my career milestones, projects, and growth as a developer.
         </p>
-      </motion.div>
+      </div>
 
-      {/* Timeline */}
-      <div className="relative max-w-3xl mx-auto">
+      {/* Timeline (GSAP animated) */}
+      <div ref={timelineRef} className="relative max-w-3xl mx-auto">
         {/* Center Line */}
         <div className="absolute left-6 sm:left-8 md:left-1/2 top-0 bottom-0 w-px bg-off-white/10 md:-translate-x-px" />
 
         {/* Start Point - The Beginning */}
         <motion.div
-          className="relative flex items-center mb-10 sm:mb-12 md:mb-16"
+          className="timeline-item relative flex items-center mb-10 sm:mb-12 md:mb-16"
           initial={{ opacity: 0, scale: 0 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
@@ -70,15 +120,11 @@ export default function JourneyTimeline() {
         </motion.div>
 
         {sortedJourney.map((item, index) => (
-          <motion.div
+          <div
             key={item.id}
-            className={`relative flex items-start gap-4 sm:gap-6 md:gap-8 mb-10 sm:mb-12 md:mb-16 ${
+            className={`timeline-item relative flex items-start gap-4 sm:gap-6 md:gap-8 mb-10 sm:mb-12 md:mb-16 ${
               index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
             }`}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
           >
             {/* Timeline Node */}
             <div className="absolute left-6 sm:left-8 md:left-1/2 -translate-x-1/2 w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-void-black border-2 border-off-white/40 z-10" />
@@ -113,12 +159,12 @@ export default function JourneyTimeline() {
                 {item.description}
               </p>
             </div>
-          </motion.div>
+          </div>
         ))}
 
         {/* End Point - Will Keep Going */}
         <motion.div
-          className="relative flex items-center justify-center"
+          className="timeline-item relative flex items-center justify-center"
           initial={{ opacity: 0, scale: 0 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}

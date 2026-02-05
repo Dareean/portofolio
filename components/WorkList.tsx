@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { motion, useSpring, useMotionValue } from "framer-motion";
 import Link from "next/link";
 import { Project } from "@/lib/data";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 interface WorkListProps {
   projects: Project[];
@@ -12,6 +14,10 @@ interface WorkListProps {
 export default function WorkList({ projects }: WorkListProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const projectListRef = useRef<HTMLDivElement>(null);
+  const viewAllRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
 
   // Mouse position with spring for smooth cursor following
@@ -45,36 +51,92 @@ export default function WorkList({ projects }: WorkListProps) {
     };
   }, [mouseX, mouseY, isMobile]);
 
+  // GSAP ScrollTrigger Animations
+  useLayoutEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const ctx = gsap.context(() => {
+      // Header animation
+      if (headerRef.current) {
+        gsap.fromTo(headerRef.current,
+          { opacity: 0, y: 60, scale: 0.95 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 1,
+            ease: "power4.out",
+            scrollTrigger: {
+              trigger: headerRef.current,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+
+      // Project items staggered animation
+      if (projectListRef.current) {
+        const projectItems = projectListRef.current.querySelectorAll('.project-item');
+        gsap.fromTo(projectItems,
+          { opacity: 0, y: 50 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: projectListRef.current,
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+
+      // View All button animation
+      if (viewAllRef.current) {
+        gsap.fromTo(viewAllRef.current,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: viewAllRef.current,
+              start: "top 90%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 lg:px-16"
-      ref={containerRef}
     >
-      {/* Section Header of work */}
-      <motion.div
-        className="mb-8 sm:mb-12 md:mb-16"
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.8 }}
-      >
+      {/* Section Header of work (GSAP animated) */}
+      <div ref={headerRef} className="mb-8 sm:mb-12 md:mb-16">
         <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-off-white">
           Selected Work
         </h2>
-      </motion.div>
+      </div>
 
-      {/* Project List */}
-      <div className="space-y-0">
+      {/* Project List (GSAP animated) */}
+      <div ref={projectListRef} className="space-y-0">
         {projects.map((project, index) => (
           <motion.div
             key={project.id}
-            className="group border-t border-off-white/10 cursor-pointer"
+            className="project-item group border-t border-off-white/10 cursor-pointer"
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
           >
             <motion.div
               className="py-6 sm:py-8 md:py-12 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 transition-opacity duration-300"
@@ -111,14 +173,8 @@ export default function WorkList({ projects }: WorkListProps) {
         <div className="border-t border-off-white/10" />
       </div>
 
-      {/* View All Link */}
-      <motion.div
-        className="mt-12 text-center"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.3 }}
-      >
+      {/* View All Link (GSAP animated) */}
+      <div ref={viewAllRef} className="mt-12 text-center">
         <Link
           href="/work"
           className="inline-flex items-center gap-2 sm:gap-3 px-5 sm:px-6 md:px-8 py-3 sm:py-4 border border-off-white/30 text-off-white text-xs sm:text-sm tracking-widest uppercase hover:bg-off-white hover:text-void-black transition-all duration-300"
@@ -138,7 +194,7 @@ export default function WorkList({ projects }: WorkListProps) {
             />
           </svg>
         </Link>
-      </motion.div>
+      </div>
 
       {/* Floating Image Preview - Hidden on touch devices */}
       <motion.div

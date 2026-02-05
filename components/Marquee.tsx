@@ -1,5 +1,9 @@
 "use client";
 
+import { useRef, useLayoutEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
 interface MarqueeProps {
   text?: string;
 }
@@ -7,10 +11,40 @@ interface MarqueeProps {
 export default function Marquee({
     text = "DRIVEN • CREATIVE • DEDICATED • EVOLVING",    
 }: MarqueeProps) {
+  const sectionRef = useRef<HTMLElement>(null);
   const repeatedText = `${text} • `.repeat(6);
 
+  // GSAP ScrollTrigger Animation
+  useLayoutEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const ctx = gsap.context(() => {
+      if (sectionRef.current) {
+        gsap.fromTo(sectionRef.current,
+          { opacity: 0, y: 50 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 90%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="py-12 sm:py-16 md:py-24 overflow-hidden border-y border-off-white/10">
+    <section 
+      ref={sectionRef}
+      className="py-12 sm:py-16 md:py-24 overflow-hidden border-y border-off-white/10"
+    >
       <div className="marquee-container">
         <div className="marquee-content">
           <span

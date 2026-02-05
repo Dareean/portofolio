@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 interface ExploreItem {
   id: string;
@@ -28,34 +30,75 @@ const exploreItems: ExploreItem[] = [
 
 export default function ExploreLinks() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const linksListRef = useRef<HTMLDivElement>(null);
+
+  // GSAP ScrollTrigger Animations
+  useLayoutEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const ctx = gsap.context(() => {
+      // Header animation
+      if (headerRef.current) {
+        gsap.fromTo(headerRef.current,
+          { opacity: 0, y: 60, scale: 0.95 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 1,
+            ease: "power4.out",
+            scrollTrigger: {
+              trigger: headerRef.current,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+
+      // Links staggered animation
+      if (linksListRef.current) {
+        const linkItems = linksListRef.current.querySelectorAll('.link-item');
+        gsap.fromTo(linkItems,
+          { opacity: 0, x: -80 },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: linksListRef.current,
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            }
+          }
+        );
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 lg:px-16">
-      {/* Section Header */}
-      <motion.div
-        className="mb-8 sm:mb-12 md:mb-16"
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.8 }}
-      >
+    <section ref={sectionRef} className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 lg:px-16">
+      {/* Section Header (GSAP animated) */}
+      <div ref={headerRef} className="mb-8 sm:mb-12 md:mb-16">
         <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-off-white">
           Explore More
         </h2>
-      </motion.div>
+      </div>
 
-      {/* Links List */}
-      <div className="space-y-0">
+      {/* Links List (GSAP animated) */}
+      <div ref={linksListRef} className="space-y-0">
         {exploreItems.map((item, index) => (
           <motion.div
             key={item.id}
-            className="group border-t border-off-white/10"
+            className="link-item group border-t border-off-white/10"
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
           >
             <Link href={item.href} className="block">
               <motion.div
