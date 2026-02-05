@@ -637,7 +637,7 @@ export default function ExperiencePage() {
           <div className="space-y-16 sm:space-y-24">
             {sortedYears.map((yearKey) => {
               const year = yearKey === "ongoing" ? "ongoing" : Number(yearKey);
-              const experiences = experiencesByYear[yearKey];
+              const experiences = experiencesByYear[year];
 
               return (
                 <YearSection
