@@ -41,10 +41,10 @@ export default function LiquidChrome() {
       powerPreference: "high-performance", // Optimize for performance
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    
+
     // Reduce pixel ratio on mobile for better performance
-    const pixelRatio = deviceInfo.isMobile 
-      ? Math.min(window.devicePixelRatio, 1.5) 
+    const pixelRatio = deviceInfo.isMobile
+      ? Math.min(window.devicePixelRatio, 1.5)
       : Math.min(window.devicePixelRatio, 2);
     renderer.setPixelRatio(pixelRatio);
     renderer.setClearColor(0x000000, 1);
@@ -268,16 +268,16 @@ export default function LiquidChrome() {
     // Animation loop
     let frameCount = 0;
     const frameSkip = deviceInfo.isMobile ? 1 : 0; // Skip frames on mobile if needed
-    
+
     const animate = () => {
       frameCount++;
-      
+
       // Optionally skip frames on mobile for better performance
       if (frameSkip > 0 && frameCount % (frameSkip + 1) !== 0) {
         sceneRef.current.animationId = requestAnimationFrame(animate);
         return;
       }
-      
+
       const elapsedTime = clock.getElapsedTime();
 
       liquidMaterial.uniforms.uTime.value = elapsedTime;
@@ -305,16 +305,21 @@ export default function LiquidChrome() {
       liquidMaterial.dispose();
       renderer.dispose();
     };
-  }, [deviceInfo.isMobile, deviceInfo.isLowEnd, deviceInfo.prefersReducedMotion]);
+  }, [
+    deviceInfo.isMobile,
+    deviceInfo.isLowEnd,
+    deviceInfo.prefersReducedMotion,
+  ]);
 
   // Show placeholder on low-end devices
   if (deviceInfo.isLowEnd || deviceInfo.prefersReducedMotion) {
     return (
-      <div 
+      <div
         className="absolute inset-0 w-full h-full pointer-events-none"
-        style={{ 
+        style={{
           zIndex: 0,
-          background: "radial-gradient(circle at center, rgba(100, 100, 120, 0.1) 0%, transparent 70%)"
+          background:
+            "radial-gradient(circle at center, rgba(100, 100, 120, 0.1) 0%, transparent 70%)",
         }}
       />
     );
