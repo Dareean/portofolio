@@ -492,7 +492,7 @@ export default function ExperiencePage() {
 
   // Group by year
   const experiencesByYear = useMemo(() => {
-    const grouped: Record<number | "ongoing", Experience[]> = {};
+    const grouped: Partial<Record<number | "ongoing", Experience[]>> = {};
 
     // First add ongoing experiences
     if (ongoingExperiences.length > 0 && activeFilter === "all") {
