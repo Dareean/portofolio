@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { useDeviceType } from "@/lib/hooks";
 
 export default function LiquidChrome() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -13,8 +14,14 @@ export default function LiquidChrome() {
     mesh?: THREE.Mesh;
     animationId?: number;
   }>({});
+  const deviceInfo = useDeviceType();
 
   useEffect(() => {
+    // Disable on low-end devices or if reduced motion is preferred
+    if (deviceInfo.isLowEnd || deviceInfo.prefersReducedMotion) {
+      return;
+    }
+
     if (!canvasRef.current) return;
 
     // Setup Three.js scene
@@ -29,11 +36,17 @@ export default function LiquidChrome() {
 
     const renderer = new THREE.WebGLRenderer({
       canvas: canvasRef.current,
-      antialias: true,
+      antialias: !deviceInfo.isMobile, // Disable antialiasing on mobile
       alpha: true,
+      powerPreference: "high-performance", // Optimize for performance
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    
+    // Reduce pixel ratio on mobile for better performance
+    const pixelRatio = deviceInfo.isMobile 
+      ? Math.min(window.devicePixelRatio, 1.5) 
+      : Math.min(window.devicePixelRatio, 2);
+    renderer.setPixelRatio(pixelRatio);
     renderer.setClearColor(0x000000, 1);
 
     const clock = new THREE.Clock();
@@ -137,7 +150,11 @@ export default function LiquidChrome() {
           float amplitude = 0.5;
           float frequency = 1.0;
           
+          // Reduce iterations on mobile for better performance
+          int iterations = 5;
+          
           for(int i = 0; i < 5; i++) {
+            if (i >= iterations) break;
             value += amplitude * snoise(p * frequency);
             frequency *= 2.0;
             amplitude *= 0.5;
@@ -217,7 +234,9 @@ export default function LiquidChrome() {
     });
 
     // Create a plane to display the shader
-    const geometry = new THREE.PlaneGeometry(10, 10, 32, 32);
+    // Reduce geometry complexity on mobile
+    const segments = deviceInfo.isMobile ? 16 : 32;
+    const geometry = new THREE.PlaneGeometry(10, 10, segments, segments);
     const mesh = new THREE.Mesh(geometry, liquidMaterial);
     scene.add(mesh);
 
@@ -245,7 +264,18 @@ export default function LiquidChrome() {
     };
 
     window.addEventListener("resize", handleResize);
-
+let frameCount = 0;
+    const frameSkip = deviceInfo.isMobile ? 1 : 0; // Skip frames on mobile if needed
+    
+    const animate = () => {
+      frameCount++;
+      
+      // Optionally skip frames on mobile for better performance
+      if (frameSkip > 0 && frameCount % (frameSkip + 1) !== 0) {
+        sceneRef.current.animationId = requestAnimationFrame(animate);
+        return;
+      }
+      
     // Animation loop
     const animate = () => {
       const elapsedTime = clock.getElapsedTime();
@@ -262,7 +292,20 @@ export default function LiquidChrome() {
     // Store references
     sceneRef.current = { scene, camera, renderer, clock, mesh };
 
-    // Cleanup
+    //deviceInfo.isMobile, deviceInfo.isLowEnd, deviceInfo.prefersReducedMotion]);
+
+  // Show placeholder on low-end devices
+  if (deviceInfo.isLowEnd || deviceInfo.prefersReducedMotion) {
+    return (
+      <div 
+        className="absolute inset-0 w-full h-full pointer-events-none"
+        style={{ 
+          zIndex: 0,
+          background: "radial-gradient(circle at center, rgba(100, 100, 120, 0.1) 0%, transparent 70%)"
+        }}
+      />
+    );
+  }eanup
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("resize", handleResize);

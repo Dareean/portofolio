@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { useDeviceType, getAnimationConfig } from "@/lib/hooks";
 
 // This version requires GSAP
 // Install with: npm install gsap
@@ -11,6 +12,8 @@ export default function IntroTransitionGSAP() {
   const blindsRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<SVGSVGElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
+  const deviceInfo = useDeviceType();
+  const animConfig = getAnimationConfig(deviceInfo);
 
   useEffect(() => {
     // Dynamically import GSAP (client-side only)
@@ -20,17 +23,21 @@ export default function IntroTransitionGSAP() {
       const blinds = blindsRef.current?.children;
       if (!blinds) return;
 
+      // Adjust animation durations based on device capability
+      const duration = deviceInfo.isLowEnd ? 0.4 : deviceInfo.isMobile ? 0.6 : 0.8;
+      const stagger = deviceInfo.isLowEnd ? 0.04 : 0.08;
+
       // Animate vertical blinds with stagger
       gsap.to(blinds, {
         scaleY: 0,
         transformOrigin: "top",
-        duration: 0.8,
-        stagger: 0.08,
+        duration: duration,
+        stagger: stagger,
         ease: "power3.inOut",
       });
 
-      // Animate SVG path (handwriting effect)
-      if (logoRef.current) {
+      // Animate SVG path (handwriting effect) - Skip on low-end
+      if (logoRef.current && !deviceInfo.isLowEnd) {
         const path = logoRef.current.querySelector("path");
         if (path) {
           const length = path.getTotalLength();
@@ -42,7 +49,7 @@ export default function IntroTransitionGSAP() {
 
           gsap.to(path, {
             strokeDashoffset: 0,
-            duration: 1.5,
+            duration: deviceInfo.isMobile ? 1.0 : 1.5,
             delay: 0.6,
             ease: "power1.inOut",
           });
@@ -58,23 +65,24 @@ export default function IntroTransitionGSAP() {
             opacity: 1,
             y: 0,
             duration: 0.6,
-            delay: 1.8,
+            delay: deviceInfo.isLowEnd ? 0.8 : 1.8,
           },
         );
       }
 
-      // Hide intro after complete
+      // Hide intro after complete - Faster on low-end devices
+      const hideDelay = deviceInfo.isLowEnd ? 1500 : deviceInfo.isMobile ? 2500 : 3000;
       setTimeout(() => {
         gsap.to(blindsRef.current, {
           opacity: 0,
           duration: 0.3,
           onComplete: () => setShowIntro(false),
         });
-      }, 3000);
+      }, hideDelay);
     };
 
     loadGSAP();
-  }, []);
+  }, [deviceInfo.isLowEnd, deviceInfo.isMobile]);
 
   if (!showIntro) return null;
 

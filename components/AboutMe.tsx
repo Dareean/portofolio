@@ -12,8 +12,9 @@ import Image from "next/image";
 import { useTheme } from "./ThemeProvider";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useDeviceType, getAnimationConfig } from "@/lib/hooks";
 
-// Generate floating particles
+// Generate floating particles with device-aware count
 const generateParticles = (count: number) => {
   return Array.from({ length: count }, (_, i) => ({
     id: i,
@@ -65,13 +66,15 @@ function useCountUp(
   return { count, ref, setHasStarted };
 }
 
-// 3D Tilt Card Component
+// 3D Tilt Card Component - Disabled on mobile for performance
 function TiltCard({
   children,
   className = "",
+  disabled = false,
 }: {
   children: React.ReactNode;
   className?: string;
+  disabled?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
@@ -84,7 +87,7 @@ function TiltCard({
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-5deg", "5deg"]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return;
+    if (disabled || !ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     const width = rect.width;
     const height = rect.height;
@@ -97,9 +100,14 @@ function TiltCard({
   };
 
   const handleMouseLeave = () => {
+    if (disabled) return;
     x.set(0);
     y.set(0);
   };
+
+  if (disabled) {
+    return <div className={className}>{children}</div>;
+  }
 
   return (
     <motion.div
@@ -128,6 +136,8 @@ export default function AboutMe() {
   const statsRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
+  const deviceInfo = useDeviceType();
+  const animConfig = getAnimationConfig(deviceInfo);
 
   // Detect mobile for performance optimization - Use state to prevent hydration mismatch
   const [isMobile, setIsMobile] = useState(false);
@@ -144,8 +154,11 @@ export default function AboutMe() {
   const [particles, setParticles] = useState<any[]>([]);
 
   useEffect(() => {
-    setParticles(generateParticles(isMobile ? 15 : 30));
-  }, [isMobile]);
+    // Drastically reduce particle count based on device capability
+    const particleCount = deviceInfo.isLowEnd ? 5 : deviceInfo.isMobile ? 10 : 30;
+    setParticles(generateParticles(particleCount));
+  }, [deviceInfo.isMobile, deviceInfo.isLowEnd]);
+  
   const particleColor = theme === "dark" ? "255,255,255" : "14,15,25";
 
   const { scrollYProgress } = useScroll({
@@ -432,7 +445,7 @@ export default function AboutMe() {
             ref={profileCardRef}
             className="md:col-span-5 lg:col-span-4"
           >
-            <TiltCard className="h-full">
+            <TiltCard className="h-full" disabled={deviceInfo.isMobile || deviceInfo.isLowEnd}>
               <div className="relative h-full min-h-[320px] sm:min-h-[380px] rounded-2xl border border-off-white/[0.06] bg-off-white/[0.015] backdrop-blur-sm p-6 sm:p-8 flex flex-col items-center justify-center group hover:border-off-white/15 transition-all duration-500 overflow-hidden">
                 {/* Shimmer effect on hover */}
                 <motion.div
@@ -531,7 +544,7 @@ export default function AboutMe() {
           <div className="md:col-span-7 lg:col-span-8 flex flex-col gap-4 sm:gap-5 md:gap-6">
             {/* Bio Quote Card (GSAP animated) */}
             <div ref={bioCardRef}>
-              <TiltCard>
+              <TiltCard disabled={deviceInfo.isMobile || deviceInfo.isLowEnd}>
                 <div className="relative rounded-2xl border border-off-white/[0.06] bg-off-white/[0.015] backdrop-blur-sm p-6 sm:p-8 hover:border-off-white/15 transition-all duration-500 overflow-hidden group">
                   {/* Animated corner accents */}
                   <motion.div

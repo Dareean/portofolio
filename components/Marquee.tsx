@@ -48,18 +48,12 @@ export default function Marquee({
       <div className="marquee-container">
         <div className="marquee-content">
           <span
-            className="font-display text-[10vw] sm:text-[9vw] md:text-[7vw] lg:text-[6vw] uppercase tracking-wider"
-            style={{
-              color: "rgba(0, 0, 0, 0.7)",
-            }}
+            className="font-display text-[10vw] sm:text-[9vw] md:text-[7vw] lg:text-[6vw] uppercase tracking-wider text-off-white/70"
           >
             {repeatedText}
           </span>
           <span
-            className="font-display text-[10vw] sm:text-[9vw] md:text-[7vw] lg:text-[6vw] uppercase tracking-wider"
-            style={{
-              color: "rgba(0, 0, 0, 0.7)",
-            }}
+            className="font-display text-[10vw] sm:text-[9vw] md:text-[7vw] lg:text-[6vw] uppercase tracking-wider text-off-white/70"
           >
             {repeatedText}
           </span>

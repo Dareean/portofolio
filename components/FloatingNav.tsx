@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useTheme } from "./ThemeProvider";
+import { useDeviceType, getAnimationConfig } from "@/lib/hooks";
 
 // SVG Icons as components
 const HomeIcon = () => (
@@ -72,7 +73,7 @@ const socialItems = [
   { href: "https://linkedin.com/in/dareean", label: "LinkedIn", icon: LinkedInIcon, external: true },
 ];
 
-// Cartoonish bouncy animation variants
+// Cartoonish bouncy animation variants - Simplified on low-end devices
 const bounceAnimation: Variants = {
   hover: {
     scale: 1.25,
@@ -88,6 +89,18 @@ const bounceAnimation: Variants = {
     scale: 0.85,
     y: 0,
     transition: { type: "spring", stiffness: 400, damping: 10 }
+  }
+};
+
+// Simple version for low-end devices
+const simpleBounceAnimation: Variants = {
+  hover: {
+    scale: 1.15,
+    transition: { duration: 0.2 }
+  },
+  tap: {
+    scale: 0.9,
+    transition: { duration: 0.1 }
   }
 };
 
@@ -127,6 +140,8 @@ export default function FloatingNav() {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
   const { theme, toggleTheme, isTransitioning } = useTheme();
+  const deviceInfo = useDeviceType();
+  const animConfig = getAnimationConfig(deviceInfo);
 
   // Show nav after loading animation delay
   useEffect(() => {
@@ -136,8 +151,11 @@ export default function FloatingNav() {
     return () => clearTimeout(timer);
   }, [isHomePage]);
 
-  // Different animations for each icon type
+  // Use simpler animations on low-end devices
   const getAnimation = (index: number) => {
+    if (deviceInfo.isLowEnd || deviceInfo.prefersReducedMotion) {
+      return simpleBounceAnimation;
+    }
     const animations = [bounceAnimation, wiggleAnimation, jumpAnimation];
     return animations[index % animations.length];
   };

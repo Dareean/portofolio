@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "./ThemeProvider";
+import { useDeviceType } from "@/lib/hooks";
 
 interface Star {
   id: number;
@@ -17,6 +18,10 @@ export default function ShootingStars() {
   const [stars, setStars] = useState<Star[]>([]);
   const [showStars, setShowStars] = useState(false);
   const { theme } = useTheme();
+  const deviceInfo = useDeviceType();
+  
+  // Disable on low-end devices or if reduced motion is preferred
+  const starsEnabled = !deviceInfo.isLowEnd && !deviceInfo.prefersReducedMotion;
   
   // Theme-aware colors
   const starColor = theme === "dark" ? "white" : "black";
@@ -29,15 +34,17 @@ export default function ShootingStars() {
 
   // Wait for intro animation to complete (about 5 seconds)
   useEffect(() => {
+    if (!starsEnabled) return;
+    
     const introDelay = setTimeout(() => {
       setShowStars(true);
     }, 5000);
 
     return () => clearTimeout(introDelay);
-  }, []);
+  }, [starsEnabled]);
 
   useEffect(() => {
-    if (!showStars) return;
+    if (!showStars || !starsEnabled) return;
 
     // Create a shooting star
     const createStar = (): Star => ({
@@ -49,18 +56,19 @@ export default function ShootingStars() {
       angle: 45,
     });
 
-    // Initial stars
-    setStars([createStar(), createStar()]);
+    // Initial stars - Reduce count on mobile
+    const initialStarCount = deviceInfo.isMobile ? 1 : 2;
+    setStars(Array.from({ length: initialStarCount }, createStar));
 
-    // Add new stars periodically
+    // Add new stars periodically - Less frequent on mobile
     const interval = setInterval(() => {
-      setStars(prev => [...prev.slice(-4), createStar()]);
-    }, 1200);
+      setStars(prev => [...prev.slice(-3), createStar()]);
+    }, deviceInfo.isMobile ? 2000 : 1200);
 
     return () => clearInterval(interval);
-  }, [showStars]);
+  }, [showStars, starsEnabled, deviceInfo.isMobile]);
 
-  if (!showStars) return null;
+  if (!showStars || !starsEnabled) return null;
 
   return (
     <div 
