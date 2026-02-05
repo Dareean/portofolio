@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { PROJECTS } from "@/lib/data";
 import FloatingNav from "@/components/FloatingNav";
+import { ChevronLeft, ArrowRight } from "lucide-react";
 
 export default function ProjectDetailPage() {
   const params = useParams();
@@ -46,9 +47,7 @@ export default function ProjectDetailPage() {
           href="/work"
           className="inline-flex items-center gap-2 text-off-white/60 hover:text-off-white mb-12 transition-colors uppercase tracking-widest text-sm"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
-          </svg>
+          <ChevronLeft className="w-4 h-4" />
           Back to Work
         </Link>
       </motion.div>
@@ -89,9 +88,7 @@ export default function ProjectDetailPage() {
               className="inline-flex items-center gap-3 px-8 py-4 bg-off-white text-void-black font-medium tracking-wide uppercase hover:bg-off-white/90 transition-colors whitespace-nowrap"
             >
               Visit Project
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
+              <ArrowRight className="w-4 h-4" />
             </Link>
           )}
         </div>
