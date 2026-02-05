@@ -48,9 +48,7 @@ export default function Hero() {
               "radial-gradient(circle, rgba(99, 102, 241, 0.5) 0%, rgba(99, 102, 241, 0) 70%)",
             filter: "blur(80px)",
             opacity: 0.5,
-            willChange: deviceInfo.prefersReducedMotion
-              ? "auto"
-              : "transform",
+            willChange: deviceInfo.prefersReducedMotion ? "auto" : "transform",
           }}
           animate={
             animConfig.enabled
@@ -74,9 +72,7 @@ export default function Hero() {
               "radial-gradient(circle, rgba(34, 197, 94, 0.45) 0%, rgba(34, 197, 94, 0) 70%)",
             filter: "blur(100px)",
             opacity: 0.45,
-            willChange: deviceInfo.prefersReducedMotion
-              ? "auto"
-              : "transform",
+            willChange: deviceInfo.prefersReducedMotion ? "auto" : "transform",
           }}
           animate={
             animConfig.enabled

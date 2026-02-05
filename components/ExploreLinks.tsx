@@ -21,12 +21,14 @@ export default function ExploreLinks() {
   // Load Three.js dynamically
   useEffect(() => {
     // Force load Three.js - remove low-end check
-    import("three").then((module) => {
-      THREE = module;
-      setIsThreeLoaded(true);
-    }).catch((error) => {
-      console.error("Failed to load Three.js:", error);
-    });
+    import("three")
+      .then((module) => {
+        THREE = module;
+        setIsThreeLoaded(true);
+      })
+      .catch((error) => {
+        console.error("Failed to load Three.js:", error);
+      });
   }, []);
 
   // Initialize Three.js scene
