@@ -15,6 +15,7 @@ interface Star {
 
 export default function ShootingStars() {
   const [stars, setStars] = useState<Star[]>([]);
+  const [showStars, setShowStars] = useState(false);
   const { theme } = useTheme();
   
   // Theme-aware colors
@@ -26,7 +27,18 @@ export default function ShootingStars() {
     ? "linear-gradient(to left, white, rgba(255,255,255,0.5), transparent)"
     : "linear-gradient(to left, black, rgba(0,0,0,0.5), transparent)";
 
+  // Wait for intro animation to complete (about 5 seconds)
   useEffect(() => {
+    const introDelay = setTimeout(() => {
+      setShowStars(true);
+    }, 5000);
+
+    return () => clearTimeout(introDelay);
+  }, []);
+
+  useEffect(() => {
+    if (!showStars) return;
+
     // Create a shooting star
     const createStar = (): Star => ({
       id: Math.random(),
@@ -46,7 +58,9 @@ export default function ShootingStars() {
     }, 1200);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [showStars]);
+
+  if (!showStars) return null;
 
   return (
     <div 
