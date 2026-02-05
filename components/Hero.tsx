@@ -38,19 +38,72 @@ export default function Hero() {
       {/* Shooting Stars */}
       <ShootingStars />
 
-      {/* Aurora blur background - Performance optimized */}
+      {/* Aurora blur background - Always visible */}
       <div className="absolute inset-0 bg-void-black overflow-hidden">
-        {/* Conditionally render aurora orbs based on device capability */}
-        {!deviceInfo.isLowEnd && (
+        {/* Aurora gradient orbs */}
+        <motion.div
+          className="absolute top-0 -left-1/4 w-[80vw] h-[80vw] rounded-full"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(99, 102, 241, 0.5) 0%, rgba(99, 102, 241, 0) 70%)",
+            filter: "blur(80px)",
+            opacity: 0.5,
+            willChange: deviceInfo.prefersReducedMotion
+              ? "auto"
+              : "transform",
+          }}
+          animate={
+            animConfig.enabled
+              ? {
+                  x: [0, 60, 0],
+                  y: [0, 40, 0],
+                  scale: [1, 1.15, 1],
+                }
+              : {}
+          }
+          transition={{
+            duration: deviceInfo.isMobile ? 20 : 15,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute top-1/4 -right-1/4 w-[70vw] h-[70vw] rounded-full"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(34, 197, 94, 0.45) 0%, rgba(34, 197, 94, 0) 70%)",
+            filter: "blur(100px)",
+            opacity: 0.45,
+            willChange: deviceInfo.prefersReducedMotion
+              ? "auto"
+              : "transform",
+          }}
+          animate={
+            animConfig.enabled
+              ? {
+                  x: [0, -50, 0],
+                  y: [0, 60, 0],
+                  scale: [1, 1.2, 1],
+                }
+              : {}
+          }
+          transition={{
+            duration: deviceInfo.isMobile ? 24 : 18,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2,
+          }}
+        />
+        {/* Additional orbs on desktop */}
+        {!deviceInfo.isMobile && (
           <>
-            {/* Aurora gradient orbs - Simplified on mobile */}
             <motion.div
-              className="absolute top-0 -left-1/4 w-[80vw] h-[80vw] rounded-full"
+              className="absolute bottom-0 left-1/4 w-[75vw] h-[75vw] rounded-full"
               style={{
                 background:
-                  "radial-gradient(circle, rgba(99, 102, 241, 0.5) 0%, rgba(99, 102, 241, 0) 70%)",
-                filter: "blur(80px)",
-                opacity: 0.5,
+                  "radial-gradient(circle, rgba(168, 85, 247, 0.5) 0%, rgba(168, 85, 247, 0) 70%)",
+                filter: "blur(90px)",
+                opacity: 0.4,
                 willChange: deviceInfo.prefersReducedMotion
                   ? "auto"
                   : "transform",
@@ -58,104 +111,46 @@ export default function Hero() {
               animate={
                 animConfig.enabled
                   ? {
-                      x: [0, 60, 0],
-                      y: [0, 40, 0],
+                      x: [0, -40, 0],
+                      y: [0, -50, 0],
+                      scale: [1, 1.25, 1],
+                    }
+                  : {}
+              }
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 4,
+              }}
+            />
+            <motion.div
+              className="absolute top-1/3 right-1/3 w-[60vw] h-[60vw] rounded-full"
+              style={{
+                background:
+                  "radial-gradient(circle, rgba(14, 165, 233, 0.45) 0%, rgba(14, 165, 233, 0) 70%)",
+                filter: "blur(80px)",
+                opacity: 0.35,
+                willChange: deviceInfo.prefersReducedMotion
+                  ? "auto"
+                  : "transform",
+              }}
+              animate={
+                animConfig.enabled
+                  ? {
+                      x: [0, 70, 0],
+                      y: [0, -40, 0],
                       scale: [1, 1.15, 1],
                     }
                   : {}
               }
               transition={{
-                duration: deviceInfo.isMobile ? 20 : 15,
+                duration: 22,
                 repeat: Infinity,
                 ease: "easeInOut",
+                delay: 6,
               }}
             />
-            <motion.div
-              className="absolute top-1/4 -right-1/4 w-[70vw] h-[70vw] rounded-full"
-              style={{
-                background:
-                  "radial-gradient(circle, rgba(34, 197, 94, 0.45) 0%, rgba(34, 197, 94, 0) 70%)",
-                filter: "blur(100px)",
-                opacity: 0.45,
-                willChange: deviceInfo.prefersReducedMotion
-                  ? "auto"
-                  : "transform",
-              }}
-              animate={
-                animConfig.enabled
-                  ? {
-                      x: [0, -50, 0],
-                      y: [0, 60, 0],
-                      scale: [1, 1.2, 1],
-                    }
-                  : {}
-              }
-              transition={{
-                duration: deviceInfo.isMobile ? 24 : 18,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 2,
-              }}
-            />
-            {/* Reduce orb count on mobile/low-end devices */}
-            {!deviceInfo.isMobile && (
-              <>
-                <motion.div
-                  className="absolute bottom-0 left-1/4 w-[75vw] h-[75vw] rounded-full"
-                  style={{
-                    background:
-                      "radial-gradient(circle, rgba(168, 85, 247, 0.5) 0%, rgba(168, 85, 247, 0) 70%)",
-                    filter: "blur(90px)",
-                    opacity: 0.4,
-                    willChange: deviceInfo.prefersReducedMotion
-                      ? "auto"
-                      : "transform",
-                  }}
-                  animate={
-                    animConfig.enabled
-                      ? {
-                          x: [0, -40, 0],
-                          y: [0, -50, 0],
-                          scale: [1, 1.25, 1],
-                        }
-                      : {}
-                  }
-                  transition={{
-                    duration: 20,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 4,
-                  }}
-                />
-                <motion.div
-                  className="absolute top-1/3 right-1/3 w-[60vw] h-[60vw] rounded-full"
-                  style={{
-                    background:
-                      "radial-gradient(circle, rgba(14, 165, 233, 0.45) 0%, rgba(14, 165, 233, 0) 70%)",
-                    filter: "blur(80px)",
-                    opacity: 0.35,
-                    willChange: deviceInfo.prefersReducedMotion
-                      ? "auto"
-                      : "transform",
-                  }}
-                  animate={
-                    animConfig.enabled
-                      ? {
-                          x: [0, 70, 0],
-                          y: [0, -40, 0],
-                          scale: [1, 1.15, 1],
-                        }
-                      : {}
-                  }
-                  transition={{
-                    duration: 22,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 6,
-                  }}
-                />
-              </>
-            )}
           </>
         )}
       </div>

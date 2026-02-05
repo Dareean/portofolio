@@ -14,24 +14,24 @@ export default function ExploreLinks() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const deviceInfo = useDeviceType();
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const [isThreeLoaded, setIsThreeLoaded] = useState(false);
   const cleanupRef = useRef<(() => void) | null>(null);
 
   // Load Three.js dynamically
   useEffect(() => {
-    if (deviceInfo.isLowEnd) return;
-
+    // Force load Three.js - remove low-end check
     import("three").then((module) => {
       THREE = module;
       setIsThreeLoaded(true);
+    }).catch((error) => {
+      console.error("Failed to load Three.js:", error);
     });
-  }, [deviceInfo.isLowEnd]);
+  }, []);
 
   // Initialize Three.js scene
   useEffect(() => {
-    if (!isThreeLoaded || !THREE || !canvasRef.current || deviceInfo.isLowEnd)
-      return;
+    if (!isThreeLoaded || !THREE || !canvasRef.current) return;
 
     const canvas = canvasRef.current;
     const ThreeJS = THREE; // Type assertion for TypeScript
@@ -164,7 +164,6 @@ export default function ExploreLinks() {
       };
 
       animate();
-      setIsVisible(true);
 
       // Handle resize
       const handleResize = () => {
@@ -207,7 +206,7 @@ export default function ExploreLinks() {
         cleanupRef.current();
       }
     };
-  }, [isThreeLoaded, deviceInfo.isLowEnd, deviceInfo.isMobile]);
+  }, [isThreeLoaded, deviceInfo.isMobile]);
 
   // GSAP ScrollTrigger Animations
   useLayoutEffect(() => {
@@ -240,21 +239,14 @@ export default function ExploreLinks() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-20 sm:py-32 md:py-40 lg:py-48 px-4 sm:px-6 md:px-12 lg:px-16 overflow-hidden"
+      className="relative py-20 sm:py-32 md:py-40 lg:py-48 px-4 sm:px-6 md:px-12 lg:px-16 overflow-hidden bg-void-black"
     >
-      {/* 3D Canvas Background */}
-      {!deviceInfo.isLowEnd && (
-        <canvas
-          ref={canvasRef}
-          className="absolute inset-0 w-full h-full min-h-[600px]"
-          style={{ opacity: isVisible ? 0.4 : 0, transition: "opacity 1s" }}
-        />
-      )}
-
-      {/* Fallback gradient for low-end devices */}
-      {deviceInfo.isLowEnd && (
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-off-white/[0.02] to-transparent pointer-events-none" />
-      )}
+      {/* 3D Canvas Background - Always render */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full min-h-[600px] z-0"
+        style={{ opacity: 0.5 }}
+      />
 
       {/* Content Overlay */}
       <div ref={titleRef} className="relative z-10">
