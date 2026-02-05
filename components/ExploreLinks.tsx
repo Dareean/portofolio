@@ -21,7 +21,7 @@ export default function ExploreLinks() {
   // Load Three.js dynamically
   useEffect(() => {
     if (deviceInfo.isLowEnd) return;
-    
+
     import("three").then((module) => {
       THREE = module;
       setIsThreeLoaded(true);
@@ -30,31 +30,37 @@ export default function ExploreLinks() {
 
   // Initialize Three.js scene
   useEffect(() => {
-    if (!isThreeLoaded || !THREE || !canvasRef.current || deviceInfo.isLowEnd) return;
+    if (!isThreeLoaded || !THREE || !canvasRef.current || deviceInfo.isLowEnd)
+      return;
 
     const canvas = canvasRef.current;
     const ThreeJS = THREE; // Type assertion for TypeScript
     let mounted = true;
-    
+
     // Wait for proper canvas dimensions
     const checkAndInit = () => {
       if (!mounted) return;
-      
+
       const parent = canvas.parentElement;
       if (!parent) {
         requestAnimationFrame(checkAndInit);
         return;
       }
-      
+
       const rect = parent.getBoundingClientRect();
       if (rect.width === 0 || rect.height === 0) {
         requestAnimationFrame(checkAndInit);
         return;
       }
-      
+
       // Initialize scene
       const scene = new ThreeJS.Scene();
-      const camera = new ThreeJS.PerspectiveCamera(75, rect.width / rect.height, 0.1, 1000);
+      const camera = new ThreeJS.PerspectiveCamera(
+        75,
+        rect.width / rect.height,
+        0.1,
+        1000,
+      );
       camera.position.z = 5;
 
       const renderer = new ThreeJS.WebGLRenderer({
@@ -113,7 +119,10 @@ export default function ExploreLinks() {
         opacity: 0.6,
       });
 
-      const particles = new ThreeJS.Points(particlesGeometry, particlesMaterial);
+      const particles = new ThreeJS.Points(
+        particlesGeometry,
+        particlesMaterial,
+      );
       scene.add(particles);
 
       // Mouse tracking
@@ -174,24 +183,24 @@ export default function ExploreLinks() {
         cancelAnimationFrame(animationId);
         window.removeEventListener("mousemove", handleMouseMove);
         window.removeEventListener("resize", handleResize);
-        
+
         // Dispose Three.js resources
         renderer.dispose();
         geometries.forEach((geo) => {
           geo.geometry.dispose();
-          if ('dispose' in geo.material) {
+          if ("dispose" in geo.material) {
             (geo.material as any).dispose();
           }
         });
         particles.geometry.dispose();
-        if ('dispose' in particles.material) {
+        if ("dispose" in particles.material) {
           (particles.material as any).dispose();
         }
       };
     };
-    
+
     checkAndInit();
-    
+
     return () => {
       mounted = false;
       if (cleanupRef.current) {
