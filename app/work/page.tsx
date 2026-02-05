@@ -2,52 +2,123 @@
 
 import { motion, useTransform, useScroll } from "framer-motion";
 import Link from "next/link";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { PROJECTS } from "@/lib/data";
 import FloatingNav from "@/components/FloatingNav";
+import AnimatedBackground from "@/components/AnimatedBackground";
+import { ExternalLink } from "lucide-react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 // Generate categories dynamically
-const allCategories = PROJECTS.flatMap(p => 
-  Array.isArray(p.category) ? p.category : [p.category]
+const allCategories = PROJECTS.flatMap((p) =>
+  Array.isArray(p.category) ? p.category : [p.category],
 );
 const categories = ["All", ...Array.from(new Set(allCategories))];
 
-// Minimal Project Card with scroll animation
-function ProjectCard({ 
-  project 
-}: { 
-  project: typeof PROJECTS[0]; 
-}) {
+// Project Card with GSAP animations
+function ProjectCard({ project, index }: { project: (typeof PROJECTS)[0]; index: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: cardRef,
-    offset: ["start end", "center center"]
-  });
+  const imageRef = useRef<HTMLDivElement>(null);
+  const descRef = useRef<HTMLParagraphElement>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
-  const y = useTransform(scrollYProgress, [0, 0.5], [80, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.5], [0.95, 1]);
+  useEffect(() => {
+    if (!cardRef.current) return;
+
+    // GSAP Pop-up animation with stagger
+    gsap.fromTo(
+      cardRef.current,
+      {
+        scale: 0.8,
+        opacity: 0,
+        y: 50,
+      },
+      {
+        scale: 1,
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        ease: "back.out(1.4)",
+        scrollTrigger: {
+          trigger: cardRef.current,
+          start: "top bottom-=100",
+          toggleActions: "play none none none",
+        },
+        delay: (index % 3) * 0.1, // Stagger based on grid position
+      }
+    );
+
+    // Parallax effect on image
+    if (imageRef.current) {
+      gsap.to(imageRef.current, {
+        yPercent: -10,
+        ease: "none",
+        scrollTrigger: {
+          trigger: cardRef.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1,
+        },
+      });
+    }
+
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => {
+        if (trigger.trigger === cardRef.current) {
+          trigger.kill();
+        }
+      });
+    };
+  }, [index]);
+
+  // Toggle description expansion
+  const toggleDescription = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!descRef.current) return;
+    
+    if (isExpanded) {
+      gsap.to(descRef.current, {
+        maxHeight: "3rem", // ~2 lines
+        duration: 0.4,
+        ease: "power2.inOut",
+      });
+    } else {
+      gsap.to(descRef.current, {
+        maxHeight: descRef.current.scrollHeight,
+        duration: 0.4,
+        ease: "power2.inOut",
+      });
+    }
+    
+    setIsExpanded(!isExpanded);
+  };
 
   return (
-    <motion.div
-      ref={cardRef}
-      style={{ opacity, y, scale }}
-      className="group"
-    >
-      <Link 
-        href={project.link || `/work/${project.id}`} 
+    <div ref={cardRef} className="group">
+      <Link
+        href={project.link || `/work/${project.id}`}
         target={project.link ? "_blank" : undefined}
         className="block"
       >
         {/* Image Container */}
         <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-off-white/5 mb-4 sm:mb-5 md:mb-6">
-          <div 
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-            style={{ backgroundImage: `url(${project.image})` }}
+          <div
+            ref={imageRef}
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-110"
+            style={{ 
+              backgroundImage: `url(${project.image})`,
+              backgroundPosition: "center 30%",
+              height: "120%",
+            }}
           />
           {/* Subtle overlay on hover */}
           <div className="absolute inset-0 bg-void-black/0 group-hover:bg-void-black/20 transition-colors duration-500" />
-          
+
           {/* Featured badge */}
           {project.featured && (
             <div className="absolute top-4 left-4">
@@ -57,10 +128,15 @@ function ProjectCard({
             </div>
           )}
 
+          {/* External link indicator */}
+          {project.link && (
+            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <ExternalLink className="w-5 h-5 text-off-white" />
+            </div>
+          )}
+
           {/* View indicator on hover */}
-          <motion.div 
-            className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          >
+          <motion.div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <span className="px-6 py-3 bg-off-white text-void-black text-sm tracking-wider uppercase rounded-full">
               View
             </span>
@@ -71,7 +147,11 @@ function ProjectCard({
         <div className="space-y-2 sm:space-y-3">
           {/* Categories + Year */}
           <div className="flex items-center gap-2 sm:gap-3 text-off-white/40 text-[10px] sm:text-xs tracking-widest uppercase">
-            <span>{Array.isArray(project.category) ? project.category[0] : project.category}</span>
+            <span>
+              {Array.isArray(project.category)
+                ? project.category[0]
+                : project.category}
+            </span>
             <span className="w-1 h-1 bg-off-white/20 rounded-full" />
             <span>{project.year}</span>
           </div>
@@ -81,15 +161,44 @@ function ProjectCard({
             {project.title}
           </h3>
 
-          {/* Description */}
+          {/* Description - Expandable */}
           {project.description && (
-            <p className="text-off-white/50 text-xs sm:text-sm leading-relaxed line-clamp-2">
-              {project.description}
-            </p>
+            <div className="relative">
+              <p 
+                ref={descRef}
+                className="text-off-white/50 text-xs sm:text-sm leading-relaxed overflow-hidden transition-all duration-300"
+                style={{ maxHeight: "3rem" }}
+              >
+                {project.description}
+              </p>
+              
+              {/* Read More Button - only show if text is long */}
+              {project.description.length > 100 && (
+                <button
+                  onClick={toggleDescription}
+                  className="mt-2 text-off-white/40 hover:text-off-white text-[10px] tracking-wider uppercase transition-colors inline-flex items-center gap-1"
+                >
+                  <span>{isExpanded ? "Show Less" : "Read More"}</span>
+                  <svg
+                    className={`w-3 h-3 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+              )}
+            </div>
           )}
         </div>
       </Link>
-    </motion.div>
+    </div>
   );
 }
 
@@ -100,34 +209,37 @@ export default function WorkPage() {
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress: heroScrollProgress } = useScroll({
     target: heroRef,
-    offset: ["start start", "end start"]
+    offset: ["start start", "end start"],
   });
   const heroOpacity = useTransform(heroScrollProgress, [0, 0.8], [1, 0]);
-  const heroY = useTransform(heroScrollProgress, [0, 1], [0, -100]);
+  const heroScale = useTransform(heroScrollProgress, [0, 1], [1, 0.95]);
 
-
-  const filteredProjects = activeFilter === "All" 
-    ? PROJECTS 
-    : PROJECTS.filter(p => 
-        Array.isArray(p.category) 
-          ? p.category.includes(activeFilter) 
-          : p.category === activeFilter
-      );
+  const filteredProjects =
+    activeFilter === "All"
+      ? PROJECTS
+      : PROJECTS.filter((p) =>
+          Array.isArray(p.category)
+            ? p.category.includes(activeFilter)
+            : p.category === activeFilter,
+        );
 
   return (
     <main className="min-h-screen overflow-hidden bg-void-black">
+      {/* Animated Background */}
+      <AnimatedBackground />
       <FloatingNav />
+
       {/* ============================================ */}
-      {/* HERO - Horizontal Marquee */}
+      {/* HERO - Editorial Title */}
       {/* ============================================ */}
-      <motion.section 
+      <motion.section
         ref={heroRef}
-        className="h-screen pt-16 sm:pt-20 pb-6 sm:pb-8 flex flex-col items-center justify-between relative overflow-hidden"
-        style={{ opacity: heroOpacity }}
+        className="min-h-screen pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 flex flex-col items-center justify-center relative px-6"
+        style={{ opacity: heroOpacity, scale: heroScale }}
       >
         {/* Home Link */}
         <motion.div
-          className="absolute top-4 sm:top-6 left-4 sm:left-6 md:left-16 z-20"
+          className="absolute top-6 left-6 md:left-16 z-20"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
@@ -152,137 +264,101 @@ export default function WorkPage() {
             <span className="text-sm tracking-wide">Home</span>
           </Link>
         </motion.div>
-        {/* Marquee Container */}
-        <div className="w-full overflow-hidden py-4 flex-1 flex flex-col justify-center">
-          {/* First marquee row - scrolling left */}
+
+        {/* Main Hero Content */}
+        <div className="max-w-5xl text-center">
+          {/* Overline */}
           <motion.div
-            className="flex whitespace-nowrap"
-            animate={{ x: [0, "-50%"] }}
-            transition={{ 
-              duration: 20, 
-              repeat: Infinity, 
-              ease: "linear" 
-            }}
+            className="mb-4 sm:mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
           >
-            {[...Array(4)].map((_, i) => (
-              <span 
-                key={i} 
-                className="font-display text-[12vw] sm:text-[10vw] md:text-[8vw] lg:text-[6vw] text-off-white tracking-tighter mx-4 sm:mx-6 flex items-center gap-4 sm:gap-6"
-              >
-                WORK
-                <span className="text-off-white/20">•</span>
-                PLAY
-                <span className="text-off-white/20">•</span>
-                CREATE
-                <span className="text-off-white/20">•</span>
-                REPEAT
-                <span className="text-off-white/20">•</span>
-              </span>
-            ))}
+            <span className="text-off-white/40 text-[10px] sm:text-xs tracking-[0.3em] uppercase">
+              Selected Projects
+            </span>
           </motion.div>
 
-          {/* Second marquee row - scrolling right (reverse) */}
-          <motion.div
-            className="flex whitespace-nowrap mt-2"
-            animate={{ x: ["-50%", 0] }}
-            transition={{ 
-              duration: 25, 
-              repeat: Infinity, 
-              ease: "linear" 
-            }}
+          {/* Main Title - Large Editorial */}
+          <motion.h1
+            className="font-display text-5xl sm:text-7xl md:text-8xl lg:text-9xl text-off-white leading-[0.9] mb-6 sm:mb-8"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
           >
-            {[...Array(4)].map((_, i) => (
-              <span 
-                key={i} 
-                className="font-display text-[12vw] sm:text-[10vw] md:text-[8vw] lg:text-[6vw] text-off-white/10 tracking-tighter mx-4 sm:mx-6 flex items-center gap-4 sm:gap-6"
-              >
-                IDEAS
-                <span className="text-off-white/5">→</span>
-                PIXELS
-                <span className="text-off-white/5">→</span>
-                REALITY
-                <span className="text-off-white/5">→</span>
-              </span>
-            ))}
-          </motion.div>
-        </div>
+            Visual
+            <br />
+            <span className="text-off-white/30">Narratives</span>
+          </motion.h1>
 
-        {/* Centered content below marquee */}
-        <motion.div 
-          className="text-center px-6 max-w-xl"
-          style={{ y: heroY }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-        >
-          <p className="text-off-white/50 text-xs sm:text-sm md:text-base leading-relaxed px-2">
-            A curated collection of projects spanning mobile apps, 
-            web platforms, and digital experiences.
-          </p>
+          {/* Description */}
+          <motion.p
+            className="text-off-white/60 text-sm sm:text-base md:text-lg leading-relaxed max-w-2xl mx-auto mb-8 sm:mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.7 }}
+          >
+            Curated collection of digital experiences — from mobile apps to web
+            platforms. Each project tells a story through design and
+            functionality.
+          </motion.p>
 
-          {/* Scroll indicator - simple arrow */}
+          {/* Scroll Indicator */}
           <motion.div
-            className="mt-6 flex flex-col items-center gap-2 text-off-white/40"
+            className="flex flex-col items-center gap-3 text-off-white/40"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1 }}
           >
-            <span className="text-[10px] tracking-[0.3em] uppercase">Scroll</span>
-            <motion.svg 
-              width="14" 
-              height="20" 
-              viewBox="0 0 16 24" 
+            <span className="text-[10px] tracking-[0.3em] uppercase">
+              Explore
+            </span>
+            <motion.svg
+              width="14"
+              height="20"
+              viewBox="0 0 16 24"
               fill="none"
               animate={{ y: [0, 5, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
             >
-              <path 
-                d="M8 0V22M8 22L1 15M8 22L15 15" 
-                stroke="currentColor" 
+              <path
+                d="M8 0V22M8 22L1 15M8 22L15 15"
+                stroke="currentColor"
                 strokeWidth="1.5"
               />
             </motion.svg>
           </motion.div>
-        </motion.div>
-
-        {/* Gradient fade on edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-16 md:w-24 bg-gradient-to-r from-void-black to-transparent pointer-events-none z-10" />
-        <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-16 md:w-24 bg-gradient-to-l from-void-black to-transparent pointer-events-none z-10" />
+        </div>
       </motion.section>
 
-
-
-
       {/* ============================================ */}
-      {/* FILTER - Minimal Underline Style */}
+      {/* FILTER - Clean Pills */}
       {/* ============================================ */}
-      <section className="px-4 sm:px-6 md:px-12 lg:px-20 py-8 sm:py-10 md:py-12 border-b border-off-white/10">
+      <section className="sticky top-16 sm:top-20 bg-void-black/80 backdrop-blur-lg z-30 border-y border-off-white/10 px-6 md:px-12 lg:px-20 py-4 sm:py-6">
         <motion.nav
-          className="flex flex-wrap gap-x-4 sm:gap-x-6 md:gap-x-8 gap-y-3 sm:gap-y-4"
+          className="flex flex-wrap gap-2 sm:gap-3 justify-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 1.4 }}
+          transition={{ duration: 0.6 }}
         >
           {categories.map((cat, i) => (
             <motion.button
               key={cat}
               onClick={() => setActiveFilter(cat)}
-              className="relative py-1.5 sm:py-2 text-xs sm:text-sm tracking-wider uppercase transition-colors duration-300"
+              className={`px-4 sm:px-5 py-2 text-[10px] sm:text-xs tracking-[0.15em] uppercase transition-all duration-300 border ${
+                activeFilter === cat
+                  ? "bg-off-white text-void-black border-off-white"
+                  : "bg-transparent text-off-white/50 border-off-white/20 hover:text-off-white hover:border-off-white/50"
+              }`}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 1.4 + i * 0.05 }}
+              transition={{ duration: 0.4, delay: i * 0.05 }}
             >
-              <span className={activeFilter === cat ? "text-off-white" : "text-off-white/40 hover:text-off-white/70"}>
-                {cat}
-              </span>
-              {/* Underline indicator */}
-              {activeFilter === cat && (
-                <motion.div
-                  className="absolute -bottom-1 left-0 right-0 h-[2px] bg-off-white"
-                  layoutId="filter-underline"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
-                />
-              )}
+              {cat}
             </motion.button>
           ))}
         </motion.nav>
@@ -293,24 +369,63 @@ export default function WorkPage() {
       {/* ============================================ */}
       <section className="px-4 sm:px-6 md:px-12 lg:px-20 py-12 sm:py-16 md:py-20">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-x-8 gap-y-10 sm:gap-y-12 md:gap-y-16">
-          {filteredProjects.map((project) => (
-            <ProjectCard 
-              key={project.id} 
-              project={project} 
-            />
+          {filteredProjects.map((project, index) => (
+            <ProjectCard key={project.id} project={project} index={index} />
           ))}
         </div>
 
         {/* Empty state */}
         {filteredProjects.length === 0 && (
-          <motion.div 
+          <motion.div
             className="text-center py-20"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            <p className="text-off-white/40 text-lg">No projects found in this category.</p>
+            <p className="text-off-white/40 text-lg">
+              No projects found in this category.
+            </p>
           </motion.div>
         )}
+      </section>
+
+      {/* ============================================ */}
+      {/* FOOTER CTA */}
+      {/* ============================================ */}
+      <section className="px-6 md:px-12 lg:px-20 py-16 sm:py-20 md:py-24 border-t border-off-white/10">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.h2
+            className="font-display text-4xl sm:text-5xl md:text-6xl text-off-white mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            Let's Create Together
+          </motion.h2>
+          <motion.p
+            className="text-off-white/60 text-base sm:text-lg mb-8 max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+          >
+            Have a project in mind? Let's discuss how we can bring your vision
+            to life.
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <Link
+              href="/contact"
+              className="inline-block px-8 py-4 border-2 border-off-white text-off-white text-sm tracking-[0.15em] uppercase hover:bg-off-white hover:text-void-black transition-all duration-300"
+            >
+              Get in Touch
+            </Link>
+          </motion.div>
+        </div>
       </section>
     </main>
   );

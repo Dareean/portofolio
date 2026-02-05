@@ -18,28 +18,28 @@ export default function IntroTransition() {
     // Show logo after blinds start revealing
     const logoTimer = setTimeout(() => {
       setShowLogo(true);
-    }, 800);
+    }, 400);
 
     // Show text after logo
     const textTimer = setTimeout(() => {
       setShowText(true);
-    }, 1500);
+    }, 750);
 
-    // Scale up logo (bouncy effect) - 1.1s after text
+    // Scale up logo (bouncy effect) - 0.55s after text
     const scaleTimer = setTimeout(() => {
       setLogoScale(2.5);
-    }, 2600); // 1500 + 1100
+    }, 1300); // 750 + 550
 
-    // After 1.1 second pause, move logo down and close blinds
+    // After 0.55 second pause, move logo down and close blinds
     const moveUpTimer = setTimeout(() => {
       setLogoMoveUp(true);
       setCloseBlinds(true);
-    }, 3700); // 2600 + 1100
+    }, 1850); // 1300 + 550
 
     // Hide entire intro after logo moves down
     const introTimer = setTimeout(() => {
       setShowIntro(false);
-    }, 4700); // Give 1s for the downward animation
+    }, 2350); // Give 0.5s for the downward animation
 
     return () => {
       clearTimeout(logoTimer);
@@ -81,8 +81,8 @@ export default function IntroTransition() {
                 initial={{ scaleY: 1 }}
                 animate={{ scaleY: closeBlinds ? 1 : 0 }}
                 transition={{
-                  duration: closeBlinds ? 0.8 : 1,
-                  delay: closeBlinds ? index * 0.05 : index * 0.1,
+                  duration: closeBlinds ? 0.4 : 0.5,
+                  delay: closeBlinds ? index * 0.025 : index * 0.05,
                   ease: [0.76, 0, 0.24, 1],
                 }}
               />

@@ -5,11 +5,15 @@ import WorkList from "@/components/WorkList";
 import ExploreLinks from "@/components/ExploreLinks";
 import Footer from "@/components/Footer";
 import FloatingNav from "@/components/FloatingNav";
+import AnimatedBackground from "@/components/AnimatedBackground";
 import { PROJECTS } from "@/lib/data";
 
 export default function Home() {
   return (
     <main className="min-h-screen">
+      {/* Animated Background */}
+      <AnimatedBackground />
+
       {/* Floating Navigation */}
       <FloatingNav />
 

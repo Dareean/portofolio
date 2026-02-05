@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useTheme } from "./ThemeProvider";
 import { useDeviceType, getAnimationConfig } from "@/lib/hooks";
+import ShootingStars from "./ShootingStars";
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -34,6 +35,9 @@ export default function Hero() {
       ref={containerRef}
       className="relative h-[100vh] sm:h-[110vh] md:h-[120vh] flex items-center justify-center overflow-hidden bg-void-black"
     >
+      {/* Shooting Stars */}
+      <ShootingStars />
+
       {/* Aurora blur background - Performance optimized */}
       <div className="absolute inset-0 bg-void-black overflow-hidden">
         {/* Conditionally render aurora orbs based on device capability */}
