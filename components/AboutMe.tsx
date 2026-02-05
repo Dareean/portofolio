@@ -470,7 +470,7 @@ export default function AboutMe() {
               className="h-full"
               disabled={deviceInfo.isMobile || deviceInfo.isLowEnd}
             >
-              <div className="relative h-full min-h-[320px] sm:min-h-[380px] rounded-2xl border border-off-white/[0.06] bg-off-white/[0.015] backdrop-blur-sm p-6 sm:p-8 flex flex-col items-center justify-center group hover:border-off-white/15 transition-all duration-500 overflow-hidden">
+              <div className="relative h-full min-h-[320px] sm:min-h-[380px] rounded-2xl bg-off-white/[0.015] backdrop-blur-sm p-6 sm:p-8 flex flex-col items-center justify-center group transition-all duration-500 overflow-hidden">
                 {/* Shimmer effect on hover */}
                 <motion.div
                   className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
@@ -507,7 +507,7 @@ export default function AboutMe() {
                   <div className="absolute -inset-3 rounded-full bg-void-black" />
 
                   <motion.div
-                    className="relative w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40 rounded-full overflow-hidden border border-off-white/20"
+                    className="relative w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40 rounded-full overflow-hidden"
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.4 }}
                   >
@@ -540,13 +540,13 @@ export default function AboutMe() {
                   viewport={{ once: true }}
                   transition={{ delay: 0.4 }}
                 >
-                  Developer & Designer
+                  UI & Social Entushiast
                 </motion.p>
 
                 {/* Status badge and Contact button */}
                 <div className="flex items-center gap-2 flex-wrap">
                   <motion.div
-                    className="px-3 py-1.5 bg-void-black border border-off-white/20 rounded-full"
+                    className="px-3 py-1.5 bg-void-black rounded-full"
                     whileHover={{ scale: 1.05 }}
                   >
                     <span className="flex items-center gap-2 text-xs text-off-white/60">
@@ -596,7 +596,7 @@ export default function AboutMe() {
             {/* Bio Quote Card (GSAP animated) */}
             <div ref={bioCardRef}>
               <TiltCard disabled={deviceInfo.isMobile || deviceInfo.isLowEnd}>
-                <div className="relative rounded-2xl border border-off-white/[0.06] bg-off-white/[0.015] backdrop-blur-sm p-6 sm:p-8 hover:border-off-white/15 transition-all duration-500 overflow-hidden group">
+                <div className="relative rounded-2xl bg-off-white/[0.015] backdrop-blur-sm p-6 sm:p-8 transition-all duration-500 overflow-hidden group">
                   {/* Animated corner accents */}
                   <motion.div
                     className="absolute top-0 left-0 w-12 h-12 border-t border-l border-off-white/20 rounded-tl-2xl"
@@ -647,54 +647,158 @@ export default function AboutMe() {
               </TiltCard>
             </div>
 
-            {/* Stats Row with Counter Animation (GSAP animated) */}
-            <div ref={statsRef} className="grid grid-cols-3 gap-3 sm:gap-4">
+            {/* Working Style (GSAP animated) */}
+            <div
+              ref={statsRef}
+              className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4"
+            >
               {[
                 {
-                  label: "Projects",
-                  value: projectsCounter.count,
-                  suffix: "+",
-                  ref: projectsCounter.ref,
-                  setStart: projectsCounter.setHasStarted,
+                  label: "Agile Mindset",
+                  description: "Iterative approach",
+                  icon: (
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                      />
+                    </svg>
+                  ),
+                  color: "from-blue-500/20 to-cyan-500/20",
+                  iconColor: "text-blue-400",
                 },
                 {
-                  label: "Experience",
-                  value: experienceCounter.count,
-                  suffix: " Yrs",
-                  ref: experienceCounter.ref,
-                  setStart: experienceCounter.setHasStarted,
+                  label: "Collaborative",
+                  description: "Team player",
+                  icon: (
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                      />
+                    </svg>
+                  ),
+                  color: "from-green-500/20 to-emerald-500/20",
+                  iconColor: "text-green-400",
                 },
                 {
-                  label: "Focus",
-                  value: "Web",
-                  suffix: "/Mobile",
-                  isText: true,
+                  label: "Detail-Oriented",
+                  description: "Quality focused",
+                  icon: (
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                      />
+                    </svg>
+                  ),
+                  color: "from-purple-500/20 to-pink-500/20",
+                  iconColor: "text-purple-400",
                 },
-              ].map((stat, i) => (
+                {
+                  label: "Fast Learner",
+                  description: "Adapts quickly",
+                  icon: (
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                      />
+                    </svg>
+                  ),
+                  color: "from-orange-500/20 to-amber-500/20",
+                  iconColor: "text-orange-400",
+                },
+              ].map((trait, i) => (
                 <motion.div
-                  key={stat.label}
-                  ref={stat.ref}
+                  key={trait.label}
                   initial={{ opacity: 0, y: 30, scale: 0.9 }}
                   whileInView={{
                     opacity: 1,
                     y: 0,
                     scale: 1,
                   }}
-                  onViewportEnter={() => stat.setStart?.(true)}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
                   whileHover={{
-                    scale: 1.03,
-                    borderColor: "rgba(255,255,255,0.3)",
+                    scale: 1.05,
+                    y: -5,
                   }}
-                  className="stat-item rounded-xl border border-off-white/[0.06] bg-off-white/[0.015] backdrop-blur-sm p-4 sm:p-5 text-center hover:border-off-white/15 transition-colors duration-500 cursor-default"
+                  className="group relative rounded-xl bg-off-white/[0.015] backdrop-blur-sm p-4 sm:p-5 transition-all duration-300 overflow-hidden"
                 >
-                  <motion.div className="font-display text-xl sm:text-2xl md:text-3xl text-off-white mb-1">
-                    {stat.isText ? stat.value : stat.value}
-                    {stat.suffix}
-                  </motion.div>
-                  <div className="text-off-white/40 text-xs sm:text-sm tracking-wide uppercase">
-                    {stat.label}
+                  {/* Gradient background on hover */}
+                  <motion.div
+                    className={`absolute inset-0 bg-gradient-to-br ${trait.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+                  />
+
+                  {/* Content */}
+                  <div className="relative z-10 flex flex-col items-center text-center gap-3">
+                    {/* Icon with animation */}
+                    <motion.div
+                      className={`${trait.iconColor} group-hover:scale-110 transition-transform duration-300`}
+                      animate={{
+                        rotate: i % 2 === 0 ? [0, 5, -5, 0] : [0, -5, 5, 0],
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        repeatDelay: 1,
+                      }}
+                    >
+                      {trait.icon}
+                    </motion.div>
+
+                    {/* Text */}
+                    <div>
+                      <div className="font-display text-sm sm:text-base text-off-white mb-1 group-hover:text-off-white transition-colors">
+                        {trait.label}
+                      </div>
+                      <div className="text-off-white/40 text-xs group-hover:text-off-white/60 transition-colors">
+                        {trait.description}
+                      </div>
+                    </div>
+
+                    {/* Decorative dot */}
+                    <motion.div
+                      className="w-1.5 h-1.5 rounded-full bg-off-white/20 group-hover:bg-off-white/40"
+                      animate={{
+                        scale: [1, 1.5, 1],
+                        opacity: [0.5, 1, 0.5],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        delay: i * 0.2,
+                      }}
+                    />
                   </div>
                 </motion.div>
               ))}
@@ -828,7 +932,7 @@ export default function AboutMe() {
                   link.click();
                   document.body.removeChild(link);
                 }}
-                className="group relative inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full border border-off-white/20 text-off-white/70 text-xs sm:text-sm tracking-wider uppercase overflow-hidden hover:text-void-black transition-colors duration-300"
+                className="group relative inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-off-white/5 text-off-white/70 text-xs sm:text-sm tracking-wider uppercase overflow-hidden hover:text-void-black transition-colors duration-300"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -867,7 +971,7 @@ export default function AboutMe() {
                     href={social.href}
                     target={social.icon !== "email" ? "_blank" : undefined}
                     rel="noopener noreferrer"
-                    className="p-2.5 rounded-full border border-off-white/10 text-off-white/40 hover:border-off-white/30 hover:text-off-white/70 transition-all duration-300"
+                    className="p-2.5 rounded-full bg-off-white/5 text-off-white/40 hover:bg-off-white/10 hover:text-off-white/70 transition-all duration-300"
                     initial={{ opacity: 0, scale: 0.8 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}

@@ -24,13 +24,13 @@ export default function Home() {
         <Marquee />
       </div>
 
+      {/* Explore More - 3D Scene & Stats */}
+      <ExploreLinks />
+
       {/* Work Section */}
       <div className="py-24">
-        <WorkList projects={PROJECTS.filter(p => p.featured)} />
+        <WorkList projects={PROJECTS.filter((p) => p.featured)} />
       </div>
-
-      {/* Explore More - Blog & Contact */}
-      <ExploreLinks />
 
       {/* Footer */}
       <Footer />
