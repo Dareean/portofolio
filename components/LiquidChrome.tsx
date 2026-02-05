@@ -264,7 +264,9 @@ export default function LiquidChrome() {
     };
 
     window.addEventListener("resize", handleResize);
-let frameCount = 0;
+
+    // Animation loop
+    let frameCount = 0;
     const frameSkip = deviceInfo.isMobile ? 1 : 0; // Skip frames on mobile if needed
     
     const animate = () => {
@@ -276,8 +278,6 @@ let frameCount = 0;
         return;
       }
       
-    // Animation loop
-    const animate = () => {
       const elapsedTime = clock.getElapsedTime();
 
       liquidMaterial.uniforms.uTime.value = elapsedTime;
@@ -292,20 +292,7 @@ let frameCount = 0;
     // Store references
     sceneRef.current = { scene, camera, renderer, clock, mesh };
 
-    //deviceInfo.isMobile, deviceInfo.isLowEnd, deviceInfo.prefersReducedMotion]);
-
-  // Show placeholder on low-end devices
-  if (deviceInfo.isLowEnd || deviceInfo.prefersReducedMotion) {
-    return (
-      <div 
-        className="absolute inset-0 w-full h-full pointer-events-none"
-        style={{ 
-          zIndex: 0,
-          background: "radial-gradient(circle at center, rgba(100, 100, 120, 0.1) 0%, transparent 70%)"
-        }}
-      />
-    );
-  }eanup
+    // Cleanup
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("resize", handleResize);
@@ -318,7 +305,20 @@ let frameCount = 0;
       liquidMaterial.dispose();
       renderer.dispose();
     };
-  }, []);
+  }, [deviceInfo.isMobile, deviceInfo.isLowEnd, deviceInfo.prefersReducedMotion]);
+
+  // Show placeholder on low-end devices
+  if (deviceInfo.isLowEnd || deviceInfo.prefersReducedMotion) {
+    return (
+      <div 
+        className="absolute inset-0 w-full h-full pointer-events-none"
+        style={{ 
+          zIndex: 0,
+          background: "radial-gradient(circle at center, rgba(100, 100, 120, 0.1) 0%, transparent 70%)"
+        }}
+      />
+    );
+  }
 
   return (
     <canvas
