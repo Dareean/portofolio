@@ -4,198 +4,201 @@ import { useRef, useLayoutEffect, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import * as THREE from "three";
 import { useDeviceType } from "@/lib/hooks";
+
+// Dynamic import Three.js only on client side
+let THREE: typeof import("three") | null = null;
 
 export default function ExploreLinks() {
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
-  const sceneRef = useRef<{
-    scene: THREE.Scene;
-    camera: THREE.PerspectiveCamera;
-    renderer: THREE.WebGLRenderer;
-    geometries: THREE.Mesh[];
-    particles: THREE.Points;
-    mouse: { x: number; y: number };
-    targetRotation: { x: number; y: number };
-  } | null>(null);
   const deviceInfo = useDeviceType();
   const [isVisible, setIsVisible] = useState(false);
+  const [isThreeLoaded, setIsThreeLoaded] = useState(false);
+  const cleanupRef = useRef<(() => void) | null>(null);
+
+  // Load Three.js dynamically
+  useEffect(() => {
+    if (deviceInfo.isLowEnd) return;
+    
+    import("three").then((module) => {
+      THREE = module;
+      setIsThreeLoaded(true);
+    });
+  }, [deviceInfo.isLowEnd]);
 
   // Initialize Three.js scene
   useEffect(() => {
-    if (!canvasRef.current || deviceInfo.isLowEnd) return;
+    if (!isThreeLoaded || !THREE || !canvasRef.current || deviceInfo.isLowEnd) return;
 
     const canvas = canvasRef.current;
+    const ThreeJS = THREE; // Type assertion for TypeScript
+    let mounted = true;
+    
+    // Wait for proper canvas dimensions
+    const checkAndInit = () => {
+      if (!mounted) return;
+      
+      const parent = canvas.parentElement;
+      if (!parent) {
+        requestAnimationFrame(checkAndInit);
+        return;
+      }
+      
+      const rect = parent.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) {
+        requestAnimationFrame(checkAndInit);
+        return;
+      }
+      
+      // Initialize scene
+      const scene = new ThreeJS.Scene();
+      const camera = new ThreeJS.PerspectiveCamera(75, rect.width / rect.height, 0.1, 1000);
+      camera.position.z = 5;
 
-    // Set initial canvas size
-    const updateCanvasSize = () => {
-      if (!canvas.parentElement) return;
-      const rect = canvas.parentElement.getBoundingClientRect();
-      canvas.width = rect.width;
-      canvas.height = rect.height;
-    };
+      const renderer = new ThreeJS.WebGLRenderer({
+        canvas,
+        alpha: true,
+        antialias: !deviceInfo.isMobile,
+      });
+      renderer.setSize(rect.width, rect.height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    updateCanvasSize();
+      // Create geometric shapes
+      const geometries: Array<InstanceType<typeof ThreeJS.Mesh>> = [];
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      canvas.width / canvas.height,
-      0.1,
-      1000,
-    );
-    camera.position.z = 5;
+      // Torus
+      const torusGeometry = new ThreeJS.TorusGeometry(1, 0.4, 16, 100);
+      const torusMaterial = new ThreeJS.MeshNormalMaterial({ wireframe: true });
+      const torus = new ThreeJS.Mesh(torusGeometry, torusMaterial);
+      torus.position.set(-2, 1, 0);
+      scene.add(torus);
+      geometries.push(torus);
 
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      alpha: true,
-      antialias: !deviceInfo.isMobile,
-    });
-    renderer.setSize(canvas.width, canvas.height);
-    renderer.setPixelRatio(
-      deviceInfo.isMobile ? 1 : Math.min(window.devicePixelRatio, 2),
-    );
+      // Icosahedron
+      const icoGeometry = new ThreeJS.IcosahedronGeometry(1, 0);
+      const icoMaterial = new ThreeJS.MeshNormalMaterial({ wireframe: true });
+      const icosahedron = new ThreeJS.Mesh(icoGeometry, icoMaterial);
+      icosahedron.position.set(2, -1, 0);
+      scene.add(icosahedron);
+      geometries.push(icosahedron);
 
-    // Create geometric shapes
-    const geometries: THREE.Mesh[] = [];
+      // Octahedron
+      const octaGeometry = new ThreeJS.OctahedronGeometry(1, 0);
+      const octaMaterial = new ThreeJS.MeshNormalMaterial({ wireframe: true });
+      const octahedron = new ThreeJS.Mesh(octaGeometry, octaMaterial);
+      octahedron.position.set(0, -1.5, -2);
+      scene.add(octahedron);
+      geometries.push(octahedron);
 
-    // Torus
-    const torusGeometry = new THREE.TorusGeometry(1, 0.4, 16, 100);
-    const torusMaterial = new THREE.MeshNormalMaterial({ wireframe: true });
-    const torus = new THREE.Mesh(torusGeometry, torusMaterial);
-    torus.position.set(-2, 1, 0);
-    scene.add(torus);
-    geometries.push(torus);
+      // Particles
+      const particleCount = deviceInfo.isMobile ? 500 : 1000;
+      const particlesGeometry = new ThreeJS.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
 
-    // Icosahedron
-    const icoGeometry = new THREE.IcosahedronGeometry(1, 0);
-    const icoMaterial = new THREE.MeshNormalMaterial({ wireframe: true });
-    const icosahedron = new THREE.Mesh(icoGeometry, icoMaterial);
-    icosahedron.position.set(2, -1, 0);
-    scene.add(icosahedron);
-    geometries.push(icosahedron);
+      for (let i = 0; i < particleCount * 3; i++) {
+        positions[i] = (Math.random() - 0.5) * 10;
+      }
 
-    // Octahedron
-    const octaGeometry = new THREE.OctahedronGeometry(1, 0);
-    const octaMaterial = new THREE.MeshNormalMaterial({ wireframe: true });
-    const octahedron = new THREE.Mesh(octaGeometry, octaMaterial);
-    octahedron.position.set(0, -1.5, -2);
-    scene.add(octahedron);
-    geometries.push(octahedron);
+      particlesGeometry.setAttribute(
+        "position",
+        new ThreeJS.BufferAttribute(positions, 3),
+      );
 
-    // Particles
-    const particleCount = deviceInfo.isMobile ? 500 : 1000;
-    const particlesGeometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
-
-    for (let i = 0; i < particleCount * 3; i++) {
-      positions[i] = (Math.random() - 0.5) * 10;
-    }
-
-    particlesGeometry.setAttribute(
-      "position",
-      new THREE.BufferAttribute(positions, 3),
-    );
-
-    const particlesMaterial = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.02,
-      transparent: true,
-      opacity: 0.6,
-    });
-
-    const particles = new THREE.Points(particlesGeometry, particlesMaterial);
-    scene.add(particles);
-
-    // Mouse tracking
-    const mouse = { x: 0, y: 0 };
-    const targetRotation = { x: 0, y: 0 };
-
-    const handleMouseMove = (event: MouseEvent) => {
-      if (!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-
-    // Store scene data
-    sceneRef.current = {
-      scene,
-      camera,
-      renderer,
-      geometries,
-      particles,
-      mouse,
-      targetRotation,
-    };
-
-    // Animation loop
-    let animationId: number;
-    const animate = () => {
-      animationId = requestAnimationFrame(animate);
-
-      if (!sceneRef.current) return;
-
-      const { geometries, particles, mouse, targetRotation } = sceneRef.current;
-
-      // Smooth mouse following
-      targetRotation.x += (mouse.y * 0.5 - targetRotation.x) * 0.05;
-      targetRotation.y += (mouse.x * 0.5 - targetRotation.y) * 0.05;
-
-      // Rotate geometries
-      geometries.forEach((geo, index) => {
-        geo.rotation.x += 0.01 * (index + 1);
-        geo.rotation.y += 0.005 * (index + 1);
-        geo.rotation.x += targetRotation.x * 0.02;
-        geo.rotation.y += targetRotation.y * 0.02;
+      const particlesMaterial = new ThreeJS.PointsMaterial({
+        color: 0xffffff,
+        size: 0.02,
+        transparent: true,
+        opacity: 0.6,
       });
 
-      // Rotate particles
-      particles.rotation.y += 0.001;
-      particles.rotation.y += targetRotation.y * 0.01;
+      const particles = new ThreeJS.Points(particlesGeometry, particlesMaterial);
+      scene.add(particles);
 
-      renderer.render(scene, camera);
-    };
+      // Mouse tracking
+      const mouse = { x: 0, y: 0 };
+      const targetRotation = { x: 0, y: 0 };
 
-    animate();
-    setIsVisible(true);
+      const handleMouseMove = (event: MouseEvent) => {
+        if (!parent) return;
+        const rect = parent.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      };
 
-    // Handle resize
-    const handleResize = () => {
-      if (!canvas || !sceneRef.current) return;
-      const { camera, renderer } = sceneRef.current;
-      camera.aspect = canvas.clientWidth / canvas.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-    };
+      window.addEventListener("mousemove", handleMouseMove);
 
-    window.addEventListener("resize", handleResize);
+      // Animation loop
+      let animationId: number;
+      const animate = () => {
+        if (!mounted) return;
+        animationId = requestAnimationFrame(animate);
 
-    return () => {
-      cancelAnimationFrame(animationId);
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("resize", handleResize);
-      renderer.dispose();
-      geometries.forEach((geo) => {
-        geo.geometry.dispose();
-        if (Array.isArray(geo.material)) {
-          geo.material.forEach((mat) => mat.dispose());
-        } else {
-          geo.material.dispose();
+        // Smooth mouse following
+        targetRotation.x += (mouse.y * 0.5 - targetRotation.x) * 0.05;
+        targetRotation.y += (mouse.x * 0.5 - targetRotation.y) * 0.05;
+
+        // Rotate geometries
+        geometries.forEach((geo, index) => {
+          geo.rotation.x += 0.01 * (index + 1);
+          geo.rotation.y += 0.005 * (index + 1);
+          geo.rotation.x += targetRotation.x * 0.02;
+          geo.rotation.y += targetRotation.y * 0.02;
+        });
+
+        // Rotate particles
+        particles.rotation.y += 0.001;
+        particles.rotation.y += targetRotation.y * 0.01;
+
+        renderer.render(scene, camera);
+      };
+
+      animate();
+      setIsVisible(true);
+
+      // Handle resize
+      const handleResize = () => {
+        if (!parent) return;
+        const rect = parent.getBoundingClientRect();
+        camera.aspect = rect.width / rect.height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(rect.width, rect.height);
+      };
+
+      window.addEventListener("resize", handleResize);
+
+      // Cleanup function
+      cleanupRef.current = () => {
+        mounted = false;
+        cancelAnimationFrame(animationId);
+        window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener("resize", handleResize);
+        
+        // Dispose Three.js resources
+        renderer.dispose();
+        geometries.forEach((geo) => {
+          geo.geometry.dispose();
+          if ('dispose' in geo.material) {
+            (geo.material as any).dispose();
+          }
+        });
+        particles.geometry.dispose();
+        if ('dispose' in particles.material) {
+          (particles.material as any).dispose();
         }
-      });
-      particles.geometry.dispose();
-      if (Array.isArray(particles.material)) {
-        particles.material.forEach((mat) => mat.dispose());
-      } else {
-        particles.material.dispose();
+      };
+    };
+    
+    checkAndInit();
+    
+    return () => {
+      mounted = false;
+      if (cleanupRef.current) {
+        cleanupRef.current();
       }
     };
-  }, [deviceInfo.isLowEnd, deviceInfo.isMobile]);
+  }, [isThreeLoaded, deviceInfo.isLowEnd, deviceInfo.isMobile]);
 
   // GSAP ScrollTrigger Animations
   useLayoutEffect(() => {
