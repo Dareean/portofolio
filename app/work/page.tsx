@@ -19,7 +19,13 @@ const allCategories = PROJECTS.flatMap((p) =>
 const categories = ["All", ...Array.from(new Set(allCategories))];
 
 // Project Card with GSAP animations
-function ProjectCard({ project, index }: { project: (typeof PROJECTS)[0]; index: number }) {
+function ProjectCard({
+  project,
+  index,
+}: {
+  project: (typeof PROJECTS)[0];
+  index: number;
+}) {
   const cardRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
@@ -48,7 +54,7 @@ function ProjectCard({ project, index }: { project: (typeof PROJECTS)[0]; index:
           toggleActions: "play none none none",
         },
         delay: (index % 3) * 0.1, // Stagger based on grid position
-      }
+      },
     );
 
     // Parallax effect on image
@@ -78,9 +84,9 @@ function ProjectCard({ project, index }: { project: (typeof PROJECTS)[0]; index:
   const toggleDescription = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!descRef.current) return;
-    
+
     if (isExpanded) {
       gsap.to(descRef.current, {
         maxHeight: "3rem", // ~2 lines
@@ -94,7 +100,7 @@ function ProjectCard({ project, index }: { project: (typeof PROJECTS)[0]; index:
         ease: "power2.inOut",
       });
     }
-    
+
     setIsExpanded(!isExpanded);
   };
 
@@ -110,7 +116,7 @@ function ProjectCard({ project, index }: { project: (typeof PROJECTS)[0]; index:
           <div
             ref={imageRef}
             className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-110"
-            style={{ 
+            style={{
               backgroundImage: `url(${project.image})`,
               backgroundPosition: "center 30%",
               height: "120%",
@@ -164,14 +170,14 @@ function ProjectCard({ project, index }: { project: (typeof PROJECTS)[0]; index:
           {/* Description - Expandable */}
           {project.description && (
             <div className="relative">
-              <p 
+              <p
                 ref={descRef}
                 className="text-off-white/50 text-xs sm:text-sm leading-relaxed overflow-hidden transition-all duration-300"
                 style={{ maxHeight: "3rem" }}
               >
                 {project.description}
               </p>
-              
+
               {/* Read More Button - only show if text is long */}
               {project.description.length > 100 && (
                 <button
