@@ -30,8 +30,8 @@ export default function ProjectDetailPage() {
     );
   }
 
-  const categoryDisplay = Array.isArray(project.category) 
-    ? project.category.join(", ") 
+  const categoryDisplay = Array.isArray(project.category)
+    ? project.category.join(", ")
     : project.category;
 
   return (
@@ -80,9 +80,9 @@ export default function ProjectDetailPage() {
           <p className="mt-4 text-xl md:text-2xl text-off-white/60 leading-relaxed max-w-2xl">
             {project.description}
           </p>
-          
+
           {project.link && (
-            <Link 
+            <Link
               href={project.link}
               target="_blank"
               className="inline-flex items-center gap-3 px-8 py-4 bg-off-white text-void-black font-medium tracking-wide uppercase hover:bg-off-white/90 transition-colors whitespace-nowrap"
@@ -101,7 +101,7 @@ export default function ProjectDetailPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.2 }}
       >
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${project.image})` }}
         />
@@ -128,7 +128,7 @@ export default function ProjectDetailPage() {
                 className="group block"
               >
                 <div className="relative aspect-[4/3] mb-6 overflow-hidden bg-off-white/5 border border-off-white/10 rounded-sm">
-                  <div 
+                  <div
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
                     style={{ backgroundImage: `url(${relatedProject.image})` }}
                   />
@@ -140,7 +140,11 @@ export default function ProjectDetailPage() {
                 <div className="flex items-center gap-4 text-sm text-off-white/50">
                   <span>{relatedProject.year}</span>
                   <span>•</span>
-                  <span>{Array.isArray(relatedProject.category) ? relatedProject.category[0] : relatedProject.category}</span>
+                  <span>
+                    {Array.isArray(relatedProject.category)
+                      ? relatedProject.category[0]
+                      : relatedProject.category}
+                  </span>
                 </div>
               </Link>
             ))}

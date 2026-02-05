@@ -1,6 +1,11 @@
 "use client";
 
-import { motion, useTransform, useScroll, AnimatePresence } from "framer-motion";
+import {
+  motion,
+  useTransform,
+  useScroll,
+  AnimatePresence,
+} from "framer-motion";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { PROJECTS } from "@/lib/data";
@@ -50,7 +55,7 @@ function BentoCard({
         rotateX,
         rotateY,
         duration: 0.5,
-        ease: 'power2.out',
+        ease: "power2.out",
         transformPerspective: 1000,
       });
     };
@@ -60,16 +65,16 @@ function BentoCard({
         rotateX: 0,
         rotateY: 0,
         duration: 0.8,
-        ease: 'power2.out',
+        ease: "power2.out",
       });
     };
 
-    card.addEventListener('mousemove', handleMouseMove);
-    card.addEventListener('mouseleave', handleMouseLeave);
+    card.addEventListener("mousemove", handleMouseMove);
+    card.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
-      card.removeEventListener('mousemove', handleMouseMove);
-      card.removeEventListener('mouseleave', handleMouseLeave);
+      card.removeEventListener("mousemove", handleMouseMove);
+      card.removeEventListener("mouseleave", handleMouseLeave);
     };
   }, []);
 
@@ -84,11 +89,11 @@ function BentoCard({
   // Get icon based on category
   const getCategoryIcon = (category: string | string[]) => {
     const cat = Array.isArray(category) ? category[0] : category;
-    if (cat.includes('Web')) return '🌐';
-    if (cat.includes('Mobile')) return '📱';
-    if (cat.includes('Design')) return '🎨';
-    if (cat.includes('AI')) return '🤖';
-    return '💼';
+    if (cat.includes("Web")) return "🌐";
+    if (cat.includes("Mobile")) return "📱";
+    if (cat.includes("Design")) return "🎨";
+    if (cat.includes("AI")) return "🤖";
+    return "💼";
   };
 
   return (
@@ -105,7 +110,7 @@ function BentoCard({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className="h-full w-full relative bg-gradient-to-br from-off-white/5 to-off-white/[0.02] backdrop-blur-xl rounded-2xl overflow-hidden border border-off-white/20 hover:border-off-white/40 shadow-2xl group transition-all duration-500"
-        style={{ transformStyle: 'preserve-3d' }}
+        style={{ transformStyle: "preserve-3d" }}
       >
         <Link
           href={project.link || `/work/${project.id}`}
@@ -114,8 +119,10 @@ function BentoCard({
         >
           {/* Animated Gradient Border */}
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl blur-sm" 
-                 style={{ padding: '1px' }} />
+            <div
+              className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl blur-sm"
+              style={{ padding: "1px" }}
+            />
           </div>
 
           {/* Background Image */}
@@ -130,16 +137,16 @@ function BentoCard({
 
             {/* Enhanced Gradient overlays for better text readability */}
             <div className="absolute inset-0 bg-gradient-to-b from-void-black/70 via-void-black/50 to-void-black/95 group-hover:from-void-black/80 group-hover:to-void-black/95 transition-all duration-500" />
-            
+
             {/* Vignette effect for better edge contrast */}
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.4)_70%,rgba(0,0,0,0.8)_100%)]" />
-            
+
             {/* Top gradient for top content */}
             <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-void-black/80 to-transparent" />
-            
+
             {/* Bottom gradient for bottom content */}
             <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-void-black/90 via-void-black/60 to-transparent" />
-            
+
             <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 via-transparent to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
             {/* Animated Glow effect */}
@@ -149,8 +156,10 @@ function BentoCard({
 
             {/* Scanline effect */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500">
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-off-white to-transparent animate-scanline" 
-                   style={{ backgroundSize: '100% 200%' }} />
+              <div
+                className="absolute inset-0 bg-gradient-to-b from-transparent via-off-white to-transparent animate-scanline"
+                style={{ backgroundSize: "100% 200%" }}
+              />
             </div>
           </div>
 
@@ -165,33 +174,40 @@ function BentoCard({
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: index * 0.1 + 0.2 }}
                   className="inline-flex items-center gap-2 px-3 py-1.5 bg-void-black/95 backdrop-blur-xl rounded-full border border-off-white/40 hover:border-blue-400/60 shadow-lg text-off-white text-[10px] sm:text-xs tracking-wider uppercase font-medium transition-all duration-300 w-fit"
-                  style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}
+                  style={{ textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}
                 >
-                  <span className="text-sm">{getCategoryIcon(project.category)}</span>
-                  <span>{Array.isArray(project.category) ? project.category[0] : project.category}</span>
+                  <span className="text-sm">
+                    {getCategoryIcon(project.category)}
+                  </span>
+                  <span>
+                    {Array.isArray(project.category)
+                      ? project.category[0]
+                      : project.category}
+                  </span>
                 </motion.div>
 
                 {/* Multiple Categories - Show on hover */}
-                {Array.isArray(project.category) && project.category.length > 1 && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ 
-                      height: isHovered ? 'auto' : 0, 
-                      opacity: isHovered ? 1 : 0 
-                    }}
-                    className="flex flex-wrap gap-1 overflow-hidden"
-                  >
-                    {project.category.slice(1).map((cat, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2 py-1 bg-void-black/90 backdrop-blur-xl rounded-full text-off-white/80 text-[9px] sm:text-[10px] tracking-wide uppercase border border-off-white/30 shadow-lg"
-                        style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}
-                      >
-                        {cat}
-                      </span>
-                    ))}
-                  </motion.div>
-                )}
+                {Array.isArray(project.category) &&
+                  project.category.length > 1 && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{
+                        height: isHovered ? "auto" : 0,
+                        opacity: isHovered ? 1 : 0,
+                      }}
+                      className="flex flex-wrap gap-1 overflow-hidden"
+                    >
+                      {project.category.slice(1).map((cat, idx) => (
+                        <span
+                          key={idx}
+                          className="px-2 py-1 bg-void-black/90 backdrop-blur-xl rounded-full text-off-white/80 text-[9px] sm:text-[10px] tracking-wide uppercase border border-off-white/30 shadow-lg"
+                          style={{ textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}
+                        >
+                          {cat}
+                        </span>
+                      ))}
+                    </motion.div>
+                  )}
 
                 {/* Year Badge - Enhanced */}
                 <motion.div
@@ -199,7 +215,7 @@ function BentoCard({
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: index * 0.1 + 0.3 }}
                   className="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-blue-500/30 to-purple-500/30 backdrop-blur-xl rounded-full border border-blue-400/50 text-blue-100 text-[10px] sm:text-xs tracking-wider font-medium w-fit shadow-lg"
-                  style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}
+                  style={{ textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}
                 >
                   <Calendar className="w-3 h-3" />
                   <span>{project.year}</span>
@@ -213,7 +229,7 @@ function BentoCard({
                   <motion.span
                     initial={{ scale: 0, rotate: -180 }}
                     animate={{ scale: 1, rotate: 0 }}
-                    transition={{ delay: index * 0.1 + 0.4, type: 'spring' }}
+                    transition={{ delay: index * 0.1 + 0.4, type: "spring" }}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-[9px] sm:text-[10px] tracking-widest uppercase rounded-full shadow-2xl font-bold ring-2 ring-blue-400/50 ring-offset-2 ring-offset-void-black"
                   >
                     <Star className="w-3 h-3 fill-current" />
@@ -245,14 +261,17 @@ function BentoCard({
               >
                 <div className="w-8 h-px bg-gradient-to-r from-blue-400 to-transparent" />
                 <span className="text-blue-300 text-[10px] tracking-widest font-mono font-bold drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
-                  PROJECT {String(index + 1).padStart(2, '0')}
+                  PROJECT {String(index + 1).padStart(2, "0")}
                 </span>
               </motion.div>
 
               {/* Title - Enhanced */}
-              <h3 
+              <h3
                 className="font-display text-lg sm:text-xl md:text-2xl lg:text-3xl text-off-white leading-tight group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-off-white group-hover:via-blue-200 group-hover:to-purple-200 transition-all duration-500"
-                style={{ textShadow: '0 2px 12px rgba(0,0,0,0.9), 0 4px 24px rgba(0,0,0,0.7)' }}
+                style={{
+                  textShadow:
+                    "0 2px 12px rgba(0,0,0,0.9), 0 4px 24px rgba(0,0,0,0.7)",
+                }}
               >
                 {project.title}
               </h3>
@@ -261,17 +280,23 @@ function BentoCard({
               {project.description && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
-                  animate={{ 
-                    height: isHovered || size === "large" || size === "xlarge" ? 'auto' : 0,
-                    opacity: isHovered || size === "large" || size === "xlarge" ? 1 : 0
+                  animate={{
+                    height:
+                      isHovered || size === "large" || size === "xlarge"
+                        ? "auto"
+                        : 0,
+                    opacity:
+                      isHovered || size === "large" || size === "xlarge"
+                        ? 1
+                        : 0,
                   }}
                   transition={{ duration: 0.3 }}
                   className="overflow-hidden"
                 >
                   <div className="bg-void-black/80 backdrop-blur-xl rounded-lg p-3 border-l-2 border-blue-400/50">
-                    <p 
+                    <p
                       className="text-off-white/90 text-xs sm:text-sm leading-relaxed line-clamp-3"
-                      style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}
+                      style={{ textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}
                     >
                       {project.description}
                     </p>
@@ -282,18 +307,18 @@ function BentoCard({
               {/* CTA - Enhanced */}
               <motion.div
                 initial={{ y: 10, opacity: 0 }}
-                animate={{ 
-                  y: isHovered ? 0 : 10, 
-                  opacity: isHovered ? 1 : 0 
+                animate={{
+                  y: isHovered ? 0 : 10,
+                  opacity: isHovered ? 1 : 0,
                 }}
                 transition={{ duration: 0.3 }}
                 className="pt-2"
               >
-                <span 
+                <span
                   className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500/30 to-purple-500/30 hover:from-blue-500/40 hover:to-purple-500/40 backdrop-blur-xl border border-off-white/40 hover:border-off-white/60 rounded-full text-off-white hover:text-white text-[10px] sm:text-xs tracking-wider uppercase transition-all duration-300 group/cta shadow-lg"
-                  style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}
+                  style={{ textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}
                 >
-                  <span>{project.link ? 'View Live' : 'Explore'}</span>
+                  <span>{project.link ? "View Live" : "Explore"}</span>
                   <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 transition-transform group-hover/cta:translate-x-1" />
                 </span>
               </motion.div>
@@ -302,20 +327,28 @@ function BentoCard({
               {(size === "large" || size === "xlarge") && (
                 <motion.div
                   initial={{ y: 10, opacity: 0 }}
-                  animate={{ 
-                    y: isHovered ? 0 : 10, 
-                    opacity: isHovered ? 1 : 0 
+                  animate={{
+                    y: isHovered ? 0 : 10,
+                    opacity: isHovered ? 1 : 0,
                   }}
                   transition={{ duration: 0.3, delay: 0.1 }}
                   className="flex items-center gap-3 pt-2 border-t border-off-white/20 bg-void-black/70 backdrop-blur-xl rounded-lg px-3 py-2"
                 >
-                  <div className="flex items-center gap-1.5 text-off-white/90 text-[10px]" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
+                  <div
+                    className="flex items-center gap-1.5 text-off-white/90 text-[10px]"
+                    style={{ textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}
+                  >
                     <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse shadow-lg shadow-green-400/50" />
                     <span>Active</span>
                   </div>
                   <div className="w-px h-3 bg-off-white/30" />
-                  <div className="text-off-white/80 text-[10px] tracking-wider" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
-                    {Array.isArray(project.category) ? `${project.category.length} Categories` : '1 Category'}
+                  <div
+                    className="text-off-white/80 text-[10px] tracking-wider"
+                    style={{ textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}
+                  >
+                    {Array.isArray(project.category)
+                      ? `${project.category.length} Categories`
+                      : "1 Category"}
                   </div>
                 </motion.div>
               )}
@@ -324,10 +357,13 @@ function BentoCard({
 
           {/* Hover Overlay Pattern */}
           <div className="absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity duration-500 pointer-events-none">
-            <div className="absolute inset-0" style={{
-              backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px)`,
-              backgroundSize: '20px 20px'
-            }} />
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px)`,
+                backgroundSize: "20px 20px",
+              }}
+            />
           </div>
         </Link>
       </div>
@@ -379,7 +415,6 @@ function EnhancedHorizontalCard({
       >
         {/* Premium Card Container */}
         <div className="h-full flex flex-col bg-gradient-to-br from-off-white/5 to-off-white/[0.02] backdrop-blur-sm rounded-2xl overflow-hidden border border-off-white/10 group-hover:border-off-white/30 transition-all duration-700 shadow-2xl group-hover:shadow-off-white/5">
-          
           {/* Image Section */}
           <div className="relative aspect-[16/9] overflow-hidden">
             {/* Parallax Image */}
@@ -580,7 +615,7 @@ function MagneticCard({
           toggleActions: "play none none none",
         },
         delay: (index % 3) * 0.1,
-      }
+      },
     );
 
     return () => {
@@ -799,7 +834,7 @@ function ParallaxCard({
           toggleActions: "play none none none",
         },
         delay: (index % 3) * 0.1,
-      }
+      },
     );
 
     // Image parallax
@@ -893,9 +928,15 @@ function ParallaxCard({
           {/* Depth indicator */}
           <div className="absolute bottom-4 right-4 opacity-30 group-hover:opacity-50 transition-opacity">
             <div className="flex gap-1">
-              <div className={`w-1 h-8 rounded-full ${layer === "bg" ? "bg-blue-400" : layer === "mid" ? "bg-purple-400" : "bg-pink-400"}`} />
-              <div className={`w-1 h-8 rounded-full ${layer !== "bg" ? "bg-off-white/30" : "bg-transparent"}`} />
-              <div className={`w-1 h-8 rounded-full ${layer === "fg" ? "bg-off-white/30" : "bg-transparent"}`} />
+              <div
+                className={`w-1 h-8 rounded-full ${layer === "bg" ? "bg-blue-400" : layer === "mid" ? "bg-purple-400" : "bg-pink-400"}`}
+              />
+              <div
+                className={`w-1 h-8 rounded-full ${layer !== "bg" ? "bg-off-white/30" : "bg-transparent"}`}
+              />
+              <div
+                className={`w-1 h-8 rounded-full ${layer === "fg" ? "bg-off-white/30" : "bg-transparent"}`}
+              />
             </div>
           </div>
         </div>
@@ -995,7 +1036,7 @@ function ScrollSnapCard({
           start: "top bottom-=100",
           toggleActions: "play none none none",
         },
-      }
+      },
     );
 
     return () => {
@@ -1222,7 +1263,7 @@ function Card3D({
           toggleActions: "play none none none",
         },
         delay: (index % 3) * 0.15, // Wave effect based on grid position
-      }
+      },
     );
 
     // 3D tilt effect on scroll
@@ -1754,10 +1795,23 @@ export default function WorkPage() {
         );
 
   // Assign sizes to projects dynamically for bento layout
-  const getSizeForProject = (index: number, total: number): "small" | "medium" | "large" | "xlarge" => {
+  const getSizeForProject = (
+    index: number,
+    total: number,
+  ): "small" | "medium" | "large" | "xlarge" => {
     const patterns = [
-      "large", "medium", "small", "xlarge", "small", "medium",
-      "medium", "xlarge", "small", "large", "small", "medium"
+      "large",
+      "medium",
+      "small",
+      "xlarge",
+      "small",
+      "medium",
+      "medium",
+      "xlarge",
+      "small",
+      "large",
+      "small",
+      "medium",
     ];
     return patterns[index % patterns.length] as any;
   };
@@ -1766,8 +1820,8 @@ export default function WorkPage() {
   useEffect(() => {
     if (!gridRef.current) return;
 
-    const cards = gsap.utils.toArray('.bento-card');
-    
+    const cards = gsap.utils.toArray(".bento-card");
+
     cards.forEach((card: any, index) => {
       gsap.fromTo(
         card,
@@ -1778,8 +1832,8 @@ export default function WorkPage() {
           y: 0,
           duration: 0.6,
           delay: index * 0.08,
-          ease: 'power3.out',
-        }
+          ease: "power3.out",
+        },
       );
     });
   }, [filteredProjects]);
@@ -1943,7 +1997,8 @@ export default function WorkPage() {
             </span>
           </div>
           <span className="text-off-white/30 text-xs tracking-wider">
-            {filteredProjects.length} {filteredProjects.length === 1 ? 'Project' : 'Projects'}
+            {filteredProjects.length}{" "}
+            {filteredProjects.length === 1 ? "Project" : "Projects"}
           </span>
         </motion.div>
 
@@ -1981,8 +2036,18 @@ export default function WorkPage() {
           >
             <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 backdrop-blur-sm border border-off-white/10 mb-6 relative">
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400/20 to-purple-400/20 blur-xl animate-pulse" />
-              <svg className="w-10 h-10 text-off-white/40 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <svg
+                className="w-10 h-10 text-off-white/40 relative z-10"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
             </div>
             <h3 className="font-display text-3xl text-off-white mb-3">
