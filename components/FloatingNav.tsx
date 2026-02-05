@@ -9,7 +9,7 @@ import { useTheme } from "./ThemeProvider";
 import { useDeviceType, getAnimationConfig } from "@/lib/hooks";
 
 // SVG Icons as components
-const HomeIcon = () => (
+const ContactIcon = () => (
   <svg
     width="20"
     height="20"
@@ -20,8 +20,8 @@ const HomeIcon = () => (
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-    <polyline points="9 22 9 12 15 12 15 22" />
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+    <polyline points="22,6 12,13 2,6" />
   </svg>
 );
 
@@ -108,9 +108,9 @@ const MoonIcon = () => (
 );
 
 const navItems = [
-  { href: "/", label: "Home", icon: HomeIcon },
   { href: "/journey", label: "Journey", icon: UserIcon },
   { href: "/work", label: "Work", icon: CodeIcon },
+  { href: "/contact", label: "Contact", icon: ContactIcon },
 ];
 
 const socialItems = [

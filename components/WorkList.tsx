@@ -58,7 +58,8 @@ export default function WorkList({ projects }: WorkListProps) {
     const ctx = gsap.context(() => {
       // Header animation
       if (headerRef.current) {
-        gsap.fromTo(headerRef.current,
+        gsap.fromTo(
+          headerRef.current,
           { opacity: 0, y: 60, scale: 0.95 },
           {
             opacity: 1,
@@ -70,15 +71,17 @@ export default function WorkList({ projects }: WorkListProps) {
               trigger: headerRef.current,
               start: "top 85%",
               toggleActions: "play none none reverse",
-            }
-          }
+            },
+          },
         );
       }
 
       // Project items staggered animation
       if (projectListRef.current) {
-        const projectItems = projectListRef.current.querySelectorAll('.project-item');
-        gsap.fromTo(projectItems,
+        const projectItems =
+          projectListRef.current.querySelectorAll(".project-item");
+        gsap.fromTo(
+          projectItems,
           { opacity: 0, y: 50 },
           {
             opacity: 1,
@@ -90,14 +93,15 @@ export default function WorkList({ projects }: WorkListProps) {
               trigger: projectListRef.current,
               start: "top 80%",
               toggleActions: "play none none reverse",
-            }
-          }
+            },
+          },
         );
       }
 
       // View All button animation
       if (viewAllRef.current) {
-        gsap.fromTo(viewAllRef.current,
+        gsap.fromTo(
+          viewAllRef.current,
           { opacity: 0, y: 30 },
           {
             opacity: 1,
@@ -108,8 +112,8 @@ export default function WorkList({ projects }: WorkListProps) {
               trigger: viewAllRef.current,
               start: "top 90%",
               toggleActions: "play none none reverse",
-            }
-          }
+            },
+          },
         );
       }
     }, sectionRef);
@@ -196,37 +200,56 @@ export default function WorkList({ projects }: WorkListProps) {
         </Link>
       </div>
 
-      {/* Floating Image Preview - Hidden on touch devices */}
-      <motion.div
-        className="fixed top-0 left-0 w-48 sm:w-56 md:w-72 h-64 sm:h-80 md:h-96 pointer-events-none z-40 will-change-transform hidden lg:block"
-        style={{
-          x: smoothX,
-          y: smoothY,
-          translateX: "-50%",
-          translateY: "-50%",
-        }}
-        animate={{
-          opacity: hoveredIndex !== null ? 1 : 0,
-          scale: hoveredIndex !== null ? 1 : 0.8,
-        }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-      >
-        <div className="w-full h-full bg-void-black border border-off-white/20 overflow-hidden">
-          {hoveredIndex !== null && (
-            <motion.div
-              key={hoveredIndex}
-              className="w-full h-full bg-gradient-to-br from-off-white/10 to-transparent flex items-center justify-center"
-              initial={{ scale: 1.2, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.4 }}
-            >
-              <span className="font-display text-2xl text-off-white/40">
-                {projects[hoveredIndex]?.title}
-              </span>
-            </motion.div>
-          )}
-        </div>
-      </motion.div>
+      {/* Floating Image Preview - Visible on desktop */}
+      {!isMobile && (
+        <motion.div
+          className="fixed top-0 left-0 w-56 md:w-72 lg:w-80 h-64 md:h-80 lg:h-96 pointer-events-none z-[100] will-change-transform"
+          style={{
+            x: smoothX,
+            y: smoothY,
+            translateX: "-50%",
+            translateY: "-50%",
+          }}
+          animate={{
+            opacity: hoveredIndex !== null ? 1 : 0,
+            scale: hoveredIndex !== null ? 1 : 0.8,
+          }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+        >
+          <div className="w-full h-full bg-void-black/95 backdrop-blur-sm border-2 border-off-white/30 rounded-lg overflow-hidden shadow-2xl">
+            {hoveredIndex !== null && projects[hoveredIndex] && (
+              <motion.div
+                key={hoveredIndex}
+                className="w-full h-full relative"
+                initial={{ scale: 1.1, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.4 }}
+              >
+                {/* Project Image */}
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{
+                    backgroundImage: `url(${projects[hoveredIndex].image})`,
+                  }}
+                />
+                {/* Overlay gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-void-black via-void-black/60 to-transparent" />
+                {/* Project info overlay */}
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <p className="font-display text-lg text-off-white/90 mb-1">
+                    {projects[hoveredIndex].title}
+                  </p>
+                  <p className="text-xs text-off-white/60 uppercase tracking-wide">
+                    {Array.isArray(projects[hoveredIndex].category)
+                      ? projects[hoveredIndex].category.join(" / ")
+                      : projects[hoveredIndex].category}
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        </motion.div>
+      )}
     </section>
   );
 }
