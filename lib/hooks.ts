@@ -15,10 +15,10 @@ export function useDeviceType() {
     const checkDevice = () => {
       const width = window.innerWidth;
       const isMobile = width < 768;
-      
+
       // Check for reduced motion preference
       const prefersReducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
+        "(prefers-reduced-motion: reduce)",
       ).matches;
 
       // Detect low-end devices
@@ -37,7 +37,7 @@ export function useDeviceType() {
     // Listen for reduced motion preference changes
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const handleChange = () => checkDevice();
-    
+
     if (mediaQuery.addEventListener) {
       mediaQuery.addEventListener("change", handleChange);
     }
@@ -68,7 +68,7 @@ function checkLowEndDevice(): boolean {
   // Check connection (if available)
   const connection = (navigator as any).connection;
   if (connection) {
-    const slowConnections = ['slow-2g', '2g', '3g'];
+    const slowConnections = ["slow-2g", "2g", "3g"];
     if (slowConnections.includes(connection.effectiveType)) {
       return true;
     }

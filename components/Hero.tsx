@@ -23,9 +23,9 @@ export default function Hero() {
 
   // Reduce parallax on mobile for better performance
   const y = useTransform(
-    scrollYProgress, 
-    [0, 1], 
-    ["0%", deviceInfo.isMobile ? "15%" : "30%"]
+    scrollYProgress,
+    [0, 1],
+    ["0%", deviceInfo.isMobile ? "15%" : "30%"],
   );
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
@@ -43,16 +43,23 @@ export default function Hero() {
             <motion.div
               className="absolute top-0 -left-1/4 w-[80vw] h-[80vw] rounded-full"
               style={{
-                background: "radial-gradient(circle, rgba(99, 102, 241, 0.5) 0%, rgba(99, 102, 241, 0) 70%)",
+                background:
+                  "radial-gradient(circle, rgba(99, 102, 241, 0.5) 0%, rgba(99, 102, 241, 0) 70%)",
                 filter: "blur(80px)",
                 opacity: 0.5,
-                willChange: deviceInfo.prefersReducedMotion ? "auto" : "transform",
+                willChange: deviceInfo.prefersReducedMotion
+                  ? "auto"
+                  : "transform",
               }}
-              animate={animConfig.enabled ? {
-                x: [0, 60, 0],
-                y: [0, 40, 0],
-                scale: [1, 1.15, 1],
-              } : {}}
+              animate={
+                animConfig.enabled
+                  ? {
+                      x: [0, 60, 0],
+                      y: [0, 40, 0],
+                      scale: [1, 1.15, 1],
+                    }
+                  : {}
+              }
               transition={{
                 duration: deviceInfo.isMobile ? 20 : 15,
                 repeat: Infinity,
@@ -62,16 +69,23 @@ export default function Hero() {
             <motion.div
               className="absolute top-1/4 -right-1/4 w-[70vw] h-[70vw] rounded-full"
               style={{
-                background: "radial-gradient(circle, rgba(34, 197, 94, 0.45) 0%, rgba(34, 197, 94, 0) 70%)",
+                background:
+                  "radial-gradient(circle, rgba(34, 197, 94, 0.45) 0%, rgba(34, 197, 94, 0) 70%)",
                 filter: "blur(100px)",
                 opacity: 0.45,
-                willChange: deviceInfo.prefersReducedMotion ? "auto" : "transform",
+                willChange: deviceInfo.prefersReducedMotion
+                  ? "auto"
+                  : "transform",
               }}
-              animate={animConfig.enabled ? {
-                x: [0, -50, 0],
-                y: [0, 60, 0],
-                scale: [1, 1.2, 1],
-              } : {}}
+              animate={
+                animConfig.enabled
+                  ? {
+                      x: [0, -50, 0],
+                      y: [0, 60, 0],
+                      scale: [1, 1.2, 1],
+                    }
+                  : {}
+              }
               transition={{
                 duration: deviceInfo.isMobile ? 24 : 18,
                 repeat: Infinity,
@@ -85,16 +99,23 @@ export default function Hero() {
                 <motion.div
                   className="absolute bottom-0 left-1/4 w-[75vw] h-[75vw] rounded-full"
                   style={{
-                    background: "radial-gradient(circle, rgba(168, 85, 247, 0.5) 0%, rgba(168, 85, 247, 0) 70%)",
+                    background:
+                      "radial-gradient(circle, rgba(168, 85, 247, 0.5) 0%, rgba(168, 85, 247, 0) 70%)",
                     filter: "blur(90px)",
                     opacity: 0.4,
-                    willChange: deviceInfo.prefersReducedMotion ? "auto" : "transform",
+                    willChange: deviceInfo.prefersReducedMotion
+                      ? "auto"
+                      : "transform",
                   }}
-                  animate={animConfig.enabled ? {
-                    x: [0, -40, 0],
-                    y: [0, -50, 0],
-                    scale: [1, 1.25, 1],
-                  } : {}}
+                  animate={
+                    animConfig.enabled
+                      ? {
+                          x: [0, -40, 0],
+                          y: [0, -50, 0],
+                          scale: [1, 1.25, 1],
+                        }
+                      : {}
+                  }
                   transition={{
                     duration: 20,
                     repeat: Infinity,
@@ -105,16 +126,23 @@ export default function Hero() {
                 <motion.div
                   className="absolute top-1/3 right-1/3 w-[60vw] h-[60vw] rounded-full"
                   style={{
-                    background: "radial-gradient(circle, rgba(14, 165, 233, 0.45) 0%, rgba(14, 165, 233, 0) 70%)",
+                    background:
+                      "radial-gradient(circle, rgba(14, 165, 233, 0.45) 0%, rgba(14, 165, 233, 0) 70%)",
                     filter: "blur(80px)",
                     opacity: 0.35,
-                    willChange: deviceInfo.prefersReducedMotion ? "auto" : "transform",
+                    willChange: deviceInfo.prefersReducedMotion
+                      ? "auto"
+                      : "transform",
                   }}
-                  animate={animConfig.enabled ? {
-                    x: [0, 70, 0],
-                    y: [0, -40, 0],
-                    scale: [1, 1.15, 1],
-                  } : {}}
+                  animate={
+                    animConfig.enabled
+                      ? {
+                          x: [0, 70, 0],
+                          y: [0, -40, 0],
+                          scale: [1, 1.15, 1],
+                        }
+                      : {}
+                  }
                   transition={{
                     duration: 22,
                     repeat: Infinity,
@@ -135,25 +163,37 @@ export default function Hero() {
           className="absolute top-8 left-8 w-16 h-16 border-l border-t border-off-white/10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: animConfig.enabled ? 4.5 : 0.5, duration: animConfig.duration }}
+          transition={{
+            delay: animConfig.enabled ? 4.5 : 0.5,
+            duration: animConfig.duration,
+          }}
         />
         <motion.div
           className="absolute top-8 right-8 w-16 h-16 border-r border-t border-off-white/10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: animConfig.enabled ? 4.6 : 0.5, duration: animConfig.duration }}
+          transition={{
+            delay: animConfig.enabled ? 4.6 : 0.5,
+            duration: animConfig.duration,
+          }}
         />
         <motion.div
           className="absolute bottom-8 left-8 w-16 h-16 border-l border-b border-off-white/10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: animConfig.enabled ? 4.7 : 0.5, duration: animConfig.duration }}
+          transition={{
+            delay: animConfig.enabled ? 4.7 : 0.5,
+            duration: animConfig.duration,
+          }}
         />
         <motion.div
           className="absolute bottom-8 right-8 w-16 h-16 border-r border-b border-off-white/10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: animConfig.enabled ? 4.8 : 0.5, duration: animConfig.duration }}
+          transition={{
+            delay: animConfig.enabled ? 4.8 : 0.5,
+            duration: animConfig.duration,
+          }}
         />
       </div>
 
@@ -173,15 +213,15 @@ export default function Hero() {
               fontWeight: 700,
               letterSpacing: "-0.03em",
             }}
-            initial={{ 
-              opacity: 0, 
+            initial={{
+              opacity: 0,
               filter: "blur(20px)",
-              scale: 1.05
+              scale: 1.05,
             }}
-            animate={{ 
-              opacity: 1, 
+            animate={{
+              opacity: 1,
               filter: "blur(0px)",
-              scale: 1
+              scale: 1,
             }}
             transition={{
               delay: 4.8,
@@ -212,7 +252,17 @@ export default function Hero() {
 
           {/* Descriptor - Word by Word Reveal */}
           <div className="mt-3 sm:mt-4 flex flex-wrap justify-center gap-x-1.5">
-            {["Bringing", "stories", "to", "life", "one", "pixel", "at", "a", "time"].map((word, index) => (
+            {[
+              "Bringing",
+              "stories",
+              "to",
+              "life",
+              "one",
+              "pixel",
+              "at",
+              "a",
+              "time",
+            ].map((word, index) => (
               <motion.span
                 key={word}
                 className="text-[10px] sm:text-xs text-off-white/35 font-light tracking-wide"

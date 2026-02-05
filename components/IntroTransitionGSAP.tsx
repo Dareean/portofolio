@@ -24,7 +24,11 @@ export default function IntroTransitionGSAP() {
       if (!blinds) return;
 
       // Adjust animation durations based on device capability
-      const duration = deviceInfo.isLowEnd ? 0.4 : deviceInfo.isMobile ? 0.6 : 0.8;
+      const duration = deviceInfo.isLowEnd
+        ? 0.4
+        : deviceInfo.isMobile
+          ? 0.6
+          : 0.8;
       const stagger = deviceInfo.isLowEnd ? 0.04 : 0.08;
 
       // Animate vertical blinds with stagger
@@ -71,7 +75,11 @@ export default function IntroTransitionGSAP() {
       }
 
       // Hide intro after complete - Faster on low-end devices
-      const hideDelay = deviceInfo.isLowEnd ? 1500 : deviceInfo.isMobile ? 2500 : 3000;
+      const hideDelay = deviceInfo.isLowEnd
+        ? 1500
+        : deviceInfo.isMobile
+          ? 2500
+          : 3000;
       setTimeout(() => {
         gsap.to(blindsRef.current, {
           opacity: 0,

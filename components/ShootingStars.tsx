@@ -19,23 +19,25 @@ export default function ShootingStars() {
   const [showStars, setShowStars] = useState(false);
   const { theme } = useTheme();
   const deviceInfo = useDeviceType();
-  
+
   // Disable on low-end devices or if reduced motion is preferred
   const starsEnabled = !deviceInfo.isLowEnd && !deviceInfo.prefersReducedMotion;
-  
+
   // Theme-aware colors
   const starColor = theme === "dark" ? "white" : "black";
-  const starGlow = theme === "dark" 
-    ? "0 0 10px 3px white, 0 0 20px 6px rgba(255,255,255,0.5)"
-    : "0 0 10px 3px black, 0 0 20px 6px rgba(0,0,0,0.3)";
-  const trailGradient = theme === "dark"
-    ? "linear-gradient(to left, white, rgba(255,255,255,0.5), transparent)"
-    : "linear-gradient(to left, black, rgba(0,0,0,0.5), transparent)";
+  const starGlow =
+    theme === "dark"
+      ? "0 0 10px 3px white, 0 0 20px 6px rgba(255,255,255,0.5)"
+      : "0 0 10px 3px black, 0 0 20px 6px rgba(0,0,0,0.3)";
+  const trailGradient =
+    theme === "dark"
+      ? "linear-gradient(to left, white, rgba(255,255,255,0.5), transparent)"
+      : "linear-gradient(to left, black, rgba(0,0,0,0.5), transparent)";
 
   // Wait for intro animation to complete (about 5 seconds)
   useEffect(() => {
     if (!starsEnabled) return;
-    
+
     const introDelay = setTimeout(() => {
       setShowStars(true);
     }, 5000);
@@ -61,9 +63,12 @@ export default function ShootingStars() {
     setStars(Array.from({ length: initialStarCount }, createStar));
 
     // Add new stars periodically - Less frequent on mobile
-    const interval = setInterval(() => {
-      setStars(prev => [...prev.slice(-3), createStar()]);
-    }, deviceInfo.isMobile ? 2000 : 1200);
+    const interval = setInterval(
+      () => {
+        setStars((prev) => [...prev.slice(-3), createStar()]);
+      },
+      deviceInfo.isMobile ? 2000 : 1200,
+    );
 
     return () => clearInterval(interval);
   }, [showStars, starsEnabled, deviceInfo.isMobile]);
@@ -71,7 +76,7 @@ export default function ShootingStars() {
   if (!showStars || !starsEnabled) return null;
 
   return (
-    <div 
+    <div
       style={{
         position: "fixed",
         top: 0,
@@ -97,13 +102,13 @@ export default function ShootingStars() {
             boxShadow: starGlow,
           }}
           initial={{ x: 0, y: 0, opacity: 1 }}
-          animate={{ 
-            x: 300, 
-            y: 300, 
+          animate={{
+            x: 300,
+            y: 300,
             opacity: [1, 1, 0],
           }}
-          transition={{ 
-            duration: star.duration, 
+          transition={{
+            duration: star.duration,
             ease: "linear",
           }}
         >

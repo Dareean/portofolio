@@ -10,21 +10,48 @@ import { useDeviceType, getAnimationConfig } from "@/lib/hooks";
 
 // SVG Icons as components
 const HomeIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
     <polyline points="9 22 9 12 15 12 15 22" />
   </svg>
 );
 
 const UserIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
     <circle cx="12" cy="7" r="4" />
   </svg>
 );
 
 const CodeIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <polyline points="16 18 22 12 16 6" />
     <polyline points="8 6 2 12 8 18" />
   </svg>
@@ -32,18 +59,27 @@ const CodeIcon = () => (
 
 const GitHubIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
   </svg>
 );
 
 const LinkedInIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
   </svg>
 );
 
 const SunIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <circle cx="12" cy="12" r="5" />
     <line x1="12" y1="1" x2="12" y2="3" />
     <line x1="12" y1="21" x2="12" y2="23" />
@@ -57,7 +93,16 @@ const SunIcon = () => (
 );
 
 const MoonIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
   </svg>
 );
@@ -69,8 +114,18 @@ const navItems = [
 ];
 
 const socialItems = [
-  { href: "https://github.com/Dareean", label: "GitHub", icon: GitHubIcon, external: true },
-  { href: "https://linkedin.com/in/dareean", label: "LinkedIn", icon: LinkedInIcon, external: true },
+  {
+    href: "https://github.com/Dareean",
+    label: "GitHub",
+    icon: GitHubIcon,
+    external: true,
+  },
+  {
+    href: "https://linkedin.com/in/dareean",
+    label: "LinkedIn",
+    icon: LinkedInIcon,
+    external: true,
+  },
 ];
 
 // Cartoonish bouncy animation variants - Simplified on low-end devices
@@ -82,26 +137,26 @@ const bounceAnimation: Variants = {
     transition: {
       scale: { type: "spring", stiffness: 400, damping: 10 },
       y: { type: "spring", stiffness: 400, damping: 10 },
-      rotate: { duration: 0.5 }
-    }
+      rotate: { duration: 0.5 },
+    },
   },
   tap: {
     scale: 0.85,
     y: 0,
-    transition: { type: "spring", stiffness: 400, damping: 10 }
-  }
+    transition: { type: "spring", stiffness: 400, damping: 10 },
+  },
 };
 
 // Simple version for low-end devices
 const simpleBounceAnimation: Variants = {
   hover: {
     scale: 1.15,
-    transition: { duration: 0.2 }
+    transition: { duration: 0.2 },
   },
   tap: {
     scale: 0.9,
-    transition: { duration: 0.1 }
-  }
+    transition: { duration: 0.1 },
+  },
 };
 
 const wiggleAnimation: Variants = {
@@ -110,13 +165,13 @@ const wiggleAnimation: Variants = {
     rotate: [0, 15, -15, 10, -10, 5, -5, 0],
     transition: {
       scale: { type: "spring", stiffness: 400, damping: 10 },
-      rotate: { duration: 0.6 }
-    }
+      rotate: { duration: 0.6 },
+    },
   },
   tap: {
     scale: 0.9,
-    transition: { type: "spring", stiffness: 400, damping: 10 }
-  }
+    transition: { type: "spring", stiffness: 400, damping: 10 },
+  },
 };
 
 const jumpAnimation: Variants = {
@@ -125,14 +180,14 @@ const jumpAnimation: Variants = {
     y: [0, -12, 0, -6, 0],
     transition: {
       scale: { type: "spring", stiffness: 500, damping: 15 },
-      y: { duration: 0.4, times: [0, 0.4, 0.6, 0.8, 1] }
-    }
+      y: { duration: 0.4, times: [0, 0.4, 0.6, 0.8, 1] },
+    },
   },
   tap: {
     scale: 0.85,
     y: 2,
-    transition: { type: "spring", stiffness: 400, damping: 10 }
-  }
+    transition: { type: "spring", stiffness: 400, damping: 10 },
+  },
 };
 
 export default function FloatingNav() {
@@ -145,9 +200,12 @@ export default function FloatingNav() {
 
   // Show nav after loading animation delay
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, isHomePage ? 2800 : 500);
+    const timer = setTimeout(
+      () => {
+        setIsVisible(true);
+      },
+      isHomePage ? 2800 : 500,
+    );
     return () => clearTimeout(timer);
   }, [isHomePage]);
 
@@ -181,13 +239,13 @@ export default function FloatingNav() {
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              whileHover={{ 
-                scale: 1.2, 
+              whileHover={{
+                scale: 1.2,
                 rotate: [0, -10, 10, 0],
-                transition: { 
+                transition: {
                   scale: { type: "spring", stiffness: 400, damping: 10 },
-                  rotate: { duration: 0.5 }
-                }
+                  rotate: { duration: 0.5 },
+                },
               }}
               whileTap={{ scale: 0.9 }}
               className="cursor-pointer"
@@ -208,7 +266,7 @@ export default function FloatingNav() {
             </motion.div>
 
             {/* Divider after logo */}
-            <motion.div 
+            <motion.div
               className="w-px h-6 bg-off-white/20 mx-1"
               whileHover={{ scaleY: 1.3, opacity: 0.5 }}
               transition={{ type: "spring", stiffness: 300 }}
@@ -249,7 +307,7 @@ export default function FloatingNav() {
             })}
 
             {/* Divider */}
-            <motion.div 
+            <motion.div
               className="w-px h-6 bg-off-white/20 mx-1"
               whileHover={{ scaleY: 1.3, opacity: 0.5 }}
               transition={{ type: "spring", stiffness: 300 }}
@@ -287,7 +345,7 @@ export default function FloatingNav() {
             })}
 
             {/* Divider */}
-            <motion.div 
+            <motion.div
               className="w-px h-6 bg-off-white/20 mx-1"
               whileHover={{ scaleY: 1.3, opacity: 0.5 }}
               transition={{ type: "spring", stiffness: 300 }}
@@ -297,16 +355,18 @@ export default function FloatingNav() {
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              whileHover={{ 
-                scale: 1.25, 
+              whileHover={{
+                scale: 1.25,
                 rotate: 180,
-                transition: { 
+                transition: {
                   scale: { type: "spring", stiffness: 400, damping: 10 },
-                  rotate: { duration: 0.4, ease: "easeInOut" }
-                }
+                  rotate: { duration: 0.4, ease: "easeInOut" },
+                },
               }}
               whileTap={{ scale: 0.85, rotate: 360 }}
-              transition={{ delay: (navItems.length + socialItems.length) * 0.05 }}
+              transition={{
+                delay: (navItems.length + socialItems.length) * 0.05,
+              }}
               className="relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full text-off-white/50 hover:text-off-white hover:bg-off-white/10 transition-colors duration-300 cursor-pointer"
               aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
               onClick={toggleTheme}

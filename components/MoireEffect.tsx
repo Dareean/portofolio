@@ -23,7 +23,7 @@ export default function MoireEffect() {
   // Mouse tracking - disable on mobile for performance
   useEffect(() => {
     if (deviceInfo.isMobile || deviceInfo.isLowEnd) return;
-    
+
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({
         x: e.clientX / window.innerWidth,
@@ -124,9 +124,13 @@ export default function MoireEffect() {
       {/* Pattern Layer 3 - Horizontal Lines - Simplified on mobile */}
       <motion.div
         className="absolute inset-0"
-        animate={animConfig.enabled ? {
-          y: [0, 10, 0],
-        } : {}}
+        animate={
+          animConfig.enabled
+            ? {
+                y: [0, 10, 0],
+              }
+            : {}
+        }
         transition={{
           duration: 8,
           repeat: Infinity,
@@ -139,12 +143,18 @@ export default function MoireEffect() {
             className="absolute left-0 right-0 h-[2px] bg-white/10"
             style={{
               top: `${(i / lineCount) * 100}%`,
-              willChange: deviceInfo.prefersReducedMotion ? "auto" : "opacity, transform",
+              willChange: deviceInfo.prefersReducedMotion
+                ? "auto"
+                : "opacity, transform",
             }}
-            animate={animConfig.enabled ? {
-              opacity: [0.05, 0.15, 0.05],
-              scaleX: deviceInfo.isMobile ? [1, 1.01, 1] : [1, 1.02, 1],
-            } : { opacity: 0.08 }}
+            animate={
+              animConfig.enabled
+                ? {
+                    opacity: [0.05, 0.15, 0.05],
+                    scaleX: deviceInfo.isMobile ? [1, 1.01, 1] : [1, 1.02, 1],
+                  }
+                : { opacity: 0.08 }
+            }
             transition={{
               duration: deviceInfo.isMobile ? 4 : 3,
               repeat: Infinity,
@@ -161,56 +171,60 @@ export default function MoireEffect() {
           className="absolute w-[800px] h-[800px] pointer-events-none"
           style={{
             left: `${mousePosition.x * 100}%`,
-          top: `${mousePosition.y * 100}%`,
-          x: "-50%",
-          y: "-50%",
-        }}
-      >
-        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <radialGradient id="radialPattern">
-              <stop offset="0%" stopColor="white" stopOpacity="0.1" />
-              <stop offset="50%" stopColor="white" stopOpacity="0.05" />
-              <stop offset="100%" stopColor="white" stopOpacity="0" />
-            </radialGradient>
-          </defs>
-          <circle
-            cx="50%"
-            cy="50%"
-            r="40%"
-            fill="none"
-            stroke="url(#radialPattern)"
-            strokeWidth="1"
-          />
-          <circle
-            cx="50%"
-            cy="50%"
-            r="30%"
-            fill="none"
-            stroke="white"
-            strokeWidth="1"
-            opacity="0.05"
-          />
-          <circle
-            cx="50%"
-            cy="50%"
-            r="20%"
-            fill="none"
-            stroke="white"
-            strokeWidth="1"
-            opacity="0.08"
-          />
-        </svg>
-      </motion.div>
+            top: `${mousePosition.y * 100}%`,
+            x: "-50%",
+            y: "-50%",
+          }}
+        >
+          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="radialPattern">
+                <stop offset="0%" stopColor="white" stopOpacity="0.1" />
+                <stop offset="50%" stopColor="white" stopOpacity="0.05" />
+                <stop offset="100%" stopColor="white" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            <circle
+              cx="50%"
+              cy="50%"
+              r="40%"
+              fill="none"
+              stroke="url(#radialPattern)"
+              strokeWidth="1"
+            />
+            <circle
+              cx="50%"
+              cy="50%"
+              r="30%"
+              fill="none"
+              stroke="white"
+              strokeWidth="1"
+              opacity="0.05"
+            />
+            <circle
+              cx="50%"
+              cy="50%"
+              r="20%"
+              fill="none"
+              stroke="white"
+              strokeWidth="1"
+              opacity="0.08"
+            />
+          </svg>
+        </motion.div>
       )}
 
       {/* Mathematical Grid - Creates interference patterns - Desktop only */}
       {!deviceInfo.isLowEnd && (
         <motion.div
           className="absolute inset-0"
-          animate={animConfig.enabled ? {
-            rotate: [0, 360],
-          } : {}}
+          animate={
+            animConfig.enabled
+              ? {
+                  rotate: [0, 360],
+                }
+              : {}
+          }
           transition={{
             duration: 60,
             repeat: Infinity,
@@ -243,13 +257,19 @@ export default function MoireEffect() {
           style={{
             width: `${(i + 1) * 20}%`,
             height: `${(i + 1) * 20}%`,
-            willChange: deviceInfo.prefersReducedMotion ? "auto" : "transform, opacity",
+            willChange: deviceInfo.prefersReducedMotion
+              ? "auto"
+              : "transform, opacity",
           }}
-          animate={animConfig.enabled ? {
-            scale: [1, 1.05, 1],
-            opacity: [0.03, 0.08, 0.03],
-            rotate: [0, 180, 360],
-          } : { opacity: 0.05 }}
+          animate={
+            animConfig.enabled
+              ? {
+                  scale: [1, 1.05, 1],
+                  opacity: [0.03, 0.08, 0.03],
+                  rotate: [0, 180, 360],
+                }
+              : { opacity: 0.05 }
+          }
           transition={{
             duration: 15 + i * 5,
             repeat: Infinity,
@@ -271,9 +291,13 @@ export default function MoireEffect() {
               rgba(255, 255, 255, 0.02) 20px
             )`,
           }}
-          animate={animConfig.enabled ? {
-            opacity: [0.5, 1, 0.5],
-          } : { opacity: 0.7 }}
+          animate={
+            animConfig.enabled
+              ? {
+                  opacity: [0.5, 1, 0.5],
+                }
+              : { opacity: 0.7 }
+          }
           transition={{
             duration: 4,
             repeat: Infinity,

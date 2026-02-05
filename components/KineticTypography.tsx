@@ -16,24 +16,24 @@ export default function KineticTypography() {
 
   // Transform text based on scroll - reduce on mobile
   const x1 = useTransform(
-    scrollYProgress, 
-    [0, 1], 
-    ["0%", deviceInfo.isMobile ? "-15%" : "-30%"]
+    scrollYProgress,
+    [0, 1],
+    ["0%", deviceInfo.isMobile ? "-15%" : "-30%"],
   );
   const x2 = useTransform(
-    scrollYProgress, 
-    [0, 1], 
-    ["0%", deviceInfo.isMobile ? "15%" : "30%"]
+    scrollYProgress,
+    [0, 1],
+    ["0%", deviceInfo.isMobile ? "15%" : "30%"],
   );
   const x3 = useTransform(
-    scrollYProgress, 
-    [0, 1], 
-    ["0%", deviceInfo.isMobile ? "-10%" : "-20%"]
+    scrollYProgress,
+    [0, 1],
+    ["0%", deviceInfo.isMobile ? "-10%" : "-20%"],
   );
   const x4 = useTransform(
-    scrollYProgress, 
-    [0, 1], 
-    ["0%", deviceInfo.isMobile ? "12%" : "25%"]
+    scrollYProgress,
+    [0, 1],
+    ["0%", deviceInfo.isMobile ? "12%" : "25%"],
   );
 
   return (
@@ -47,79 +47,126 @@ export default function KineticTypography() {
       {/* Architectural Grid Lines - Performance optimized for mobile */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Vertical Lines - Conditionally rendered based on device */}
-        {!deviceInfo.isLowEnd && !deviceInfo.isMobile && [...Array(20)].map((_, i) => (
-          <motion.div
-            key={`v-${i}`}
-            className="absolute top-0 bottom-0 w-px bg-white/5"
-            style={{ left: `${(i + 1) * 5}%`, willChange: deviceInfo.prefersReducedMotion ? "auto" : "opacity" }}
-            initial={{ opacity: 0 }}
-            animate={animConfig.enabled ? { opacity: [0.05, 0.15, 0.05] } : { opacity: 0.08 }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              delay: i * 0.1,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
+        {!deviceInfo.isLowEnd &&
+          !deviceInfo.isMobile &&
+          [...Array(20)].map((_, i) => (
+            <motion.div
+              key={`v-${i}`}
+              className="absolute top-0 bottom-0 w-px bg-white/5"
+              style={{
+                left: `${(i + 1) * 5}%`,
+                willChange: deviceInfo.prefersReducedMotion
+                  ? "auto"
+                  : "opacity",
+              }}
+              initial={{ opacity: 0 }}
+              animate={
+                animConfig.enabled
+                  ? { opacity: [0.05, 0.15, 0.05] }
+                  : { opacity: 0.08 }
+              }
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                delay: i * 0.1,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
 
         {/* Mobile - Fewer vertical lines */}
-        {!deviceInfo.isLowEnd && deviceInfo.isMobile && [...Array(8)].map((_, i) => (
-          <motion.div
-            key={`v-mobile-${i}`}
-            className="absolute top-0 bottom-0 w-px bg-white/5"
-            style={{ left: `${(i + 1) * 12}%`, willChange: deviceInfo.prefersReducedMotion ? "auto" : "opacity" }}
-            initial={{ opacity: 0 }}
-            animate={animConfig.enabled ? { opacity: [0.05, 0.12, 0.05] } : { opacity: 0.08 }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              delay: i * 0.15,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
+        {!deviceInfo.isLowEnd &&
+          deviceInfo.isMobile &&
+          [...Array(8)].map((_, i) => (
+            <motion.div
+              key={`v-mobile-${i}`}
+              className="absolute top-0 bottom-0 w-px bg-white/5"
+              style={{
+                left: `${(i + 1) * 12}%`,
+                willChange: deviceInfo.prefersReducedMotion
+                  ? "auto"
+                  : "opacity",
+              }}
+              initial={{ opacity: 0 }}
+              animate={
+                animConfig.enabled
+                  ? { opacity: [0.05, 0.12, 0.05] }
+                  : { opacity: 0.08 }
+              }
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                delay: i * 0.15,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
 
         {/* Horizontal Lines - Conditionally rendered */}
-        {!deviceInfo.isLowEnd && !deviceInfo.isMobile && [...Array(12)].map((_, i) => (
-          <motion.div
-            key={`h-${i}`}
-            className="absolute left-0 right-0 h-px bg-white/5"
-            style={{ top: `${(i + 1) * 8}%`, willChange: deviceInfo.prefersReducedMotion ? "auto" : "opacity" }}
-            initial={{ opacity: 0 }}
-            animate={animConfig.enabled ? { opacity: [0.05, 0.15, 0.05] } : { opacity: 0.08 }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              delay: i * 0.15,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
+        {!deviceInfo.isLowEnd &&
+          !deviceInfo.isMobile &&
+          [...Array(12)].map((_, i) => (
+            <motion.div
+              key={`h-${i}`}
+              className="absolute left-0 right-0 h-px bg-white/5"
+              style={{
+                top: `${(i + 1) * 8}%`,
+                willChange: deviceInfo.prefersReducedMotion
+                  ? "auto"
+                  : "opacity",
+              }}
+              initial={{ opacity: 0 }}
+              animate={
+                animConfig.enabled
+                  ? { opacity: [0.05, 0.15, 0.05] }
+                  : { opacity: 0.08 }
+              }
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                delay: i * 0.15,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
 
         {/* Mobile - Fewer horizontal lines */}
-        {!deviceInfo.isLowEnd && deviceInfo.isMobile && [...Array(6)].map((_, i) => (
-          <motion.div
-            key={`h-mobile-${i}`}
-            className="absolute left-0 right-0 h-px bg-white/5"
-            style={{ top: `${(i + 1) * 15}%`, willChange: deviceInfo.prefersReducedMotion ? "auto" : "opacity" }}
-            initial={{ opacity: 0 }}
-            animate={animConfig.enabled ? { opacity: [0.05, 0.12, 0.05] } : { opacity: 0.08 }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              delay: i * 0.2,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
+        {!deviceInfo.isLowEnd &&
+          deviceInfo.isMobile &&
+          [...Array(6)].map((_, i) => (
+            <motion.div
+              key={`h-mobile-${i}`}
+              className="absolute left-0 right-0 h-px bg-white/5"
+              style={{
+                top: `${(i + 1) * 15}%`,
+                willChange: deviceInfo.prefersReducedMotion
+                  ? "auto"
+                  : "opacity",
+              }}
+              initial={{ opacity: 0 }}
+              animate={
+                animConfig.enabled
+                  ? { opacity: [0.05, 0.12, 0.05] }
+                  : { opacity: 0.08 }
+              }
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                delay: i * 0.2,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
       </div>
 
       {/* Kinetic Typography Layers - Optimized for mobile */}
       <div className="absolute inset-0 flex flex-col justify-center pointer-events-none">
         {/* Layer 1 - Moving Right */}
         <motion.div
-          style={{ x: x1, willChange: deviceInfo.prefersReducedMotion ? "auto" : "transform" }}
+          style={{
+            x: x1,
+            willChange: deviceInfo.prefersReducedMotion ? "auto" : "transform",
+          }}
           className="whitespace-nowrap will-change-transform"
         >
           <motion.div
@@ -144,7 +191,10 @@ export default function KineticTypography() {
 
         {/* Layer 2 - Moving Left (Opposite direction) */}
         <motion.div
-          style={{ x: x2, willChange: deviceInfo.prefersReducedMotion ? "auto" : "transform" }}
+          style={{
+            x: x2,
+            willChange: deviceInfo.prefersReducedMotion ? "auto" : "transform",
+          }}
           className="whitespace-nowrap will-change-transform -mt-4 sm:-mt-6 md:-mt-8 lg:-mt-12"
         >
           <motion.div
@@ -170,7 +220,12 @@ export default function KineticTypography() {
         {/* Layer 3 - Moving Right (Slower) - Desktop only to reduce load */}
         {!deviceInfo.isMobile && (
           <motion.div
-            style={{ x: x3, willChange: deviceInfo.prefersReducedMotion ? "auto" : "transform" }}
+            style={{
+              x: x3,
+              willChange: deviceInfo.prefersReducedMotion
+                ? "auto"
+                : "transform",
+            }}
             className="whitespace-nowrap will-change-transform -mt-4 sm:-mt-6 md:-mt-8 lg:-mt-12"
           >
             <motion.div
@@ -197,7 +252,12 @@ export default function KineticTypography() {
         {/* Layer 4 - Moving Left (Fast) - Desktop only to reduce load */}
         {!deviceInfo.isMobile && (
           <motion.div
-            style={{ x: x4, willChange: deviceInfo.prefersReducedMotion ? "auto" : "transform" }}
+            style={{
+              x: x4,
+              willChange: deviceInfo.prefersReducedMotion
+                ? "auto"
+                : "transform",
+            }}
             className="whitespace-nowrap will-change-transform -mt-4 sm:-mt-6 md:-mt-8 lg:-mt-12"
           >
             <motion.div
@@ -228,10 +288,14 @@ export default function KineticTypography() {
           <motion.div
             className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 sm:via-white/15 to-transparent"
             style={{ top: "30%" }}
-            animate={animConfig.enabled ? {
-              scaleX: [0.8, 1, 0.8],
-              opacity: [0.1, 0.3, 0.1],
-            } : { opacity: 0.2 }}
+            animate={
+              animConfig.enabled
+                ? {
+                    scaleX: [0.8, 1, 0.8],
+                    opacity: [0.1, 0.3, 0.1],
+                  }
+                : { opacity: 0.2 }
+            }
             transition={{
               duration: 3,
               repeat: Infinity,
@@ -242,10 +306,14 @@ export default function KineticTypography() {
           <motion.div
             className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 sm:via-white/15 to-transparent"
             style={{ bottom: "30%" }}
-            animate={animConfig.enabled ? {
-              scaleX: [0.8, 1, 0.8],
-              opacity: [0.1, 0.3, 0.1],
-            } : { opacity: 0.2 }}
+            animate={
+              animConfig.enabled
+                ? {
+                    scaleX: [0.8, 1, 0.8],
+                    opacity: [0.1, 0.3, 0.1],
+                  }
+                : { opacity: 0.2 }
+            }
             transition={{
               duration: 3,
               repeat: Infinity,
