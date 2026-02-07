@@ -102,12 +102,12 @@ export default function Navbar() {
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`fixed top-4 sm:top-6 right-4 sm:right-6 md:right-16 z-50 w-10 h-10 sm:w-12 sm:h-12 flex flex-col items-center justify-center gap-1 sm:gap-1.5 focus:outline-none rounded-full transition-colors duration-300 ${
+              className={`fixed top-4 sm:top-6 right-4 sm:right-6 md:right-16 z-50 w-10 h-10 sm:w-12 sm:h-12 flex flex-col items-center justify-center gap-1 sm:gap-1.5 focus:outline-none rounded-full transition-all duration-300 ${
                 isMenuOpen 
-                  ? "bg-void-black/10" 
+                  ? "bg-off-white/20 backdrop-blur-xl border border-off-white/30 shadow-lg" 
                   : isScrolled 
-                    ? "bg-off-white/10 backdrop-blur-md" 
-                    : "bg-off-white/20 backdrop-blur-sm"
+                    ? "bg-off-white/15 backdrop-blur-2xl border border-off-white/20 shadow-md" 
+                    : "bg-off-white/10 backdrop-blur-xl border border-off-white/10 shadow-sm"
               }`}
               aria-label="Toggle menu"
             >
@@ -232,8 +232,8 @@ export default function Navbar() {
     <motion.header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled
-          ? "bg-void-black/90 backdrop-blur-md border-b border-off-white/10"
-          : "bg-void-black/60 backdrop-blur-sm"
+          ? "bg-void-black/80 backdrop-blur-2xl backdrop-saturate-150 border-b border-off-white/20 shadow-xl"
+          : "bg-void-black/40 backdrop-blur-xl backdrop-saturate-150 border-b border-off-white/10 shadow-lg"
       }`}
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
@@ -281,7 +281,7 @@ export default function Navbar() {
           {/* CTA Button for Contact */}
           <Link
             href="/contact"
-            className="hidden md:block px-4 py-2 border border-off-white/30 text-off-white text-sm tracking-widest uppercase hover:bg-off-white hover:text-void-black transition-all duration-300"
+            className="hidden md:block px-4 py-2 bg-off-white/10 backdrop-blur-xl border border-off-white/30 text-off-white text-sm tracking-widest uppercase hover:bg-off-white hover:text-void-black transition-all duration-300 shadow-md hover:shadow-lg"
           >
             Contact Me
           </Link>
