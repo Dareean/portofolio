@@ -243,7 +243,7 @@ export const EXPERIENCES: Experience[] = [
   {
     id: 7,
     title: "Green Generation Central Sulawesi",
-    role: "Volunteer",
+    role: "Communications Officers",
     organization: "Environmental Community",
     dateStart: "2025-01",
     description:
@@ -253,14 +253,15 @@ export const EXPERIENCES: Experience[] = [
       "Community Service",
       "Sustainability",
     ],
-    category: "volunteer",
+    category: "community",
   },
   {
     id: 8,
     title: "Guard Riders - Smart Helmet",
     role: "Team Member",
     organization: "Road Safety Innovation",
-    dateStart: "2025-07",
+    dateStart: "2025-05",
+    dateEnd: "2025-07",
     description:
       "Collaborated on the design of a smart helmet to enhance road safety. Advanced to the competition finals with innovative safety features.",
     highlights: ["IoT Development", "Safety Innovation", "Competition Finals"],
@@ -334,6 +335,40 @@ export const EXPERIENCES: Experience[] = [
       "Strategic Planning",
     ],
     category: "committee",
+  },
+  {
+    id: 13,
+    title: "Palu Developer Day 2026",
+    role: "Public Relations Committee",
+    organization: "Hammercode - Programming Community",
+    dateStart: "2025-11",
+    dateEnd: "2026-01",
+    description:
+      "Served as part of the Public Relations team for Palu Developer Day 2026, the premier tech conference organized by Hammercode Palu. Responsible for managing media relations, creating promotional content, coordinating with speakers and sponsors, and building community engagement through strategic communication across multiple channels.",
+    highlights: [
+      "Media Relations",
+      "Content Creation",
+      "Community Engagement",
+      "Speaker Coordination",
+    ],
+    category: "committee",
+  },
+  {
+    id: 14,
+    title: "Active Member of HMTI",
+    role: "Member",
+    organization:
+      "Computer Science Student Association (HMTI) of Tadulako University",
+    dateStart: "2025-11",
+    description:
+      "Active member of Himpunan Mahasiswa Teknik Informatika (HMTI), the official student association for Computer Science at Tadulako University. Participating in various activities including workshops, seminars, and collaborative projects to enhance technical skills and foster a strong community among informatics students.",
+    highlights: [
+      "Workshop Participation",
+      "Technical Seminars",
+      "Student Community",
+      "Collaborative Learning",
+    ],
+    category: "community",
   },
 ];
 

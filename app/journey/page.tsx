@@ -346,15 +346,6 @@ function AnimatedBackground() {
       repeat: -1,
       yoyo: true,
     });
-
-    // Floating text animation
-    gsap.to(".animated-text", {
-      y: -10,
-      duration: 2,
-      repeat: -1,
-      yoyo: true,
-      ease: "sine.inOut",
-    });
   }, []);
 
   return (
@@ -455,8 +446,7 @@ function AnimatedBackground() {
 }
 
 export default function ExperiencePage() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: containerRef });
+  const { scrollYProgress } = useScroll();
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
 
   // Filter state
@@ -533,10 +523,7 @@ export default function ExperiencePage() {
   };
 
   return (
-    <main
-      ref={containerRef}
-      className="min-h-screen relative overflow-hidden bg-void-black"
-    >
+    <main className="min-h-screen relative overflow-hidden bg-void-black">
       <FloatingNav />
 
       {/* Animated Background Elements */}

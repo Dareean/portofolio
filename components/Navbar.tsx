@@ -25,9 +25,12 @@ export default function Navbar() {
 
   // Show navbar after loading animation (delay for homepage)
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoaded(true);
-    }, isHomePage ? 2800 : 500);
+    const timer = setTimeout(
+      () => {
+        setIsLoaded(true);
+      },
+      isHomePage ? 2800 : 500,
+    );
     return () => clearTimeout(timer);
   }, [isHomePage]);
 
@@ -75,15 +78,15 @@ export default function Navbar() {
   };
 
   const linkVariants = {
-    closed: { 
-      opacity: 0, 
+    closed: {
+      opacity: 0,
       y: 30,
-      transition: { duration: 0.2 }
+      transition: { duration: 0.2 },
     },
-    open: { 
-      opacity: 1, 
+    open: {
+      opacity: 1,
       y: 0,
-      transition: { duration: 0.4 }
+      transition: { duration: 0.4 },
     },
   };
 
@@ -102,13 +105,13 @@ export default function Navbar() {
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`fixed top-4 sm:top-6 right-4 sm:right-6 md:right-16 z-50 w-10 h-10 sm:w-12 sm:h-12 flex flex-col items-center justify-center gap-1 sm:gap-1.5 focus:outline-none rounded-full transition-all duration-300 ${
-                isMenuOpen 
-                  ? "bg-off-white/20 backdrop-blur-xl border border-off-white/30 shadow-lg" 
-                  : isScrolled 
-                    ? "bg-off-white/15 backdrop-blur-2xl border border-off-white/20 shadow-md" 
-                    : "bg-off-white/10 backdrop-blur-xl border border-off-white/10 shadow-sm"
-              }`}
+              className={`fixed top-4 sm:top-6 right-4 sm:right-6 md:right-16 z-50 w-10 h-10 sm:w-12 sm:h-12 flex flex-col items-center justify-center gap-1 sm:gap-1.5 focus:outline-none rounded-full transition-all duration-500 ${
+                isMenuOpen
+                  ? "bg-gradient-to-br from-white/50 via-white/35 to-white/25 backdrop-blur-[40px] backdrop-saturate-[250%] border-[3px] border-white/70 shadow-[0_8px_32px_rgba(255,255,255,0.4),0_0_60px_rgba(255,255,255,0.2),inset_0_2px_4px_rgba(255,255,255,0.9)]"
+                  : isScrolled
+                    ? "bg-gradient-to-br from-white/40 via-white/25 to-white/15 backdrop-blur-[35px] backdrop-saturate-[220%] border-[2.5px] border-white/60 shadow-[0_8px_32px_rgba(255,255,255,0.3),inset_0_2px_4px_rgba(255,255,255,0.7)]"
+                    : "bg-gradient-to-br from-white/30 via-white/20 to-white/10 backdrop-blur-[30px] backdrop-saturate-[200%] border-[2px] border-white/50 shadow-[0_4px_24px_rgba(255,255,255,0.2),inset_0_1px_2px_rgba(255,255,255,0.6)]"
+              } relative overflow-hidden before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-br before:from-white/40 before:via-transparent before:to-transparent before:opacity-70`}
               aria-label="Toggle menu"
             >
               <motion.span
@@ -230,60 +233,74 @@ export default function Navbar() {
   // ============================================
   return (
     <motion.header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? "bg-void-black/80 backdrop-blur-2xl backdrop-saturate-150 border-b border-off-white/20 shadow-xl"
-          : "bg-void-black/40 backdrop-blur-xl backdrop-saturate-150 border-b border-off-white/10 shadow-lg"
-      }`}
+      className="fixed top-6 left-1/2 -translate-x-1/2 z-50"
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, delay: 0.1 }}
     >
-      <nav className="flex items-center justify-between px-4 sm:px-6 md:px-12 lg:px-16 py-4 sm:py-5 md:py-6">
+      <nav
+        className={`flex items-center gap-2 transition-all duration-500 ${
+          isScrolled
+            ? "bg-white/95 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] ring-1 ring-black/10"
+            : "bg-white/90 backdrop-blur-lg shadow-[0_4px_24px_rgba(0,0,0,0.08)] ring-1 ring-black/5"
+        } rounded-full px-6 py-3 relative overflow-hidden`}
+      >
+        {/* Liquid Glass Effect Layers */}
+        <div className="absolute inset-0 overflow-hidden rounded-full pointer-events-none">
+          {/* Top glass highlight */}
+          <div className="absolute top-0 left-0 right-0 h-[50%] bg-gradient-to-b from-white/60 to-transparent" />
+
+          {/* Animated shimmer */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+            animate={{
+              x: ["-100%", "100%"],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+          />
+        </div>
         {/* Logo */}
-        <Link href="/" className="group">
+        <Link href="/" className="group relative z-10">
           <motion.span
-            className="font-display text-lg sm:text-xl md:text-2xl text-off-white tracking-tight"
+            className="font-display text-lg md:text-xl text-void-black tracking-tight font-bold"
             whileHover={{ opacity: 0.7 }}
           >
             DAREEAN
           </motion.span>
         </Link>
 
+        {/* Divider */}
+        <div className="hidden md:block w-px h-6 bg-black/10" />
+
         {/* Navigation Links */}
-        <div className="flex items-center gap-4 sm:gap-6 md:gap-8">
+        <div className="hidden md:flex items-center gap-1 relative z-10">
           {navLinks.slice(0, 3).map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`relative group ${link.mobileOnly ? 'md:hidden' : ''}`}
-            >
+            <Link key={link.href} href={link.href} className="relative group">
               <span
-                className={`text-sm tracking-widest uppercase transition-colors duration-300 ${
+                className={`text-sm tracking-wide font-medium transition-all duration-300 px-4 py-1.5 rounded-full block ${
                   pathname === link.href
-                    ? "text-off-white"
-                    : "text-off-white/60 hover:text-off-white"
+                    ? "text-void-black bg-black/5"
+                    : "text-void-black/60 hover:text-void-black hover:bg-black/5"
                 }`}
               >
                 {link.label}
               </span>
-              {/* Active indicator */}
-              {pathname === link.href && (
-                <motion.div
-                  className="absolute -bottom-1 left-0 right-0 h-px bg-off-white"
-                  layoutId="activeNav"
-                  transition={{ duration: 0.3 }}
-                />
-              )}
             </Link>
           ))}
 
+          {/* Divider before contact */}
+          <div className="w-px h-6 bg-black/10 mx-1" />
+
           {/* CTA Button for Contact */}
-          <Link
-            href="/contact"
-            className="hidden md:block px-4 py-2 bg-off-white/10 backdrop-blur-xl border border-off-white/30 text-off-white text-sm tracking-widest uppercase hover:bg-off-white hover:text-void-black transition-all duration-300 shadow-md hover:shadow-lg"
-          >
-            Contact Me
+          <Link href="/contact" className="hidden md:block relative group">
+            <span className="px-4 py-1.5 bg-void-black text-white text-sm font-medium rounded-full block transition-all duration-300 hover:bg-void-black/90 hover:shadow-lg relative overflow-hidden">
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+              <span className="relative z-10">Contact</span>
+            </span>
           </Link>
         </div>
       </nav>
