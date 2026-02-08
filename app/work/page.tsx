@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform, useSpring, useInView } from "framer-mo
 import Link from "next/link";
 import { PROJECTS } from "@/lib/data";
 import FloatingNav from "@/components/FloatingNav";
-import { ExternalLink, ArrowRight, ChevronLeft, Star, Calendar, Sparkles } from "lucide-react";
+import { ExternalLink, ArrowRight, ChevronLeft, ChevronRight, Star, Calendar, Sparkles, FolderOpen } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -162,7 +162,7 @@ function FeaturedProjectCard({
           />
 
           {/* Thumbnail */}
-          <div className="relative w-full sm:w-32 md:w-40 h-32 sm:h-28 md:h-32 flex-shrink-0 rounded-xl overflow-hidden">
+          <div className="relative w-full sm:w-32 md:w-40 h-48 sm:h-28 md:h-32 flex-shrink-0 rounded-xl overflow-hidden">
             <motion.div
               className="absolute inset-0 bg-cover bg-center"
               style={{ backgroundImage: `url(${project.image})` }}
@@ -291,9 +291,9 @@ function BentoCard({
 
   const sizeClasses = {
     small: "col-span-1 row-span-1",
-    medium: "col-span-1 row-span-2 md:col-span-2 md:row-span-1",
-    large: "col-span-2 row-span-2",
-    xlarge: "col-span-1 row-span-2 md:col-span-2 md:row-span-2",
+    medium: "col-span-1 row-span-1 md:col-span-2 md:row-span-1",
+    large: "col-span-1 row-span-1 md:col-span-2 md:row-span-2",
+    xlarge: "col-span-1 row-span-1 md:col-span-2 md:row-span-2",
   };
 
   return (
@@ -372,19 +372,83 @@ function BentoCard({
 
 // Filter Tabs
 function FilterTabs({ activeFilter, setActiveFilter }: { activeFilter: string; setActiveFilter: (f: string) => void }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScroll = () => {
+    if (containerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 5);
+    }
+  };
+
+  useEffect(() => {
+    checkScroll();
+    window.addEventListener("resize", checkScroll);
+    return () => window.removeEventListener("resize", checkScroll);
+  }, []);
+
   return (
-    <div className="flex items-center gap-1 p-1 bg-off-white/5 rounded-full border border-off-white/10 backdrop-blur-sm">
-      {categories.map((cat) => (
-        <button
-          key={cat}
-          onClick={() => setActiveFilter(cat)}
-          className={`px-4 py-2 rounded-full text-xs tracking-wider uppercase transition-all duration-300 ${
-            activeFilter === cat ? "bg-off-white text-void-black font-medium" : "text-off-white/50 hover:text-off-white"
-          }`}
+    <div className="relative flex items-center bg-off-white/5 rounded-full border border-off-white/10 backdrop-blur-xl max-w-full shadow-inner group/tabs">
+      {/* Scroll Indicators */}
+      <div 
+        className={`absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-void-black/40 to-transparent z-20 pointer-events-none transition-opacity duration-300 rounded-l-full ${canScrollLeft ? "opacity-100" : "opacity-0"}`} 
+      />
+      <div 
+        className={`absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-void-black/40 to-transparent z-20 pointer-events-none transition-opacity duration-300 rounded-r-full flex items-center justify-end pr-2 ${canScrollRight ? "opacity-100" : "opacity-0"}`}
+      >
+        <motion.div 
+          animate={{ x: [0, 3, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
         >
-          {cat}
-        </button>
-      ))}
+          <ChevronRight className="w-4 h-4 text-off-white/70" />
+        </motion.div>
+      </div>
+
+      <div 
+        ref={containerRef}
+        onScroll={checkScroll}
+        className="flex items-center gap-1 p-1.5 overflow-x-auto max-w-full scrollbar-hide w-full"
+      >
+        {categories.map((cat) => {
+          const isActive = activeFilter === cat;
+          return (
+            <button
+              key={cat}
+              onClick={() => setActiveFilter(cat)}
+              className={`relative px-5 py-2.5 rounded-full text-xs tracking-widest uppercase transition-all duration-300 whitespace-nowrap outline-none focus:outline-none ${
+                isActive
+                  ? "text-void-black font-bold"
+                  : "text-off-white/50 hover:text-off-white hover:bg-off-white/5"
+              }`}
+              style={{ WebkitTapHighlightColor: "transparent" }}
+            >
+              {isActive && (
+                <motion.div
+                  layoutId="activeFilter"
+                  className="absolute inset-0 bg-gradient-to-b from-off-white to-off-white/90 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.2)] z-0"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                >
+                  {/* Shine effect */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-white/40 to-transparent rounded-full opacity-50" />
+                </motion.div>
+              )}
+              <span className="relative z-10 flex items-center gap-2">
+                {cat}
+                {isActive && (
+                  <motion.span
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="w-1 h-1 rounded-full bg-void-black/50"
+                  />
+                )}
+              </span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -410,7 +474,7 @@ export default function WorkPage() {
   };
 
   return (
-    <main className="min-h-screen bg-void-black relative">
+    <main className="min-h-screen bg-void-black relative overflow-x-hidden">
       <AnimatedBackground />
       <FloatingNav />
 
@@ -449,7 +513,7 @@ export default function WorkPage() {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2 }}
-            className="font-display text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-off-white leading-[0.9] mb-8"
+            className="font-display text-5xl sm:text-6xl md:text-8xl lg:text-9xl text-off-white leading-[0.9] mb-6 md:mb-8"
           >
             The
             <br />
@@ -539,7 +603,9 @@ export default function WorkPage() {
 
         {filteredRegularProjects.length === 0 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
-            <div className="text-5xl mb-4">✨</div>
+            <div className="w-16 h-16 mx-auto mb-4 bg-off-white/10 rounded-full flex items-center justify-center">
+              <FolderOpen className="w-8 h-8 text-off-white/50" />
+            </div>
             <h3 className="font-display text-xl text-off-white mb-2">No projects in this category</h3>
             <button onClick={() => setActiveFilter("All")} className="mt-4 px-5 py-2 bg-off-white/10 text-off-white rounded-full text-sm hover:bg-off-white/20 transition-colors">
               View All

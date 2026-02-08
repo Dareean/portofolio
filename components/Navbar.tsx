@@ -266,8 +266,12 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="group relative z-10">
           <motion.span
-            className="font-display text-lg md:text-xl text-void-black tracking-tight font-bold"
-            whileHover={{ opacity: 0.7 }}
+            className={`font-display text-lg md:text-xl tracking-tight font-bold transition-all duration-300 px-4 py-1.5 rounded-full block ${
+              pathname === "/"
+                ? "text-void-black bg-black/5"
+                : "text-void-black/60 hover:text-void-black hover:bg-black/5"
+            }`}
+            whileHover={{ opacity: 1 }}
           >
             DAREEAN
           </motion.span>

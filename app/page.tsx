@@ -6,11 +6,12 @@ import ExploreLinks from "@/components/ExploreLinks";
 import Footer from "@/components/Footer";
 import FloatingNav from "@/components/FloatingNav";
 import AnimatedBackground from "@/components/AnimatedBackground";
+import IntroSection from "@/components/IntroSection";
 import { PROJECTS } from "@/lib/data";
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen relative overflow-x-hidden">
       {/* Animated Background */}
       <AnimatedBackground />
 
@@ -19,6 +20,9 @@ export default function Home() {
 
       {/* Hero Section */}
       <Hero />
+
+      {/* Intro / Scroll Reveal Bio */}
+      <IntroSection />
 
       {/* About Me */}
       <AboutMe />

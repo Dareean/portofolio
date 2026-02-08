@@ -252,7 +252,7 @@ export default function FloatingNav() {
             >
               <Link
                 href="/"
-                className="relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full"
+                className="relative flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-full"
                 aria-label="Home - Dareean"
               >
                 <Image
@@ -293,7 +293,7 @@ export default function FloatingNav() {
                   </span>
                   <Link
                     href={item.href}
-                    className={`relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full transition-colors duration-300 ${
+                    className={`relative flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-full transition-colors duration-300 ${
                       isActive
                         ? "bg-off-white/15 text-off-white"
                         : "text-off-white/50 hover:text-off-white hover:bg-off-white/10"
@@ -335,7 +335,7 @@ export default function FloatingNav() {
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full text-off-white/50 hover:text-off-white hover:bg-off-white/10 transition-colors duration-300"
+                    className="relative flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-full text-off-white/50 hover:text-off-white hover:bg-off-white/10 transition-colors duration-300"
                     aria-label={item.label}
                   >
                     <Icon />
@@ -367,7 +367,7 @@ export default function FloatingNav() {
               transition={{
                 delay: (navItems.length + socialItems.length) * 0.05,
               }}
-              className="relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full text-off-white/50 hover:text-off-white hover:bg-off-white/10 transition-colors duration-300 cursor-pointer"
+              className="relative flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-full text-off-white/50 hover:text-off-white hover:bg-off-white/10 transition-colors duration-300 cursor-pointer"
               aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
               onClick={toggleTheme}
               disabled={isTransitioning}

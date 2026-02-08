@@ -2,15 +2,24 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
 export default function FixedLogo() {
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
+
+  // Position: Top-Left on Home, Top-Right on other pages
+  const positionClass = isHomePage
+    ? "left-4 sm:left-6 md:left-8"
+    : "right-4 sm:right-6 md:right-8";
+
   return (
     <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5, delay: 2.5 }}
-      className="fixed top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 z-50"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: isHomePage ? 2.5 : 0.5 }}
+      className={`fixed top-4 sm:top-6 md:top-8 z-50 ${positionClass}`}
     >
       <Link href="/" aria-label="Home - Dareean">
         <Image

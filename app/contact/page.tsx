@@ -16,6 +16,7 @@ import {
   Loader2,
   CheckCircle2,
   Sparkles,
+  Lightbulb,
 } from "lucide-react";
 
 export default function ContactPage() {
@@ -92,7 +93,7 @@ export default function ContactPage() {
   ];
 
   return (
-    <main className="min-h-screen relative overflow-hidden bg-void-black">
+    <main className="min-h-screen relative overflow-x-hidden bg-void-black">
       {/* Animated Background */}
       <AnimatedBackground />
       <FloatingNav />
@@ -434,7 +435,9 @@ export default function ContactPage() {
                 <div className="absolute inset-0 bg-off-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                 <div className="relative z-10 flex items-start gap-4">
-                  <span className="text-4xl">💡</span>
+                  <div className="w-12 h-12 rounded-2xl bg-off-white/20 backdrop-blur-xl border border-off-white/40 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                    <Lightbulb className="w-6 h-6 text-off-white" />
+                  </div>
                   <div>
                     <h4 className="font-display text-lg text-off-white mb-2 flex items-center gap-2">
                       Quick Response

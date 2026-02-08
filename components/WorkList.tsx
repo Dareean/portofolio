@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Project } from "@/lib/data";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ArrowRight } from "lucide-react";
 
 interface WorkListProps {
   projects: Project[];
@@ -184,19 +185,7 @@ export default function WorkList({ projects }: WorkListProps) {
           className="inline-flex items-center gap-2 sm:gap-3 px-5 sm:px-6 md:px-8 py-3 sm:py-4 border border-off-white/30 text-off-white text-xs sm:text-sm tracking-widest uppercase hover:bg-off-white hover:text-void-black transition-all duration-300"
         >
           View All Projects
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 8l4 4m0 0l-4 4m4-4H3"
-            />
-          </svg>
+          <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
 

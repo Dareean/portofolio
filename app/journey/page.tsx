@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import { EXPERIENCES, Experience } from "@/lib/data";
 import FloatingNav from "@/components/FloatingNav";
-import { ChevronLeft, Circle, Dot } from "lucide-react";
+import { ChevronLeft, Circle, Dot, Inbox } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -89,25 +89,25 @@ function TypographyExperience({
       transition={{ duration: 0.6, delay: index * 0.1 }}
       className={`relative ${
         isLarge
-          ? "col-span-2 row-span-2"
+          ? "col-span-1 row-span-1 md:col-span-2 md:row-span-2"
           : isMedium
-            ? "col-span-1 row-span-2"
+            ? "col-span-1 row-span-1 md:col-span-1 md:row-span-2"
             : "col-span-1 row-span-1"
       }`}
     >
       {/* Color accent line */}
       <div className={`absolute left-0 top-0 bottom-0 w-1 ${style.bg}`} />
 
-      <div className="pl-6 pr-4 py-6">
+      <div className="pl-5 pr-3 py-5 md:pl-6 md:pr-4 md:py-6">
         {/* Meta info */}
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
           <span
-            className={`text-xs font-bold tracking-widest uppercase ${style.text}`}
+            className={`text-[10px] md:text-xs font-bold tracking-widest uppercase ${style.text}`}
           >
             {experience.category}
           </span>
           <span className="text-off-white/30">•</span>
-          <span className="text-off-white/40 text-xs font-mono">
+          <span className="text-off-white/40 text-[10px] md:text-xs font-mono">
             {formatDate(experience.dateStart)}
             {experience.dateEnd
               ? ` — ${formatDate(experience.dateEnd)}`
@@ -122,7 +122,7 @@ function TypographyExperience({
                   animate={{ opacity: [1, 0.3, 1] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 />
-                <span className="text-xs text-green-400 font-medium">
+                <span className="text-[10px] md:text-xs text-green-400 font-medium">
                   Active
                 </span>
               </div>
@@ -132,12 +132,12 @@ function TypographyExperience({
 
         {/* Title - Variable sizes */}
         <h3
-          className={`font-display font-bold leading-tight mb-3 ${
+          className={`font-display font-bold leading-tight mb-2 md:mb-3 ${
             isLarge
-              ? "text-4xl md:text-5xl"
+              ? "text-2xl sm:text-3xl md:text-5xl"
               : isMedium
-                ? "text-2xl md:text-3xl"
-                : "text-xl md:text-2xl"
+                ? "text-xl sm:text-2xl md:text-3xl"
+                : "text-lg sm:text-xl md:text-2xl"
           } text-off-white`}
         >
           {experience.title}
@@ -205,27 +205,27 @@ function YearSection({
   ongoingIds: Set<number>;
 }) {
   return (
-    <div className="mb-24 sm:mb-32">
+    <div className="mb-16 sm:mb-24 md:mb-32">
       {/* Year Header */}
       <motion.div
         initial={{ opacity: 0, x: -40 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
-        className="mb-12"
+        className="mb-8 md:mb-12"
       >
-        <div className="flex items-baseline gap-6 mb-2">
-          <h2 className="font-display text-8xl sm:text-9xl font-bold text-off-white">
+        <div className="flex items-baseline gap-4 md:gap-6 mb-2">
+          <h2 className="font-display text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-off-white">
             {year === "ongoing" ? "Now" : year}
           </h2>
           {year === "ongoing" && (
             <div className="flex items-center gap-2">
               <motion.div
-                className="w-3 h-3 bg-green-400 rounded-full"
+                className="w-2 h-2 md:w-3 md:h-3 bg-green-400 rounded-full"
                 animate={{ opacity: [1, 0.3, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
-              <span className="text-sm text-green-400 font-medium tracking-wide">
-                ONGOING ACTIVITIES
+              <span className="text-xs md:text-sm text-green-400 font-medium tracking-wide">
+                ONGOING
               </span>
             </div>
           )}
@@ -234,7 +234,7 @@ function YearSection({
       </motion.div>
 
       {/* Masonry Grid Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-8 auto-rows-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-6 sm:gap-y-8 auto-rows-auto grid-flow-row-dense">
         {experiences.map((exp, index) => (
           <TypographyExperience
             key={exp.id}
@@ -523,7 +523,7 @@ export default function ExperiencePage() {
   };
 
   return (
-    <main className="min-h-screen relative overflow-hidden bg-void-black">
+    <main className="min-h-screen relative overflow-x-hidden bg-void-black">
       <FloatingNav />
 
       {/* Animated Background Elements */}
@@ -644,7 +644,9 @@ export default function ExperiencePage() {
               animate={{ opacity: 1, scale: 1 }}
               className="text-center py-16"
             >
-              <div className="text-6xl mb-4">📭</div>
+              <div className="w-20 h-20 mx-auto mb-6 bg-off-white/5 rounded-full flex items-center justify-center">
+                <Inbox className="w-10 h-10 text-off-white/40" />
+              </div>
               <h3 className="font-display text-2xl text-off-white mb-2">
                 No experiences found
               </h3>
