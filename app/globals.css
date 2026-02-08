@@ -133,13 +133,9 @@ body {
     }
   }
 
-  /* Invert filter for logo based on theme */
-  [data-theme="dark"] .logo-adaptive {
+  /* Force logo to be white always (invert black original) */
+  .logo-adaptive {
     filter: invert(1);
-  }
-
-  [data-theme="light"] .logo-adaptive {
-    filter: invert(0);
   }
 
   /* Optimize will-change for performance */
