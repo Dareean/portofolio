@@ -134,6 +134,10 @@ function FeaturedProjectCard({
   const cardRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(cardRef, { once: true, margin: "-50px" });
   const [isHovered, setIsHovered] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  // Check if text is long enough to need expansion
+  const needsExpansion = project.description && project.description.length > 100;
 
   return (
     <motion.div
@@ -149,6 +153,12 @@ function FeaturedProjectCard({
         href={project.link || `/work/${project.id}`}
         target={project.link ? "_blank" : undefined}
         className="block"
+        onClick={(e) => {
+          // Prevent navigation if clicking expand button
+          if ((e.target as HTMLElement).closest('.expand-btn')) {
+            e.preventDefault();
+          }
+        }}
       >
         <div className="relative flex flex-col sm:flex-row gap-6 p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-off-white/[0.04] to-transparent border border-off-white/10 hover:border-off-white/30 transition-all duration-500 overflow-hidden">
           
@@ -204,19 +214,50 @@ function FeaturedProjectCard({
               ))}
             </div>
 
-            {/* Title */}
+            {/* Title with tooltip for full text */}
             <motion.h3
-              className="font-display text-xl sm:text-2xl text-off-white leading-tight mb-2 truncate"
+              className="font-display text-xl sm:text-2xl text-off-white leading-tight mb-2 group/title relative"
               animate={{ x: isHovered ? 4 : 0 }}
+              title={project.title}
             >
-              {project.title}
+              <span className={isExpanded ? "" : "line-clamp-1"}>
+                {project.title}
+              </span>
             </motion.h3>
 
-            {/* Description - truncated */}
+            {/* Description - expandable */}
             {project.description && (
-              <p className="text-off-white/50 text-sm leading-relaxed line-clamp-2 mb-3">
-                {project.description}
-              </p>
+              <div className="relative">
+                <motion.p 
+                  className={`text-off-white/50 text-sm leading-relaxed mb-2 ${isExpanded ? "" : "line-clamp-2"}`}
+                  animate={{ height: "auto" }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {project.description}
+                </motion.p>
+                
+                {/* View More / View Less Button */}
+                {needsExpansion && (
+                  <motion.button
+                    className="expand-btn inline-flex items-center gap-1.5 text-off-white/60 hover:text-off-white text-xs tracking-wide transition-colors duration-200 mb-2"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsExpanded(!isExpanded);
+                    }}
+                    whileHover={{ x: 2 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <motion.span
+                      animate={{ rotate: isExpanded ? 180 : 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <ChevronRight className="w-3 h-3" />
+                    </motion.span>
+                    <span>{isExpanded ? "View Less" : "View More"}</span>
+                  </motion.button>
+                )}
+              </div>
             )}
 
             {/* CTA */}

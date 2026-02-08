@@ -7,6 +7,8 @@ import Footer from "@/components/Footer";
 import FloatingNav from "@/components/FloatingNav";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import IntroSection from "@/components/IntroSection";
+import FloatingGeometry from "@/components/FloatingGeometry";
+import PixelsToPeople from "@/components/PixelsToPeople";
 import { PROJECTS } from "@/lib/data";
 
 export default function Home() {
@@ -24,16 +26,19 @@ export default function Home() {
       {/* Intro / Scroll Reveal Bio */}
       <IntroSection />
 
-      {/* About Me */}
-      <AboutMe />
-
-      {/* Marquee Divider */}
-      <div className="py-16">
+      {/* Marquee Divider - Moved after Intro */}
+      <div className="py-8">
         <Marquee />
       </div>
 
-      {/* Explore More - 3D Scene & Stats */}
+      {/* Explore More - 3D Scene & Stats - Moved after Marquee */}
       <ExploreLinks />
+
+      {/* About Me */}
+      <AboutMe />
+
+      {/* "From pixels to people" Scroll Reveal - Before Selected Work */}
+      <PixelsToPeople />
 
       {/* Work Section */}
       <div className="py-24">

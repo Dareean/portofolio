@@ -248,37 +248,8 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: baseDelay + 1.4, duration: 0.8, ease: "easeOut" }}
           >
-            Creative Developer & Digital Storyteller
+            Bringing Stories to life one pixel at a time
           </motion.p>
-
-          {/* Descriptor - Word by Word Reveal */}
-          <div className="mt-3 sm:mt-4 flex flex-wrap justify-center gap-x-1.5">
-            {[
-              "Bringing",
-              "stories",
-              "to",
-              "life",
-              "one",
-              "pixel",
-              "at",
-              "a",
-              "time",
-            ].map((word, index) => (
-              <motion.span
-                key={word}
-                className="text-[10px] sm:text-xs text-off-white/35 font-light tracking-wide"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  delay: baseDelay + 1.8 + index * 0.15,
-                  duration: 0.5,
-                  ease: "easeOut",
-                }}
-              >
-                {word}
-              </motion.span>
-            ))}
-          </div>
         </div>
 
         {/* Scroll Indicator */}

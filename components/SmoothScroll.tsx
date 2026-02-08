@@ -19,10 +19,10 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
     }
 
     const lenis = new Lenis({
-      lerp: 0.1,
-      duration: 1.5,
+      lerp: 0.15, // Higher lerp = more responsive, less floaty (medium pace)
+      duration: 1.2, // Slightly shorter duration
       smoothWheel: true,
-      wheelMultiplier: 1,
+      wheelMultiplier: 0.8, // Slightly reduced speed for control
       touchMultiplier: 2,
     });
 

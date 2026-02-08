@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useDeviceType } from "@/lib/hooks";
+import { useTheme } from "./ThemeProvider";
 
 // Dynamic import Three.js only on client side
 let THREE: typeof import("three") | null = null;
@@ -17,6 +18,11 @@ export default function ExploreLinks() {
   const [isVisible, setIsVisible] = useState(true);
   const [isThreeLoaded, setIsThreeLoaded] = useState(false);
   const cleanupRef = useRef<(() => void) | null>(null);
+  const { theme } = useTheme();
+
+  // Theme-aware colors
+  const isDark = theme === "dark";
+  const particleColor = isDark ? 0xffffff : 0x1e293b;
 
   // Load Three.js dynamically
   useEffect(() => {
@@ -115,10 +121,10 @@ export default function ExploreLinks() {
       );
 
       const particlesMaterial = new ThreeJS.PointsMaterial({
-        color: 0xffffff,
-        size: 0.02,
+        color: particleColor,
+        size: isDark ? 0.02 : 0.03,
         transparent: true,
-        opacity: 0.6,
+        opacity: isDark ? 0.6 : 0.8,
       });
 
       const particles = new ThreeJS.Points(
@@ -310,44 +316,29 @@ export default function ExploreLinks() {
               {/* Stat 1 - Years of Experience */}
               <motion.div
                 className="relative group"
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <div className="bg-off-white/[0.03] backdrop-blur-sm border border-off-white/10 rounded-2xl p-4 sm:p-6 hover:border-off-white/20 transition-all duration-300">
+                <div className="glass-card rounded-2xl p-6 flex flex-col items-center justify-center text-center h-full">
                   <motion.div
-                    className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center"
-                    animate={{
-                      rotate: [0, 360],
-                    }}
-                    transition={{
-                      duration: 20,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
+                    className="mb-4 text-off-white/80"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
                   >
-                    <svg
-                      className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
                     </svg>
                   </motion.div>
                   <motion.div
-                    className="text-2xl sm:text-3xl md:text-4xl font-bold text-off-white mb-1 sm:mb-2 font-mono"
+                    className="text-4xl font-bold text-off-white mb-2 font-display tracking-tight"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                   >
                     5+
                   </motion.div>
-                  <div className="text-xs sm:text-sm text-off-white/60">
+                  <div className="text-sm text-off-white/50 uppercase tracking-widest text-[10px]">
                     Years Experience
                   </div>
                 </div>
@@ -356,40 +347,28 @@ export default function ExploreLinks() {
               {/* Stat 2 - Projects Completed */}
               <motion.div
                 className="relative group"
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <div className="bg-off-white/[0.03] backdrop-blur-sm border border-off-white/10 rounded-2xl p-4 sm:p-6 hover:border-off-white/20 transition-all duration-300">
+                <div className="glass-card rounded-2xl p-6 flex flex-col items-center justify-center text-center h-full">
                   <motion.div
-                    className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 rounded-full bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center"
-                    animate={{
-                      scale: [1, 1.1, 1],
-                    }}
+                    className="mb-4 text-off-white/80"
+                    animate={{ scale: [1, 1.1, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   >
-                    <svg
-                      className="w-5 h-5 sm:w-6 sm:h-6 text-green-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <polyline points="20 6 9 17 4 12" />
                     </svg>
                   </motion.div>
                   <motion.div
-                    className="text-2xl sm:text-3xl md:text-4xl font-bold text-off-white mb-1 sm:mb-2 font-mono"
+                    className="text-4xl font-bold text-off-white mb-2 font-display tracking-tight"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                   >
                     15+
                   </motion.div>
-                  <div className="text-xs sm:text-sm text-off-white/60">
+                  <div className="text-sm text-off-white/50 uppercase tracking-widest text-[10px]">
                     Projects Done
                   </div>
                 </div>
@@ -398,82 +377,63 @@ export default function ExploreLinks() {
               {/* Stat 3 - Technologies */}
               <motion.div
                 className="relative group"
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <div className="bg-off-white/[0.03] backdrop-blur-sm border border-off-white/10 rounded-2xl p-4 sm:p-6 hover:border-off-white/20 transition-all duration-300">
+                <div className="glass-card rounded-2xl p-6 flex flex-col items-center justify-center text-center h-full">
                   <motion.div
-                    className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 rounded-full bg-gradient-to-br from-orange-500/20 to-red-500/20 flex items-center justify-center"
-                    animate={{
-                      y: [0, -5, 0],
-                    }}
+                    className="mb-4 text-off-white/80"
+                    animate={{ y: [0, -3, 0] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   >
-                    <svg
-                      className="w-5 h-5 sm:w-6 sm:h-6 text-orange-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
-                      />
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <polyline points="16 18 22 12 16 6" />
+                      <polyline points="8 6 2 12 8 18" />
                     </svg>
                   </motion.div>
                   <motion.div
-                    className="text-2xl sm:text-3xl md:text-4xl font-bold text-off-white mb-1 sm:mb-2 font-mono"
+                    className="text-4xl font-bold text-off-white mb-2 font-display tracking-tight"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                   >
                     12+
                   </motion.div>
-                  <div className="text-xs sm:text-sm text-off-white/60">
-                    Technologies
+                  <div className="text-sm text-off-white/50 uppercase tracking-widest text-[10px]">
+                    Machines Mastered
                   </div>
                 </div>
               </motion.div>
 
-              {/* Stat 4 - Coffee Consumed (Fun) */}
+              {/* Stat 4 - Coffee Consumed */}
               <motion.div
                 className="relative group"
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <div className="bg-off-white/[0.03] backdrop-blur-sm border border-off-white/10 rounded-2xl p-4 sm:p-6 hover:border-off-white/20 transition-all duration-300">
+                <div className="glass-card rounded-2xl p-6 flex flex-col items-center justify-center text-center h-full">
                   <motion.div
-                    className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 rounded-full bg-gradient-to-br from-amber-500/20 to-yellow-500/20 flex items-center justify-center"
-                    animate={{
-                      rotate: [0, 10, -10, 0],
-                    }}
+                    className="mb-4 text-off-white/80"
+                    animate={{ rotate: [0, 10, -10, 0] }}
                     transition={{ duration: 3, repeat: Infinity }}
                   >
-                    <svg
-                      className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M20 7h-1M8 7h1m0 0H8m9 0v10a2 2 0 01-2 2H9a2 2 0 01-2-2V7m9 0a2 2 0 00-2-2H9a2 2 0 00-2 2m13 0h-1m-9 7h2"
-                      />
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                      <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
+                      <line x1="6" y1="1" x2="6" y2="4" />
+                      <line x1="10" y1="1" x2="10" y2="4" />
+                      <line x1="14" y1="1" x2="14" y2="4" />
                     </svg>
                   </motion.div>
                   <motion.div
-                    className="text-2xl sm:text-3xl md:text-4xl font-bold text-off-white mb-1 sm:mb-2 font-mono"
+                    className="text-4xl font-bold text-off-white mb-2 font-display tracking-tight"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                   >
                     ∞
                   </motion.div>
-                  <div className="text-xs sm:text-sm text-off-white/60">
+                  <div className="text-sm text-off-white/50 uppercase tracking-widest text-[10px]">
                     Cups of Coffee
                   </div>
                 </div>

@@ -58,13 +58,13 @@ const ScrollReveal: FC<ScrollRevealProps> = ({
         opacity: 1,
         filter: "blur(0px)",
         y: 0,
-        stagger: 0.1, // Slower stagger
+        stagger: 0.05, // Faster stagger for quicker reveal
         ease: "power2.out",
         scrollTrigger: {
           trigger: containerRef.current,
           scroller: scrollContainerRef?.current || undefined,
-          start: "top 90%", // Start earlier
-          end: "bottom 20%", // End later (longer scroll distance = slower speed)
+          start: "top 85%", // Start when top of element hits 85% of viewport
+          end: "top 40%", // End when top of element hits 40% (near center)
           scrub: true,
         },
       }
@@ -81,8 +81,8 @@ const ScrollReveal: FC<ScrollRevealProps> = ({
           scrollTrigger: {
             trigger: containerRef.current,
             scroller: scrollContainerRef?.current || undefined,
-            start: "top 90%",
-            end: "bottom 60%",
+            start: "top 85%",
+            end: "top 50%", // Complete rotation by center
             scrub: true,
           },
         }

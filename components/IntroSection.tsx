@@ -3,7 +3,7 @@
 import ScrollReveal from "./ScrollReveal";
 
 export default function IntroSection() {
-  const introText = `I see code not just as syntax, but as a bridge between ideas and reality. My journey is defined by a relentless curiosity—from building smart IoT solutions to nurturing tech communities in Palu. I craft digital experiences that don't just function, but inspire. For me, innovation isn't about the tools; it's about the lives we touch and the future we build together.`;
+  const introText = `I see code not just as syntax, but as a bridge between ideas and reality. My journey is defined by a relentless curiosity from building smart solutions to nurturing tech communities in Palu. I craft digital experiences that don't just function, but inspire. For me, innovation isn't about the tools, it's about the lives we touch and the future we build together.`;
 
   return (
     <section className="relative py-20 md:py-32 px-6 md:px-12 lg:px-20 overflow-hidden">

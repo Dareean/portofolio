@@ -133,9 +133,16 @@ body {
     }
   }
 
-  /* Force logo to be white always (invert black original) */
+  /* Logo color adaptation based on theme */
+  /* Default (dark mode): white logo */
   .logo-adaptive {
     filter: invert(1);
+    transition: filter 0.3s ease;
+  }
+
+  /* Light mode: black logo (original color) */
+  [data-theme="light"] .logo-adaptive {
+    filter: invert(0);
   }
 
   /* Optimize will-change for performance */
@@ -294,5 +301,111 @@ body {
 
   .animate-scanline {
     animation: scanline 2s linear infinite;
+  }
+
+  /* Liquid Glass Navbar Effect - Enhanced */
+  .liquid-nav {
+    /* Brighter, more transparent base to catch light */
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Stronger border */
+    box-shadow: 
+      /* Deep drop shadow */
+      0 20px 40px rgba(0, 0, 0, 0.4),
+      /* Surface tension (top bright rim) - Stronger */
+      inset 0 2px 0 rgba(255, 255, 255, 0.6),
+      /* Bottom reflection (glass thickness) */
+      inset 0 -2px 0 rgba(255, 255, 255, 0.1),
+      /* Inner volumetric glow */
+      inset 0 0 30px rgba(255, 255, 255, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Chromatic/Iridescent rim accent - Brighter */
+  .liquid-nav::before {
+    content: '';
+    position: absolute;
+    inset: -2px; /* Slightly larger */
+    z-index: -1;
+    border-radius: 9999px;
+    padding: 2px;
+    background: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0.8) 0%,
+      rgba(255, 255, 255, 0.2) 20%,
+      rgba(255, 255, 255, 0.0) 50%,
+      rgba(255, 255, 255, 0.2) 80%,
+      rgba(255, 255, 255, 0.8) 100%
+    );
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 1; /* Full opacity */
+  }
+
+  /* Subtle Glossy Shine */
+  .liquid-nav::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 40%;
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.15) 0%,    /* Much more subtle top */
+      rgba(255, 255, 255, 0.05) 40%,
+      transparent 100%
+    );
+    border-radius: 9999px 9999px 100% 100% / 100% 100% 40% 40%;
+    filter: blur(8px); /* Softer blur */
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  /* Glass Card Styles for Stats */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(12px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glass-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    transform: translateY(-5px);
+  }
+
+  /* Subtle shine line for cards */
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    transform: skewX(-25deg);
+    transition: 0.5s;
+    pointer-events: none;
+  }
+
+  .glass-card:hover::before {
+    left: 150%;
+    transition: 0.7s ease-in-out;
   }
 }
