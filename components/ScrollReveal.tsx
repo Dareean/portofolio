@@ -51,18 +51,20 @@ const ScrollReveal: FC<ScrollRevealProps> = ({
       {
         opacity: baseOpacity,
         filter: enableBlur ? `blur(${blurStrength}px)` : "none",
-        willChange: "filter, opacity",
+        y: 20, // Added slight vertical offset for "floating up" effect
+        willChange: "filter, opacity, transform",
       },
       {
         opacity: 1,
         filter: "blur(0px)",
-        stagger: 0.05,
+        y: 0,
+        stagger: 0.1, // Slower stagger
         ease: "power2.out",
         scrollTrigger: {
           trigger: containerRef.current,
           scroller: scrollContainerRef?.current || undefined,
-          start: "top 80%",
-          end: "bottom 40%",
+          start: "top 90%", // Start earlier
+          end: "bottom 20%", // End later (longer scroll distance = slower speed)
           scrub: true,
         },
       }

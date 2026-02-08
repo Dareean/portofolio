@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useTheme } from "./ThemeProvider";
-import { useDeviceType, getAnimationConfig } from "@/lib/hooks";
+import { useDeviceType, getAnimationConfig, useIntroSeen } from "@/lib/hooks";
 
 // SVG Icons as components
 const ContactIcon = () => (
@@ -197,17 +197,22 @@ export default function FloatingNav() {
   const { theme, toggleTheme, isTransitioning } = useTheme();
   const deviceInfo = useDeviceType();
   const animConfig = getAnimationConfig(deviceInfo);
+  const isIntroSeen = useIntroSeen();
 
   // Show nav after loading animation delay
   useEffect(() => {
+    // If on home page AND intro not seen (first load), wait 2.8s
+    // Else (subpages OR return to home), wait only 0.5s
+    const delay = isHomePage && !isIntroSeen ? 2800 : 500;
+
     const timer = setTimeout(
       () => {
         setIsVisible(true);
       },
-      isHomePage ? 2800 : 500,
+      delay,
     );
     return () => clearTimeout(timer);
-  }, [isHomePage]);
+  }, [isHomePage, isIntroSeen]);
 
   // Use simpler animations on low-end devices
   const getAnimation = (index: number) => {

@@ -138,3 +138,27 @@ export function getAnimationConfig(deviceInfo: {
     complexity: "full" as const,
   };
 }
+
+// Global variable to track intro state across client-side navigations
+let hasSeenIntroGlobal = false;
+
+/**
+ * Hook to check if the user has seen the intro animation in the current session
+ * Returns false on first load/refresh, true on subsequent navigations
+ */
+export function useIntroSeen() {
+  const [hasSeen, setHasSeen] = useState(hasSeenIntroGlobal);
+
+  useEffect(() => {
+    // If it's the first time, mark it as seen for future navigations
+    if (!hasSeenIntroGlobal) {
+      hasSeenIntroGlobal = true;
+      // We keep hasSeen as false for this render to play the intro
+    } else {
+      // If global is already true, ensure local state is true
+      setHasSeen(true);
+    }
+  }, []);
+
+  return hasSeen;
+}

@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useTheme } from "./ThemeProvider";
-import { useDeviceType, getAnimationConfig } from "@/lib/hooks";
+import { useDeviceType, getAnimationConfig, useIntroSeen } from "@/lib/hooks";
 import ShootingStars from "./ShootingStars";
 
 export default function Hero() {
@@ -12,6 +12,12 @@ export default function Hero() {
   const { theme } = useTheme();
   const deviceInfo = useDeviceType();
   const animConfig = getAnimationConfig(deviceInfo);
+  const isIntroSeen = useIntroSeen();
+
+  // Animation Delays
+  // If intro seen (back navigation), start much faster (0.5s)
+  // If first visit, wait for loading screen (4.8s)
+  const baseDelay = isIntroSeen ? 0.5 : 4.8;
 
   useEffect(() => {
     setIsMounted(true);
@@ -159,7 +165,7 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{
-            delay: animConfig.enabled ? 4.5 : 0.5,
+            delay: animConfig.enabled ? baseDelay - 0.3 : 0.5,
             duration: animConfig.duration,
           }}
         />
@@ -168,7 +174,7 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{
-            delay: animConfig.enabled ? 4.6 : 0.5,
+            delay: animConfig.enabled ? baseDelay - 0.2 : 0.5,
             duration: animConfig.duration,
           }}
         />
@@ -177,7 +183,7 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{
-            delay: animConfig.enabled ? 4.7 : 0.5,
+            delay: animConfig.enabled ? baseDelay - 0.1 : 0.5,
             duration: animConfig.duration,
           }}
         />
@@ -186,7 +192,7 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{
-            delay: animConfig.enabled ? 4.8 : 0.5,
+            delay: animConfig.enabled ? baseDelay : 0.5,
             duration: animConfig.duration,
           }}
         />
@@ -219,7 +225,7 @@ export default function Hero() {
               scale: 1,
             }}
             transition={{
-              delay: 4.8,
+              delay: baseDelay,
               duration: 1.5,
               ease: [0.22, 1, 0.36, 1],
             }}
@@ -232,7 +238,7 @@ export default function Hero() {
             className="w-12 sm:w-16 h-px bg-off-white/40 my-5 sm:my-6"
             initial={{ scaleX: 0, opacity: 0 }}
             animate={{ scaleX: 1, opacity: 1 }}
-            transition={{ delay: 5.8, duration: 0.8 }}
+            transition={{ delay: baseDelay + 1.0, duration: 0.8 }}
           />
 
           {/* Tagline - Simple Fade Up */}
@@ -240,7 +246,7 @@ export default function Hero() {
             className="text-xs sm:text-sm md:text-base text-off-white/60 font-light tracking-[0.15em] uppercase"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 6.2, duration: 0.8, ease: "easeOut" }}
+            transition={{ delay: baseDelay + 1.4, duration: 0.8, ease: "easeOut" }}
           >
             Creative Developer & Digital Storyteller
           </motion.p>
@@ -264,7 +270,7 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{
-                  delay: 6.6 + index * 0.15,
+                  delay: baseDelay + 1.8 + index * 0.15,
                   duration: 0.5,
                   ease: "easeOut",
                 }}
@@ -277,10 +283,10 @@ export default function Hero() {
 
         {/* Scroll Indicator */}
         <motion.div
-          className="absolute bottom-12 sm:bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
+          className="absolute bottom-32 sm:bottom-40 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 6.2, duration: 1 }}
+          transition={{ delay: baseDelay + 1.4, duration: 1 }}
         >
           <span className="text-[10px] sm:text-xs text-off-white/40 tracking-[0.2em] uppercase font-light">
             Scroll
