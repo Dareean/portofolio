@@ -121,7 +121,7 @@ const socialItems = [
     external: true,
   },
   {
-    href: "https://linkedin.com/in/dareean",
+    href: "https://www.linkedin.com/in/dareean-ahmad-raffi-mardin-72247a229/",
     label: "LinkedIn",
     icon: LinkedInIcon,
     external: true,
@@ -205,12 +205,9 @@ export default function FloatingNav() {
     // Else (subpages OR return to home), wait only 0.5s
     const delay = isHomePage && !isIntroSeen ? 2800 : 500;
 
-    const timer = setTimeout(
-      () => {
-        setIsVisible(true);
-      },
-      delay,
-    );
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, delay);
     return () => clearTimeout(timer);
   }, [isHomePage, isIntroSeen]);
 

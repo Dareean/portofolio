@@ -82,7 +82,7 @@ export default function ContactPage() {
     },
     {
       name: "LinkedIn",
-      url: "https://linkedin.com/in/dareean",
+      url: "https://www.linkedin.com/in/dareean-ahmad-raffi-mardin-72247a229/",
       icon: <Linkedin className="w-5 h-5" />,
     },
     {

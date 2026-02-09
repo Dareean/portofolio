@@ -963,7 +963,10 @@ export default function AboutMe() {
               <div className="flex items-center gap-2">
                 {[
                   { href: "https://github.com/Dareean", icon: "github" },
-                  { href: "https://linkedin.com/in/dareean", icon: "linkedin" },
+                  {
+                    href: "https://www.linkedin.com/in/dareean-ahmad-raffi-mardin-72247a229/",
+                    icon: "linkedin",
+                  },
                   { href: "mailto:dmardin@gmail.com", icon: "email" },
                 ].map((social, i) => (
                   <motion.a
