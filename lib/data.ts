@@ -30,7 +30,7 @@ export const PROJECTS: Project[] = [
     image: "/assets/sorot-dummy_showcase.png",
     description:
       "Developed a comprehensive prototype geospatial reporting system enabling citizens to report environmental issues with automatic GPS mapping. The platform features real-time monitoring through QGIS integration and a responsive admin dashboard for efficient issue management.",
-    featured: true,
+    featured: false,
   },
   {
     id: 3,
@@ -52,6 +52,50 @@ export const PROJECTS: Project[] = [
     image: "/assets/rsict_2025.jpeg",
     description:
       "Joined the 'Guard Riders' team to tackle road safety challenges. We designed a multifunctional smart helmet aimed at reducing accident rates by preventing their primary causes.",
+    featured: false,
+  },
+  {
+    id: 5,
+    title: "DreamPOS - Inventory Management System",
+    link: "https://github.com/Dareean/dreampos",
+    category: "Web Platform",
+    year: "2024",
+    image: "/assets/dreampos_showcase.jpeg",
+    description:
+      "A comprehensive web-based inventory management system designed to efficiently manage stock, products, brands, and categories. Features include product management with image upload, multi-level category organization, role-based access control (Admin/User), automatic barcode generation, Excel export functionality, and tax rate management. Built with PHP, MySQL, Bootstrap, and integrated with PHPMailer for email notifications and PHPSpreadsheet for data export. Perfect for retail stores, warehouses, and businesses needing organized inventory tracking.",
+    featured: true,
+  },
+  {
+    id: 6,
+    title: "Digital Library - React Dashboard",
+    link: "digital-libray.vercel.app",
+    category: "Web Platform",
+    year: "2024",
+    image: "/assets/digital_library.jpeg",
+    description:
+      "Modern digital library system built as a Single-Page Application with React and Vite. Features comprehensive book management with CRUD operations, integration with external APIs (Open Library & Gutendex), role-based authentication (Admin/User), book request system, reading history tracking, and dark mode support. Includes search & filter functionality, responsive design, and Swagger API documentation. Built with React 19, Node.js, Express, and Tailwind CSS for a seamless user experience.",
+    featured: false,
+  },
+  {
+    id: 7,
+    title: "Employee Management System",
+    link: "https://sistem-manajemen-karyawan-seven.vercel.app/",
+    category: "Web Platform",
+    year: "2024",
+    image: "/assets/employee_management.jpeg",
+    description:
+      "Full-stack HR management application with automated payroll system. Features include employee CRUD operations, real-time attendance tracking with check-in/check-out, automated salary calculations based on work hours and overtime, role-based dashboards (Admin/Employee), analytics with weekly attendance charts, and JWT authentication. Built with Node.js 20, Express 5, React 19, Prisma ORM, SQLite database, and Tailwind CSS. Perfect for small to medium companies needing centralized HR operations.",
+    featured: false,
+  },
+  {
+    id: 8,
+    title: "Batik Heritage - Cultural Showcase Website",
+    link: "projekmagang.vercel.app",
+    category: "Web Platform",
+    year: "2024",
+    image: "/assets/batik_web.jpeg",
+    description:
+      "Landing page showcase for Indonesian batik collection with focus on cultural education and product promotion. Features include hero section with regional batik highlights (Solo, Yogyakarta, Cirebon, Pekalongan), comprehensive history section, product gallery organized by origin, smooth scroll navigation, contact form, FAQ section, and customer testimonials. Built with HTML5, SCSS modular architecture, Bootstrap 5, AOS animations, and responsive design for optimal viewing across all devices. Completed during internship program.",
     featured: false,
   },
 ];

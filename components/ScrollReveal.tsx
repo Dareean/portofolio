@@ -37,8 +37,7 @@ const ScrollReveal: FC<ScrollRevealProps> = ({
     return text.split(" ");
   };
 
-  const words =
-    typeof children === "string" ? splitText(children) : [children];
+  const words = typeof children === "string" ? splitText(children) : [children];
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -58,16 +57,16 @@ const ScrollReveal: FC<ScrollRevealProps> = ({
         opacity: 1,
         filter: "blur(0px)",
         y: 0,
-        stagger: 0.05, // Faster stagger for quicker reveal
+        stagger: 0.08, // Slower stagger for more gradual reveal
         ease: "power2.out",
         scrollTrigger: {
           trigger: containerRef.current,
           scroller: scrollContainerRef?.current || undefined,
-          start: "top 85%", // Start when top of element hits 85% of viewport
-          end: "top 40%", // End when top of element hits 40% (near center)
+          start: "top 70%", // Start later - when top hits 70% of viewport
+          end: "top 10%", // End much later - creates longer reveal distance
           scrub: true,
         },
-      }
+      },
     );
 
     // Container rotation animation
@@ -81,11 +80,11 @@ const ScrollReveal: FC<ScrollRevealProps> = ({
           scrollTrigger: {
             trigger: containerRef.current,
             scroller: scrollContainerRef?.current || undefined,
-            start: "top 85%",
-            end: "top 50%", // Complete rotation by center
+            start: "top 70%",
+            end: "top 20%", // Complete rotation more gradually
             scrub: true,
           },
-        }
+        },
       );
     }
 
