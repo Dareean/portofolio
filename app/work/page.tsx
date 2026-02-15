@@ -366,6 +366,7 @@ function BentoCard({
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [isDescExpanded, setIsDescExpanded] = useState(false);
 
   const sizeClasses = {
     small: "col-span-1 row-span-1",
@@ -382,7 +383,18 @@ function BentoCard({
     xlarge: "line-clamp-4",
   };
 
+  // Threshold for showing "Read More" based on description length vs card size
+  const readMoreThreshold = {
+    small: 80,
+    medium: 80,
+    large: 180,
+    xlarge: 180,
+  };
+
   const isLargeCard = size === "large" || size === "xlarge";
+  const needsReadMore =
+    project.description &&
+    project.description.length > readMoreThreshold[size];
 
   return (
     <motion.div
@@ -395,13 +407,21 @@ function BentoCard({
       <div
         ref={cardRef}
         onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onMouseLeave={() => {
+          setIsHovered(false);
+          setIsDescExpanded(false);
+        }}
         className="h-full w-full relative bg-gradient-to-br from-off-white/5 to-off-white/[0.02] backdrop-blur-xl rounded-2xl lg:rounded-3xl overflow-hidden border border-off-white/20 hover:border-off-white/40 shadow-2xl group transition-all duration-500"
       >
         <Link
           href={project.link || `/work/${project.id}`}
           target={project.link ? "_blank" : undefined}
           className="block h-full"
+          onClick={(e) => {
+            if ((e.target as HTMLElement).closest(".read-more-btn")) {
+              e.preventDefault();
+            }
+          }}
         >
           {/* Background Image */}
           <div className="absolute inset-0">
@@ -464,7 +484,7 @@ function BentoCard({
                 {project.title}
               </h3>
 
-              {/* Description — size-aware, animated reveal */}
+              {/* Description — size-aware, animated reveal with Read More */}
               {project.description && (
                 <motion.div
                   initial={false}
@@ -476,11 +496,30 @@ function BentoCard({
                   className="overflow-hidden"
                 >
                   <p
-                    className={`text-off-white/70 text-xs sm:text-sm leading-relaxed ${descClamp[size]}`}
+                    className={`text-off-white/70 text-xs sm:text-sm leading-relaxed ${isDescExpanded ? "" : descClamp[size]}`}
                     style={{ textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}
                   >
                     {project.description}
                   </p>
+                  {needsReadMore && (
+                    <button
+                      className="read-more-btn mt-1.5 inline-flex items-center gap-1 text-off-white/50 hover:text-off-white text-[10px] sm:text-xs tracking-wide transition-colors duration-200"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsDescExpanded(!isDescExpanded);
+                      }}
+                    >
+                      <motion.span
+                        animate={{ rotate: isDescExpanded ? 180 : 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="inline-block"
+                      >
+                        <ChevronRight className="w-3 h-3" />
+                      </motion.span>
+                      {isDescExpanded ? "Show Less" : "Read More"}
+                    </button>
+                  )}
                 </motion.div>
               )}
 

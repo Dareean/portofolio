@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import { EXPERIENCES, Experience } from "@/lib/data";
 import FloatingNav from "@/components/FloatingNav";
-import { ChevronLeft, Circle, Dot, Inbox } from "lucide-react";
+import { ChevronLeft, ChevronRight, Circle, Dot, Inbox } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -76,6 +76,7 @@ function TypographyExperience({
   index: number;
 }) {
   const style = categoryStyles[experience.category] || categoryStyles.work;
+  const [isDescExpanded, setIsDescExpanded] = useState(false);
 
   // Vary sizes for visual interest
   const isLarge = index % 3 === 0;
@@ -160,17 +161,35 @@ function TypographyExperience({
         </div>
 
         {/* Description - Show more for larger items */}
-        <p
-          className={`leading-relaxed text-off-white/60 ${
-            isLarge
-              ? "text-base line-clamp-none"
-              : isMedium
-                ? "text-sm line-clamp-4"
-                : "text-sm line-clamp-3"
-          } mb-4`}
-        >
-          {experience.description}
-        </p>
+        <div className="mb-4">
+          <p
+            className={`leading-relaxed text-off-white/60 ${
+              isLarge
+                ? "text-base"
+                : isMedium
+                  ? `text-sm ${isDescExpanded ? "" : "line-clamp-4"}`
+                  : `text-sm ${isDescExpanded ? "" : "line-clamp-3"}`
+            }`}
+          >
+            {experience.description}
+          </p>
+          {!isLarge &&
+            experience.description.length > (isMedium ? 200 : 120) && (
+              <button
+                className="mt-1.5 inline-flex items-center gap-1 text-off-white/50 hover:text-off-white text-[10px] sm:text-xs tracking-wide transition-colors duration-200"
+                onClick={() => setIsDescExpanded(!isDescExpanded)}
+              >
+                <motion.span
+                  animate={{ rotate: isDescExpanded ? 180 : 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="inline-block"
+                >
+                  <ChevronRight className="w-3 h-3" />
+                </motion.span>
+                {isDescExpanded ? "Show Less" : "Read More"}
+              </button>
+            )}
+        </div>
 
         {/* Highlights */}
         {experience.highlights && experience.highlights.length > 0 && (
