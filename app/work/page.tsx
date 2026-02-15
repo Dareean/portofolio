@@ -1,11 +1,26 @@
 "use client";
 
 import { useRef, useState, useEffect, useMemo } from "react";
-import { motion, useScroll, useTransform, useSpring, useInView } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useSpring,
+  useInView,
+} from "framer-motion";
 import Link from "next/link";
 import { PROJECTS } from "@/lib/data";
 import FloatingNav from "@/components/FloatingNav";
-import { ExternalLink, ArrowRight, ChevronLeft, ChevronRight, Star, Calendar, Sparkles, FolderOpen } from "lucide-react";
+import {
+  ExternalLink,
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Star,
+  Calendar,
+  Sparkles,
+  FolderOpen,
+} from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -67,10 +82,21 @@ function AnimatedBackground() {
   }, []);
 
   return (
-    <div ref={containerRef} className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div
+      ref={containerRef}
+      className="fixed inset-0 pointer-events-none overflow-hidden z-0"
+    >
       {/* Asterisk/Star - Top Right */}
-      <svg className="animated-star absolute top-20 right-[15%] w-16 h-16 opacity-20" viewBox="0 0 100 100">
-        <path d="M50 0 L55 45 L100 50 L55 55 L50 100 L45 55 L0 50 L45 45 Z" fill="none" stroke="url(#gradient1)" strokeWidth="2" />
+      <svg
+        className="animated-star absolute top-20 right-[15%] w-16 h-16 opacity-20"
+        viewBox="0 0 100 100"
+      >
+        <path
+          d="M50 0 L55 45 L100 50 L55 55 L50 100 L45 55 L0 50 L45 45 Z"
+          fill="none"
+          stroke="url(#gradient1)"
+          strokeWidth="2"
+        />
         <defs>
           <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#60A5FA" />
@@ -80,8 +106,18 @@ function AnimatedBackground() {
       </svg>
 
       {/* Circle - Top Left */}
-      <svg className="animated-circle absolute top-32 left-[10%] w-12 h-12 opacity-15" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="40" fill="none" stroke="#34D399" strokeWidth="3" />
+      <svg
+        className="animated-circle absolute top-32 left-[10%] w-12 h-12 opacity-15"
+        viewBox="0 0 100 100"
+      >
+        <circle
+          cx="50"
+          cy="50"
+          r="40"
+          fill="none"
+          stroke="#34D399"
+          strokeWidth="3"
+        />
       </svg>
 
       {/* Small dots scattered */}
@@ -91,7 +127,10 @@ function AnimatedBackground() {
       <div className="animated-dot absolute top-[60%] right-[15%] w-2 h-2 rounded-full bg-emerald-400 opacity-35" />
 
       {/* Curved Path - Left Side */}
-      <svg className="absolute top-[35%] left-0 w-64 h-64 opacity-10" viewBox="0 0 200 200">
+      <svg
+        className="absolute top-[35%] left-0 w-64 h-64 opacity-10"
+        viewBox="0 0 200 200"
+      >
         <path
           className="animated-path"
           d="M 10,100 Q 50,20 100,50 T 190,100"
@@ -111,13 +150,29 @@ function AnimatedBackground() {
       </svg>
 
       {/* Diamond shape - Bottom Right */}
-      <svg className="animated-circle absolute bottom-[20%] right-[20%] w-10 h-10 opacity-15" viewBox="0 0 100 100">
-        <path d="M 50,10 L 90,50 L 50,90 L 10,50 Z" fill="none" stroke="#F472B6" strokeWidth="2" />
+      <svg
+        className="animated-circle absolute bottom-[20%] right-[20%] w-10 h-10 opacity-15"
+        viewBox="0 0 100 100"
+      >
+        <path
+          d="M 50,10 L 90,50 L 50,90 L 10,50 Z"
+          fill="none"
+          stroke="#F472B6"
+          strokeWidth="2"
+        />
       </svg>
 
       {/* Plus shape - Middle */}
-      <svg className="animated-star absolute top-[50%] left-[50%] w-8 h-8 opacity-10" viewBox="0 0 100 100">
-        <path d="M 50,20 L 50,80 M 20,50 L 80,50" stroke="#60A5FA" strokeWidth="3" strokeLinecap="round" />
+      <svg
+        className="animated-star absolute top-[50%] left-[50%] w-8 h-8 opacity-10"
+        viewBox="0 0 100 100"
+      >
+        <path
+          d="M 50,20 L 50,80 M 20,50 L 80,50"
+          stroke="#60A5FA"
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
       </svg>
     </div>
   );
@@ -137,7 +192,8 @@ function FeaturedProjectCard({
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Check if text is long enough to need expansion
-  const needsExpansion = project.description && project.description.length > 100;
+  const needsExpansion =
+    project.description && project.description.length > 100;
 
   return (
     <motion.div
@@ -155,15 +211,14 @@ function FeaturedProjectCard({
         className="block"
         onClick={(e) => {
           // Prevent navigation if clicking expand button
-          if ((e.target as HTMLElement).closest('.expand-btn')) {
+          if ((e.target as HTMLElement).closest(".expand-btn")) {
             e.preventDefault();
           }
         }}
       >
         <div className="relative flex flex-col sm:flex-row gap-6 p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-off-white/[0.04] to-transparent border border-off-white/10 hover:border-off-white/30 transition-all duration-500 overflow-hidden">
-          
           {/* Animated accent line on left */}
-          <motion.div 
+          <motion.div
             className="absolute left-0 top-0 bottom-0 w-1 bg-off-white"
             initial={{ scaleY: 0 }}
             animate={{ scaleY: isInView ? 1 : 0 }}
@@ -180,7 +235,7 @@ function FeaturedProjectCard({
               transition={{ duration: 0.5 }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-void-black/60 to-transparent" />
-            
+
             {/* Number overlay */}
             <span className="absolute bottom-2 right-2 font-display text-2xl text-off-white/20 leading-none">
               {String(index + 1).padStart(2, "0")}
@@ -201,14 +256,22 @@ function FeaturedProjectCard({
                 >
                   <Sparkles className="w-3 h-3 text-off-white/70" />
                 </motion.div>
-                <span className="text-off-white/70 text-[10px] tracking-widest uppercase font-medium">Featured</span>
+                <span className="text-off-white/70 text-[10px] tracking-widest uppercase font-medium">
+                  Featured
+                </span>
               </motion.div>
-              
+
               <span className="text-off-white/30 text-xs">•</span>
               <span className="text-off-white/40 text-xs">{project.year}</span>
-              
-              {(Array.isArray(project.category) ? project.category : [project.category]).map((cat, i) => (
-                <span key={i} className="hidden sm:inline text-off-white/30 text-xs">
+
+              {(Array.isArray(project.category)
+                ? project.category
+                : [project.category]
+              ).map((cat, i) => (
+                <span
+                  key={i}
+                  className="hidden sm:inline text-off-white/30 text-xs"
+                >
                   • {cat}
                 </span>
               ))}
@@ -228,14 +291,14 @@ function FeaturedProjectCard({
             {/* Description - expandable */}
             {project.description && (
               <div className="relative">
-                <motion.p 
+                <motion.p
                   className={`text-off-white/50 text-sm leading-relaxed mb-2 ${isExpanded ? "" : "line-clamp-2"}`}
                   animate={{ height: "auto" }}
                   transition={{ duration: 0.3 }}
                 >
                   {project.description}
                 </motion.p>
-                
+
                 {/* View More / View Less Button */}
                 {needsExpansion && (
                   <motion.button
@@ -269,17 +332,19 @@ function FeaturedProjectCard({
                 {project.link ? "View Project" : "Explore"}
               </span>
               <ArrowRight className="w-3 h-3 text-off-white/40 group-hover:text-off-white transition-all group-hover:translate-x-1" />
-              {project.link && <ExternalLink className="w-3 h-3 text-off-white/30" />}
+              {project.link && (
+                <ExternalLink className="w-3 h-3 text-off-white/30" />
+              )}
             </motion.div>
           </div>
 
           {/* Hover glow effect */}
           <motion.div
             className="absolute inset-0 pointer-events-none rounded-2xl"
-            animate={{ 
-              boxShadow: isHovered 
-                ? "inset 0 0 40px rgba(255,255,255,0.03)" 
-                : "inset 0 0 0px transparent" 
+            animate={{
+              boxShadow: isHovered
+                ? "inset 0 0 40px rgba(255,255,255,0.03)"
+                : "inset 0 0 0px transparent",
             }}
             transition={{ duration: 0.4 }}
           />
@@ -315,11 +380,22 @@ function BentoCard({
       const rotateX = ((y - centerY) / centerY) * -8;
       const rotateY = ((x - centerX) / centerX) * 8;
 
-      gsap.to(card, { rotateX, rotateY, duration: 0.5, ease: "power2.out", transformPerspective: 1000 });
+      gsap.to(card, {
+        rotateX,
+        rotateY,
+        duration: 0.5,
+        ease: "power2.out",
+        transformPerspective: 1000,
+      });
     };
 
     const handleMouseLeave = () => {
-      gsap.to(card, { rotateX: 0, rotateY: 0, duration: 0.8, ease: "power2.out" });
+      gsap.to(card, {
+        rotateX: 0,
+        rotateY: 0,
+        duration: 0.8,
+        ease: "power2.out",
+      });
     };
 
     card.addEventListener("mousemove", handleMouseMove);
@@ -352,22 +428,45 @@ function BentoCard({
         className="h-full w-full relative bg-gradient-to-br from-off-white/5 to-off-white/[0.02] backdrop-blur-xl rounded-2xl overflow-hidden border border-off-white/20 hover:border-off-white/40 shadow-2xl group transition-all duration-500"
         style={{ transformStyle: "preserve-3d" }}
       >
-        <Link href={project.link || `/work/${project.id}`} target={project.link ? "_blank" : undefined} className="block h-full">
+        <Link
+          href={project.link || `/work/${project.id}`}
+          target={project.link ? "_blank" : undefined}
+          className="block h-full"
+        >
           {/* Background Image */}
           <div className="absolute inset-0">
             <div
               className="absolute inset-0 bg-cover bg-center transition-all duration-700 ease-out group-hover:scale-110"
-              style={{ backgroundImage: `url(${project.image})`, backgroundPosition: "center 30%" }}
+              style={{
+                backgroundImage: `url(${project.image})`,
+                backgroundPosition: "center 30%",
+                filter: "brightness(0.75) saturate(0.7) contrast(1.1)",
+              }}
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-void-black/60 via-void-black/40 to-void-black/90 group-hover:from-void-black/70 group-hover:to-void-black/95 transition-all duration-500" />
+            {/* Lighter base gradient - vignette will handle darkening */}
+            <div className="absolute inset-0 bg-gradient-to-b from-void-black/50 via-void-black/30 to-void-black/80 transition-all duration-500" />
+            {/* Animated Vignette on Hover */}
+            <motion.div
+              className="absolute inset-0 bg-radial-gradient"
+              style={{
+                background:
+                  "radial-gradient(circle at center, transparent 0%, transparent 40%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,0.9) 100%)",
+              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: isHovered ? 1 : 0 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+            />
           </div>
 
           {/* Content */}
-          <div className="absolute inset-0 flex flex-col justify-between p-4 sm:p-6 z-10">
-            <div className="flex items-start justify-between gap-2">
+          <div className="absolute inset-0 flex flex-col justify-between z-10">
+            {/* Top badges area */}
+            <div className="flex items-start justify-between gap-2 p-4 sm:p-6">
               <div className="flex flex-col gap-2">
                 <span className="inline-flex px-3 py-1.5 bg-void-black/80 backdrop-blur-xl rounded-full border border-off-white/30 text-off-white text-[10px] sm:text-xs tracking-wider uppercase font-medium w-fit">
-                  {Array.isArray(project.category) ? project.category[0] : project.category}
+                  {Array.isArray(project.category)
+                    ? project.category[0]
+                    : project.category}
                 </span>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-off-white/10 backdrop-blur-xl rounded-full text-off-white/70 text-[10px] sm:text-xs w-fit">
                   <Calendar className="w-3 h-3" />
@@ -384,21 +483,66 @@ function BentoCard({
               )}
             </div>
 
-            <div className="space-y-2 sm:space-y-3">
-              <h3 className="font-display text-lg sm:text-xl md:text-2xl text-off-white leading-tight">
-                {project.title}
-              </h3>
+            {/* Badge-style text container */}
+            <div className="relative p-4 sm:p-6 space-y-3">
+              {/* Title Badge */}
+              <div className="inline-block">
+                <div className="px-4 py-2.5 bg-void-black/95 backdrop-blur-xl rounded-xl border-2 border-off-white/40 shadow-xl">
+                  <h3
+                    className="font-display text-base sm:text-lg md:text-xl text-off-white leading-tight"
+                    style={{
+                      textShadow: "0 2px 8px rgba(0,0,0,0.8)",
+                    }}
+                  >
+                    {project.title}
+                  </h3>
+                </div>
+              </div>
+
+              {/* Description Badge (shown on hover or large cards) */}
               {project.description && (
                 <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: isHovered || size === "large" || size === "xlarge" ? "auto" : 0, opacity: isHovered || size === "large" || size === "xlarge" ? 1 : 0 }}
+                  initial={{ height: 0, opacity: 0, scale: 0.95 }}
+                  animate={{
+                    height:
+                      isHovered || size === "large" || size === "xlarge"
+                        ? "auto"
+                        : 0,
+                    opacity:
+                      isHovered || size === "large" || size === "xlarge"
+                        ? 1
+                        : 0,
+                    scale:
+                      isHovered || size === "large" || size === "xlarge"
+                        ? 1
+                        : 0.95,
+                  }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
                   className="overflow-hidden"
                 >
-                  <p className="text-off-white/70 text-xs sm:text-sm leading-relaxed line-clamp-3">{project.description}</p>
+                  <div className="inline-block px-4 py-2 bg-void-black/90 backdrop-blur-xl rounded-lg border border-off-white/30 shadow-lg">
+                    <p
+                      className="text-off-white/90 text-xs sm:text-sm leading-relaxed line-clamp-3"
+                      style={{
+                        textShadow: "0 1px 6px rgba(0,0,0,0.8)",
+                      }}
+                    >
+                      {project.description}
+                    </p>
+                  </div>
                 </motion.div>
               )}
-              <motion.div animate={{ y: isHovered ? 0 : 10, opacity: isHovered ? 1 : 0 }} className="pt-2">
-                <span className="inline-flex items-center gap-2 px-4 py-2 bg-off-white/10 hover:bg-off-white/20 backdrop-blur-xl border border-off-white/30 rounded-full text-off-white text-[10px] sm:text-xs tracking-wider uppercase transition-all duration-300 group/cta">
+
+              {/* CTA Badge */}
+              <motion.div
+                animate={{
+                  y: isHovered ? 0 : 10,
+                  opacity: isHovered ? 1 : 0,
+                  scale: isHovered ? 1 : 0.9,
+                }}
+                transition={{ duration: 0.3 }}
+              >
+                <span className="inline-flex items-center gap-2 px-4 py-2 bg-void-black/95 hover:bg-off-white/10 backdrop-blur-xl border-2 border-off-white/40 hover:border-off-white/60 rounded-full text-off-white text-[10px] sm:text-xs tracking-wider uppercase transition-all duration-300 group/cta shadow-xl">
                   {project.link ? "View Live" : "Explore"}
                   <ArrowRight className="w-3 h-3 transition-transform group-hover/cta:translate-x-1" />
                 </span>
@@ -412,7 +556,13 @@ function BentoCard({
 }
 
 // Filter Tabs
-function FilterTabs({ activeFilter, setActiveFilter }: { activeFilter: string; setActiveFilter: (f: string) => void }) {
+function FilterTabs({
+  activeFilter,
+  setActiveFilter,
+}: {
+  activeFilter: string;
+  setActiveFilter: (f: string) => void;
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -434,13 +584,13 @@ function FilterTabs({ activeFilter, setActiveFilter }: { activeFilter: string; s
   return (
     <div className="relative flex items-center bg-off-white/5 rounded-full border border-off-white/10 backdrop-blur-xl max-w-full shadow-inner group/tabs">
       {/* Scroll Indicators */}
-      <div 
-        className={`absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-void-black/40 to-transparent z-20 pointer-events-none transition-opacity duration-300 rounded-l-full ${canScrollLeft ? "opacity-100" : "opacity-0"}`} 
+      <div
+        className={`absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-void-black/40 to-transparent z-20 pointer-events-none transition-opacity duration-300 rounded-l-full ${canScrollLeft ? "opacity-100" : "opacity-0"}`}
       />
-      <div 
+      <div
         className={`absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-void-black/40 to-transparent z-20 pointer-events-none transition-opacity duration-300 rounded-r-full flex items-center justify-end pr-2 ${canScrollRight ? "opacity-100" : "opacity-0"}`}
       >
-        <motion.div 
+        <motion.div
           animate={{ x: [0, 3, 0] }}
           transition={{ duration: 1.5, repeat: Infinity }}
         >
@@ -448,7 +598,7 @@ function FilterTabs({ activeFilter, setActiveFilter }: { activeFilter: string; s
         </motion.div>
       </div>
 
-      <div 
+      <div
         ref={containerRef}
         onScroll={checkScroll}
         className="flex items-center gap-1 p-1.5 overflow-x-auto max-w-full scrollbar-hide w-full"
@@ -496,7 +646,10 @@ function FilterTabs({ activeFilter, setActiveFilter }: { activeFilter: string; s
 
 export default function WorkPage() {
   const { scrollYProgress } = useScroll();
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+  });
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
 
   const [activeFilter, setActiveFilter] = useState("All");
@@ -509,8 +662,21 @@ export default function WorkPage() {
     });
   }, [activeFilter]);
 
-  const getSizeForProject = (index: number): "small" | "medium" | "large" | "xlarge" => {
-    const patterns = ["large", "medium", "small", "xlarge", "small", "medium", "medium", "xlarge", "small", "large"];
+  const getSizeForProject = (
+    index: number,
+  ): "small" | "medium" | "large" | "xlarge" => {
+    const patterns = [
+      "large",
+      "medium",
+      "small",
+      "xlarge",
+      "small",
+      "medium",
+      "medium",
+      "xlarge",
+      "small",
+      "large",
+    ];
     return patterns[index % patterns.length] as any;
   };
 
@@ -526,7 +692,10 @@ export default function WorkPage() {
       />
 
       {/* Parallax Background */}
-      <motion.div style={{ y: backgroundY }} className="absolute inset-0 pointer-events-none">
+      <motion.div
+        style={{ y: backgroundY }}
+        className="absolute inset-0 pointer-events-none"
+      >
         <div className="absolute top-20 right-20 w-[500px] h-[500px] bg-off-white/[0.02] rounded-full blur-[100px]" />
         <div className="absolute bottom-40 left-20 w-[400px] h-[400px] bg-off-white/[0.02] rounded-full blur-[80px]" />
       </motion.div>
@@ -539,15 +708,25 @@ export default function WorkPage() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
-          <Link href="/" className="inline-flex items-center gap-2 text-off-white/50 hover:text-off-white transition-colors group">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-off-white/50 hover:text-off-white transition-colors group"
+          >
             <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
             <span className="text-sm tracking-wide">Home</span>
           </Link>
         </motion.div>
 
         <div className="text-center relative z-10">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="mb-8">
-            <span className="text-off-white/30 text-xs tracking-[0.5em] uppercase">Portfolio</span>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="mb-8"
+          >
+            <span className="text-off-white/30 text-xs tracking-[0.5em] uppercase">
+              Portfolio
+            </span>
           </motion.div>
 
           <motion.h1
@@ -605,7 +784,11 @@ export default function WorkPage() {
 
           <div className="space-y-8">
             {featuredProjects.map((project, index) => (
-              <FeaturedProjectCard key={project.id} project={project} index={index} />
+              <FeaturedProjectCard
+                key={project.id}
+                project={project}
+                index={index}
+              />
             ))}
           </div>
         </section>
@@ -630,25 +813,45 @@ export default function WorkPage() {
               More Work
             </motion.h2>
           </div>
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}>
-            <FilterTabs activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+          >
+            <FilterTabs
+              activeFilter={activeFilter}
+              setActiveFilter={setActiveFilter}
+            />
           </motion.div>
         </div>
 
         {/* Bento Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 auto-rows-[280px]">
           {filteredRegularProjects.map((project, index) => (
-            <BentoCard key={project.id} project={project} size={getSizeForProject(index)} index={index} />
+            <BentoCard
+              key={project.id}
+              project={project}
+              size={getSizeForProject(index)}
+              index={index}
+            />
           ))}
         </div>
 
         {filteredRegularProjects.length === 0 && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-20"
+          >
             <div className="w-16 h-16 mx-auto mb-4 bg-off-white/10 rounded-full flex items-center justify-center">
               <FolderOpen className="w-8 h-8 text-off-white/50" />
             </div>
-            <h3 className="font-display text-xl text-off-white mb-2">No projects in this category</h3>
-            <button onClick={() => setActiveFilter("All")} className="mt-4 px-5 py-2 bg-off-white/10 text-off-white rounded-full text-sm hover:bg-off-white/20 transition-colors">
+            <h3 className="font-display text-xl text-off-white mb-2">
+              No projects in this category
+            </h3>
+            <button
+              onClick={() => setActiveFilter("All")}
+              className="mt-4 px-5 py-2 bg-off-white/10 text-off-white rounded-full text-sm hover:bg-off-white/20 transition-colors"
+            >
               View All
             </button>
           </motion.div>
@@ -657,12 +860,18 @@ export default function WorkPage() {
 
       {/* Footer CTA */}
       <section className="px-6 md:px-20 py-32 text-center border-t border-off-white/10">
-        <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
           <h2 className="font-display text-4xl md:text-5xl text-off-white mb-6">
             Let&apos;s Create
             <span className="text-off-white/60"> Together</span>
           </h2>
-          <p className="text-off-white/50 text-lg mb-10 max-w-xl mx-auto">Have a project in mind? Let&apos;s turn your vision into reality.</p>
+          <p className="text-off-white/50 text-lg mb-10 max-w-xl mx-auto">
+            Have a project in mind? Let&apos;s turn your vision into reality.
+          </p>
           <Link
             href="/contact"
             className="inline-flex items-center gap-3 px-8 py-4 bg-off-white text-void-black font-medium rounded-full hover:bg-off-white/90 transition-all duration-300 group"
