@@ -309,6 +309,20 @@ body {
     }
   }
 
+  /* Marquee scroll animation for tech items */
+  @keyframes marquee-scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  .animate-marquee-scroll {
+    animation: marquee-scroll 25s linear infinite;
+  }
+
   .animate-scanline {
     animation: scanline 2s linear infinite;
   }
