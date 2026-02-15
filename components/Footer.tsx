@@ -60,7 +60,10 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer ref={footerRef} className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 md:px-12 lg:px-16 border-t border-off-white/10">
+    <footer ref={footerRef} className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 md:px-12 lg:px-16">
+      {/* Gradient top border */}
+      <div className="section-divider mb-12 sm:mb-16 md:mb-24" />
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 sm:gap-10 md:gap-12">
         {/* Left Section (GSAP animated) */}
         <div ref={leftSectionRef}>
@@ -95,7 +98,7 @@ export default function Footer() {
           <div className="flex flex-wrap gap-4 sm:gap-6 md:gap-8">
             <Link
               href="/journey"
-              className="text-off-white/60 hover:text-off-white text-sm tracking-widest uppercase transition-colors duration-300"
+              className="text-off-white/60 hover:text-off-white text-sm tracking-widest uppercase transition-colors duration-300 hover:underline underline-offset-4 decoration-off-white/30"
             >
               Journey
             </Link>
@@ -115,17 +118,25 @@ export default function Footer() {
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-off-white/60 hover:text-off-white text-sm tracking-widest uppercase transition-colors duration-300"
+                className="text-off-white/60 hover:text-off-white text-sm tracking-widest uppercase transition-colors duration-300 hover:underline underline-offset-4 decoration-off-white/30"
               >
                 {link.name}
               </a>
             ))}
           </div>
 
-          {/* Copyright */}
-          <p className="text-off-white/30 text-xs tracking-wider">
-            © {currentYear} Dareean. All rights reserved.
-          </p>
+          {/* Copyright & Back to Top */}
+          <div className="flex items-center gap-6">
+            <p className="text-off-white/30 text-xs tracking-wider">
+              © {currentYear} Dareean. All rights reserved.
+            </p>
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="text-off-white/30 hover:text-off-white text-xs tracking-wider uppercase transition-colors duration-300 flex items-center gap-1.5"
+            >
+              ↑ Top
+            </button>
+          </div>
         </div>
       </div>
     </footer>

@@ -279,14 +279,16 @@ function FilterPills({
             px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 whitespace-nowrap
             ${
               activeFilter === filter.key
-                ? "bg-off-white text-void-black"
-                : "bg-off-white/5 text-off-white/60 hover:bg-off-white/10"
+                ? "bg-off-white text-void-black border border-off-white/80 shadow-lg"
+                : "bg-off-white/5 text-off-white/60 hover:bg-off-white/10 border border-transparent"
             }
           `}
           whileTap={{ scale: 0.95 }}
         >
           {filter.label}
-          <span className="ml-2 opacity-60">{filterCounts[filter.key]}</span>
+          <span className={`ml-2 ${activeFilter === filter.key ? "opacity-50" : "opacity-40 text-off-white/40"}`}>
+            {filterCounts[filter.key]}
+          </span>
         </motion.button>
       ))}
     </motion.div>

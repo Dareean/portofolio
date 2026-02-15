@@ -216,7 +216,7 @@ function FeaturedProjectCard({
           }
         }}
       >
-        <div className="relative flex flex-col sm:flex-row gap-6 p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-off-white/[0.04] to-transparent border border-off-white/10 hover:border-off-white/30 transition-all duration-500 overflow-hidden">
+        <div className="relative flex flex-col sm:flex-row gap-6 p-5 sm:p-6 lg:p-8 rounded-2xl bg-gradient-to-r from-off-white/[0.04] to-transparent border border-off-white/10 hover:border-off-white/30 transition-all duration-500 overflow-hidden">
           {/* Animated accent line on left */}
           <motion.div
             className="absolute left-0 top-0 bottom-0 w-1 bg-off-white"
@@ -227,7 +227,7 @@ function FeaturedProjectCard({
           />
 
           {/* Thumbnail */}
-          <div className="relative w-full sm:w-32 md:w-40 h-48 sm:h-28 md:h-32 flex-shrink-0 rounded-xl overflow-hidden">
+          <div className="relative w-full sm:w-32 md:w-40 lg:w-48 xl:w-56 h-48 sm:h-28 md:h-32 lg:h-36 xl:h-40 flex-shrink-0 rounded-xl overflow-hidden">
             <motion.div
               className="absolute inset-0 bg-cover bg-center"
               style={{ backgroundImage: `url(${project.image})` }}
@@ -292,7 +292,7 @@ function FeaturedProjectCard({
             {project.description && (
               <div className="relative">
                 <motion.p
-                  className={`text-off-white/50 text-sm leading-relaxed mb-2 ${isExpanded ? "" : "line-clamp-2"}`}
+                  className={`text-off-white/50 text-sm lg:text-base leading-relaxed mb-2 ${isExpanded ? "" : "line-clamp-2"}`}
                   animate={{ height: "auto" }}
                   transition={{ duration: 0.3 }}
                 >
@@ -367,51 +367,22 @@ function BentoCard({
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
-  useEffect(() => {
-    if (!cardRef.current) return;
-    const card = cardRef.current;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-      const rotateX = ((y - centerY) / centerY) * -8;
-      const rotateY = ((x - centerX) / centerX) * 8;
-
-      gsap.to(card, {
-        rotateX,
-        rotateY,
-        duration: 0.5,
-        ease: "power2.out",
-        transformPerspective: 1000,
-      });
-    };
-
-    const handleMouseLeave = () => {
-      gsap.to(card, {
-        rotateX: 0,
-        rotateY: 0,
-        duration: 0.8,
-        ease: "power2.out",
-      });
-    };
-
-    card.addEventListener("mousemove", handleMouseMove);
-    card.addEventListener("mouseleave", handleMouseLeave);
-    return () => {
-      card.removeEventListener("mousemove", handleMouseMove);
-      card.removeEventListener("mouseleave", handleMouseLeave);
-    };
-  }, []);
-
   const sizeClasses = {
     small: "col-span-1 row-span-1",
     medium: "col-span-1 row-span-1 md:col-span-2 md:row-span-1",
     large: "col-span-1 row-span-1 md:col-span-2 md:row-span-2",
     xlarge: "col-span-1 row-span-1 md:col-span-2 md:row-span-2",
   };
+
+  // Size-aware description line clamp
+  const descClamp = {
+    small: "line-clamp-2",
+    medium: "line-clamp-2",
+    large: "line-clamp-4",
+    xlarge: "line-clamp-4",
+  };
+
+  const isLargeCard = size === "large" || size === "xlarge";
 
   return (
     <motion.div
@@ -425,8 +396,7 @@ function BentoCard({
         ref={cardRef}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="h-full w-full relative bg-gradient-to-br from-off-white/5 to-off-white/[0.02] backdrop-blur-xl rounded-2xl overflow-hidden border border-off-white/20 hover:border-off-white/40 shadow-2xl group transition-all duration-500"
-        style={{ transformStyle: "preserve-3d" }}
+        className="h-full w-full relative bg-gradient-to-br from-off-white/5 to-off-white/[0.02] backdrop-blur-xl rounded-2xl lg:rounded-3xl overflow-hidden border border-off-white/20 hover:border-off-white/40 shadow-2xl group transition-all duration-500"
       >
         <Link
           href={project.link || `/work/${project.id}`}
@@ -443,106 +413,86 @@ function BentoCard({
                 filter: "brightness(0.75) saturate(0.7) contrast(1.1)",
               }}
             />
-            {/* Lighter base gradient - vignette will handle darkening */}
-            <div className="absolute inset-0 bg-gradient-to-b from-void-black/50 via-void-black/30 to-void-black/80 transition-all duration-500" />
-            {/* Animated Vignette on Hover */}
+            {/* Base gradient */}
             <motion.div
-              className="absolute inset-0 bg-radial-gradient"
-              style={{
-                background:
-                  "radial-gradient(circle at center, transparent 0%, transparent 40%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,0.9) 100%)",
+              className="absolute inset-0 transition-all duration-500"
+              animate={{
+                background: isHovered
+                  ? "linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 40%, rgba(0,0,0,0.85) 70%, rgba(0,0,0,0.95) 100%)"
+                  : "linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.8) 100%)",
               }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isHovered ? 1 : 0 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
+              transition={{ duration: 0.4 }}
             />
           </div>
 
-          {/* Content */}
-          <div className="absolute inset-0 flex flex-col justify-between z-10">
-            {/* Top badges area */}
-            <div className="flex items-start justify-between gap-2 p-4 sm:p-6">
-              <div className="flex flex-col gap-2">
-                <span className="inline-flex px-3 py-1.5 bg-void-black/80 backdrop-blur-xl rounded-full border border-off-white/30 text-off-white text-[10px] sm:text-xs tracking-wider uppercase font-medium w-fit">
+          {/* Content — bottom-anchored */}
+          <div className="absolute inset-0 flex flex-col justify-end z-10">
+            {/* Top-right external link icon (absolute positioned) */}
+            {project.link && (
+              <motion.div
+                animate={{ opacity: isHovered ? 1 : 0 }}
+                className="absolute top-4 right-4 sm:top-6 sm:right-6 lg:top-8 lg:right-8 p-2 bg-off-white/10 backdrop-blur-md rounded-full border border-off-white/20"
+              >
+                <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 text-off-white" />
+              </motion.div>
+            )}
+
+            {/* Bottom content area */}
+            <div className="relative p-4 sm:p-6 lg:p-8 space-y-2.5">
+              {/* Category & Year row */}
+              <motion.div
+                className="flex items-center gap-2 flex-wrap"
+                animate={{ y: isHovered ? 0 : 4, opacity: isHovered ? 1 : 0.8 }}
+                transition={{ duration: 0.3 }}
+              >
+                <span className="inline-flex px-2.5 py-1 bg-void-black/70 backdrop-blur-xl rounded-full border border-off-white/25 text-off-white text-[10px] sm:text-xs tracking-wider uppercase font-medium">
                   {Array.isArray(project.category)
                     ? project.category[0]
                     : project.category}
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-off-white/10 backdrop-blur-xl rounded-full text-off-white/70 text-[10px] sm:text-xs w-fit">
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-off-white/10 backdrop-blur-xl rounded-full text-off-white/60 text-[10px] sm:text-xs">
                   <Calendar className="w-3 h-3" />
                   {project.year}
                 </span>
-              </div>
-              {project.link && (
-                <motion.div
-                  animate={{ opacity: isHovered ? 1 : 0 }}
-                  className="p-2 bg-off-white/10 backdrop-blur-md rounded-full border border-off-white/20"
-                >
-                  <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 text-off-white" />
-                </motion.div>
-              )}
-            </div>
+              </motion.div>
 
-            {/* Badge-style text container */}
-            <div className="relative p-4 sm:p-6 space-y-3">
-              {/* Title Badge */}
-              <div className="inline-block">
-                <div className="px-4 py-2.5 bg-void-black/95 backdrop-blur-xl rounded-xl border-2 border-off-white/40 shadow-xl">
-                  <h3
-                    className="font-display text-base sm:text-lg md:text-xl text-off-white leading-tight"
-                    style={{
-                      textShadow: "0 2px 8px rgba(0,0,0,0.8)",
-                    }}
-                  >
-                    {project.title}
-                  </h3>
-                </div>
-              </div>
+              {/* Title */}
+              <h3
+                className="font-display text-sm sm:text-base md:text-lg text-off-white leading-snug"
+                style={{ textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}
+              >
+                {project.title}
+              </h3>
 
-              {/* Description Badge (shown on hover or large cards) */}
+              {/* Description — size-aware, animated reveal */}
               {project.description && (
                 <motion.div
-                  initial={{ height: 0, opacity: 0, scale: 0.95 }}
+                  initial={false}
                   animate={{
-                    height:
-                      isHovered || size === "large" || size === "xlarge"
-                        ? "auto"
-                        : 0,
-                    opacity:
-                      isHovered || size === "large" || size === "xlarge"
-                        ? 1
-                        : 0,
-                    scale:
-                      isHovered || size === "large" || size === "xlarge"
-                        ? 1
-                        : 0.95,
+                    height: isHovered || isLargeCard ? "auto" : 0,
+                    opacity: isHovered || isLargeCard ? 1 : 0,
                   }}
                   transition={{ duration: 0.3, ease: "easeOut" }}
                   className="overflow-hidden"
                 >
-                  <div className="inline-block px-4 py-2 bg-void-black/90 backdrop-blur-xl rounded-lg border border-off-white/30 shadow-lg">
-                    <p
-                      className="text-off-white/90 text-xs sm:text-sm leading-relaxed line-clamp-3"
-                      style={{
-                        textShadow: "0 1px 6px rgba(0,0,0,0.8)",
-                      }}
-                    >
-                      {project.description}
-                    </p>
-                  </div>
+                  <p
+                    className={`text-off-white/70 text-xs sm:text-sm leading-relaxed ${descClamp[size]}`}
+                    style={{ textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}
+                  >
+                    {project.description}
+                  </p>
                 </motion.div>
               )}
 
-              {/* CTA Badge */}
+              {/* CTA */}
               <motion.div
                 animate={{
-                  y: isHovered ? 0 : 10,
+                  y: isHovered ? 0 : 8,
                   opacity: isHovered ? 1 : 0,
-                  scale: isHovered ? 1 : 0.9,
                 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.3, delay: 0.05 }}
               >
-                <span className="inline-flex items-center gap-2 px-4 py-2 bg-void-black/95 hover:bg-off-white/10 backdrop-blur-xl border-2 border-off-white/40 hover:border-off-white/60 rounded-full text-off-white text-[10px] sm:text-xs tracking-wider uppercase transition-all duration-300 group/cta shadow-xl">
+                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-off-white/10 hover:bg-off-white/20 backdrop-blur-xl border border-off-white/30 hover:border-off-white/50 rounded-full text-off-white text-[10px] sm:text-xs tracking-wider uppercase transition-all duration-300 group/cta">
                   {project.link ? "View Live" : "Explore"}
                   <ArrowRight className="w-3 h-3 transition-transform group-hover/cta:translate-x-1" />
                 </span>
@@ -791,6 +741,9 @@ export default function WorkPage() {
               />
             ))}
           </div>
+
+          {/* Section Divider */}
+          <div className="section-divider mt-24" />
         </section>
       )}
 
@@ -825,7 +778,7 @@ export default function WorkPage() {
         </div>
 
         {/* Bento Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 auto-rows-[280px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 auto-rows-[280px] lg:auto-rows-[300px]">
           {filteredRegularProjects.map((project, index) => (
             <BentoCard
               key={project.id}
@@ -859,7 +812,8 @@ export default function WorkPage() {
       </section>
 
       {/* Footer CTA */}
-      <section className="px-6 md:px-20 py-32 text-center border-t border-off-white/10">
+      <section className="px-6 md:px-20 py-32 text-center">
+        <div className="section-divider mb-24" />
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}

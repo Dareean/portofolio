@@ -297,7 +297,7 @@ export default function ExploreLinks() {
 
           {/* Decorative line */}
           <motion.div
-            className="mt-12 mx-auto w-32 h-px bg-gradient-to-r from-transparent via-off-white/40 to-transparent"
+            className="mt-12 mx-auto w-48 h-px bg-gradient-to-r from-transparent via-off-white/30 to-transparent"
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
             viewport={{ once: true }}
@@ -319,7 +319,7 @@ export default function ExploreLinks() {
                 whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <div className="glass-card rounded-2xl p-6 flex flex-col items-center justify-center text-center h-full">
+                <div className="glass-card rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center h-full">
                   <motion.div
                     className="mb-4 text-off-white/80"
                     animate={{ rotate: 360 }}
@@ -338,7 +338,7 @@ export default function ExploreLinks() {
                   >
                     5+
                   </motion.div>
-                  <div className="text-sm text-off-white/50 uppercase tracking-widest text-[10px]">
+                  <div className="text-xs text-off-white/50 uppercase tracking-widest">
                     Years Experience
                   </div>
                 </div>
@@ -350,7 +350,7 @@ export default function ExploreLinks() {
                 whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <div className="glass-card rounded-2xl p-6 flex flex-col items-center justify-center text-center h-full">
+                <div className="glass-card rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center h-full">
                   <motion.div
                     className="mb-4 text-off-white/80"
                     animate={{ scale: [1, 1.1, 1] }}
@@ -380,7 +380,7 @@ export default function ExploreLinks() {
                 whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <div className="glass-card rounded-2xl p-6 flex flex-col items-center justify-center text-center h-full">
+                <div className="glass-card rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center h-full">
                   <motion.div
                     className="mb-4 text-off-white/80"
                     animate={{ y: [0, -3, 0] }}
@@ -411,7 +411,7 @@ export default function ExploreLinks() {
                 whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <div className="glass-card rounded-2xl p-6 flex flex-col items-center justify-center text-center h-full">
+                <div className="glass-card rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center h-full">
                   <motion.div
                     className="mb-4 text-off-white/80"
                     animate={{ rotate: [0, 10, -10, 0] }}

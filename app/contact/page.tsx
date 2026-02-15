@@ -263,36 +263,44 @@ export default function ContactPage() {
                         >
                           Subject
                         </label>
-                        <select
-                          id="subject"
-                          name="subject"
-                          value={formData.subject}
-                          onChange={handleChange}
-                          required
-                          className="w-full px-5 py-4 rounded-2xl bg-void-black/50 backdrop-blur-xl border border-off-white/20 text-off-white focus:outline-none focus:border-off-white/50 focus:ring-2 focus:ring-off-white/10 transition-all duration-300 appearance-none cursor-pointer"
-                        >
-                          <option value="" className="bg-void-black">
-                            Select a topic
-                          </option>
-                          <option
-                            value="collaboration"
-                            className="bg-void-black"
+                        <div className="relative">
+                          <select
+                            id="subject"
+                            name="subject"
+                            value={formData.subject}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-5 py-4 rounded-2xl bg-void-black/50 backdrop-blur-xl border border-off-white/20 text-off-white focus:outline-none focus:border-off-white/50 focus:ring-2 focus:ring-off-white/10 transition-all duration-300 appearance-none cursor-pointer pr-12"
                           >
-                            Project Collaboration
-                          </option>
-                          <option value="freelance" className="bg-void-black">
-                            Freelance Work
-                          </option>
-                          <option value="job" className="bg-void-black">
-                            Job Opportunity
-                          </option>
-                          <option value="general" className="bg-void-black">
-                            General Inquiry
-                          </option>
-                          <option value="other" className="bg-void-black">
-                            Other
-                          </option>
-                        </select>
+                            <option value="" className="bg-void-black">
+                              Select a topic
+                            </option>
+                            <option
+                              value="collaboration"
+                              className="bg-void-black"
+                            >
+                              Project Collaboration
+                            </option>
+                            <option value="freelance" className="bg-void-black">
+                              Freelance Work
+                            </option>
+                            <option value="job" className="bg-void-black">
+                              Job Opportunity
+                            </option>
+                            <option value="general" className="bg-void-black">
+                              General Inquiry
+                            </option>
+                            <option value="other" className="bg-void-black">
+                              Other
+                            </option>
+                          </select>
+                          {/* Custom Chevron */}
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-off-white/40">
+                              <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                          </div>
+                        </div>
                       </div>
 
                       {/* Message */}

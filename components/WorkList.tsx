@@ -182,7 +182,7 @@ export default function WorkList({ projects }: WorkListProps) {
       <div ref={viewAllRef} className="mt-12 text-center">
         <Link
           href="/work"
-          className="inline-flex items-center gap-2 sm:gap-3 px-5 sm:px-6 md:px-8 py-3 sm:py-4 border border-off-white/30 text-off-white text-xs sm:text-sm tracking-widest uppercase hover:bg-off-white hover:text-void-black transition-all duration-300"
+          className="inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 md:px-10 py-3 sm:py-4 border border-off-white/30 rounded-full text-off-white text-xs sm:text-sm tracking-widest uppercase hover:bg-off-white hover:text-void-black transition-all duration-300"
         >
           View All Projects
           <ArrowRight className="w-4 h-4" />

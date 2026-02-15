@@ -82,7 +82,7 @@ export const PROJECTS: Project[] = [
     link: "https://sistem-manajemen-karyawan-seven.vercel.app/",
     category: "Web Platform",
     year: "2024",
-    image: "/assets/employee_management.jpeg",
+    image: "/assets/sistem-manajemen-karyawan.png",
     description:
       "Full-stack HR management application with automated payroll system. Features include employee CRUD operations, real-time attendance tracking with check-in/check-out, automated salary calculations based on work hours and overtime, role-based dashboards (Admin/Employee), analytics with weekly attendance charts, and JWT authentication. Built with Node.js 20, Express 5, React 19, Prisma ORM, SQLite database, and Tailwind CSS. Perfect for small to medium companies needing centralized HR operations.",
     featured: false,

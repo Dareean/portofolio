@@ -45,7 +45,7 @@ export default function Marquee({
       ref={sectionRef}
       className="py-12 sm:py-16 md:py-24 overflow-hidden border-y border-off-white/10"
     >
-      <div className="marquee-container">
+      <div className="marquee-container marquee-gradient-mask">
         <div className="marquee-content">
           <span
             className="font-display text-[10vw] sm:text-[9vw] md:text-[7vw] lg:text-[6vw] uppercase tracking-wider text-off-white/70"

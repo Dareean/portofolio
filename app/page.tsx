@@ -26,13 +26,22 @@ export default function Home() {
       {/* Intro / Scroll Reveal Bio */}
       <IntroSection />
 
-      {/* Marquee Divider - Moved after Intro */}
-      <div className="py-8">
+      {/* Section Divider */}
+      <div className="section-divider mx-auto max-w-5xl" />
+
+      {/* Marquee Divider */}
+      <div className="py-16">
         <Marquee />
       </div>
 
-      {/* Explore More - 3D Scene & Stats - Moved after Marquee */}
+      {/* Section Divider */}
+      <div className="section-divider mx-auto max-w-5xl" />
+
+      {/* Explore More - 3D Scene & Stats */}
       <ExploreLinks />
+
+      {/* Section Divider */}
+      <div className="section-divider mx-auto max-w-5xl" />
 
       {/* About Me */}
       <AboutMe />
@@ -40,10 +49,16 @@ export default function Home() {
       {/* "From pixels to people" Scroll Reveal - Before Selected Work */}
       <PixelsToPeople />
 
+      {/* Section Divider */}
+      <div className="section-divider mx-auto max-w-5xl" />
+
       {/* Work Section */}
       <div className="py-24">
         <WorkList projects={PROJECTS.filter((p) => p.featured)} />
       </div>
+
+      {/* Section Divider */}
+      <div className="section-divider mx-auto max-w-5xl" />
 
       {/* Footer */}
       <Footer />

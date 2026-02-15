@@ -408,4 +408,49 @@ body {
     left: 150%;
     transition: 0.7s ease-in-out;
   }
+
+  /* Section Divider - Reusable gradient line between sections */
+  .section-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(var(--foreground-rgb), 0.1) 20%,
+      rgba(var(--foreground-rgb), 0.15) 50%,
+      rgba(var(--foreground-rgb), 0.1) 80%,
+      transparent 100%
+    );
+  }
+
+  /* Marquee Gradient Mask - Smooth fade on left/right edges */
+  .marquee-gradient-mask {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 8%,
+      black 92%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 8%,
+      black 92%,
+      transparent 100%
+    );
+  }
+
+  /* Light mode glass card adjustments */
+  [data-theme="light"] .glass-card {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  [data-theme="light"] .glass-card:hover {
+    background: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  }
 }
