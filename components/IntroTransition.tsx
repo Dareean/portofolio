@@ -63,13 +63,19 @@ export default function IntroTransition() {
     <AnimatePresence>
       {showIntro && (
         <motion.div
-          className="fixed inset-0 z-[100] flex items-center justify-center"
+          className="fixed inset-0 z-[9998] flex items-center justify-center"
           style={{ backgroundColor: bgColor }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
         >
+          {/* Solid backdrop — stays behind blinds to prevent any page bleed-through */}
+          <div
+            className="absolute inset-0"
+            style={{ backgroundColor: bgColor }}
+          />
+
           {/* Vertical Blinds */}
-          <div className="absolute inset-0 flex">
+          <div className="absolute inset-0 flex z-[1]">
             {blinds.map((index) => (
               <motion.div
                 key={index}
