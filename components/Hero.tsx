@@ -121,7 +121,7 @@ export default function Hero() {
   return (
     <section
       ref={containerRef}
-      className="relative h-[100vh] sm:h-[110vh] md:h-[120vh] flex items-center justify-center overflow-hidden bg-void-black"
+      className="relative h-screen flex items-center justify-center overflow-hidden bg-void-black"
     >
       {/* Shooting Stars */}
       <ShootingStars />
@@ -251,7 +251,7 @@ export default function Hero() {
         className="relative z-10 w-full h-full flex items-center justify-center px-6 sm:px-8"
       >
         {/* Main Content Container - Shifted up for scroll indicator visibility */}
-        <div className="flex flex-col items-center justify-center text-center w-full -mt-24 sm:-mt-32">
+        <div className="flex flex-col items-center justify-center text-center w-full -mt-16 sm:-mt-24 md:-mt-32">
           {/* Scramble Text Name */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -346,29 +346,28 @@ export default function Hero() {
         </div>
       </motion.div>
 
-      {/* Enhanced Scroll Indicator — positioned from top to stay within viewport */}
+      {/* Enhanced Scroll Indicator */}
       <motion.div
-        className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20"
-        style={{ top: "85vh" }}
+        className="absolute left-1/2 -translate-x-1/2 bottom-24 sm:bottom-28 flex flex-col items-center gap-3 z-20"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: baseDelay + 2.0, duration: 1 }}
       >
+        <span className="text-xs sm:text-sm text-off-white/60 tracking-[0.15em] font-light">
+          Scroll to explore
+        </span>
         {/* Mouse icon outline */}
         <motion.div
-          className="w-6 h-10 rounded-full border-2 border-off-white/40 flex items-start justify-center pt-2"
-          animate={{ borderColor: ["rgba(255,255,255,0.4)", "rgba(255,255,255,0.2)", "rgba(255,255,255,0.4)"] }}
+          className="w-7 h-11 rounded-full border-2 border-off-white/50 flex items-start justify-center pt-2.5"
+          animate={{ borderColor: ["rgba(255,255,255,0.5)", "rgba(255,255,255,0.25)", "rgba(255,255,255,0.5)"] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
           <motion.div
-            className="w-1 h-2 rounded-full bg-off-white/60"
-            animate={{ y: [0, 8, 0], opacity: [1, 0.3, 1] }}
+            className="w-1 h-2.5 rounded-full bg-off-white/80"
+            animate={{ y: [0, 8, 0], opacity: [1, 0.4, 1] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
           />
         </motion.div>
-        <span className="text-[10px] sm:text-xs text-off-white/50 tracking-[0.25em] uppercase font-light">
-          Scroll to Explore
-        </span>
       </motion.div>
     </section>
   );

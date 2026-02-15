@@ -95,7 +95,7 @@ export default function Footer() {
           className="flex flex-col items-start md:items-end gap-4 sm:gap-6"
         >
           {/* Navigation Links */}
-          <div className="flex flex-wrap gap-4 sm:gap-6 md:gap-8">
+          <div className="flex flex-wrap gap-x-4 gap-y-2 sm:gap-x-6 md:gap-x-8">
             <Link
               href="/journey"
               className="text-off-white/60 hover:text-off-white text-sm tracking-widest uppercase transition-colors duration-300 hover:underline underline-offset-4 decoration-off-white/30"

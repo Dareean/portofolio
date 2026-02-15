@@ -470,7 +470,7 @@ export default function AboutMe() {
               className="h-full"
               disabled={deviceInfo.isMobile || deviceInfo.isLowEnd}
             >
-              <div className="relative h-full min-h-[320px] sm:min-h-[380px] rounded-2xl bg-off-white/[0.015] backdrop-blur-sm p-6 sm:p-8 flex flex-col items-center justify-center group transition-all duration-500 overflow-hidden">
+              <div className="relative h-full min-h-[280px] sm:min-h-[320px] md:min-h-[380px] rounded-2xl bg-off-white/[0.015] backdrop-blur-sm p-5 sm:p-6 md:p-8 flex flex-col items-center justify-center group transition-all duration-500 overflow-hidden">
                 {/* Shimmer effect on hover */}
                 <motion.div
                   className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"

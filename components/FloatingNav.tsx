@@ -235,7 +235,7 @@ export default function FloatingNav() {
             layout
             whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
-            className="flex items-center gap-1 liquid-nav rounded-full px-2 py-2 pointer-events-auto"
+            className="flex items-center gap-0.5 sm:gap-1 liquid-nav rounded-full px-1.5 sm:px-2 py-2 pointer-events-auto max-w-[95vw]"
           >
             {/* Logo */}
             <motion.div

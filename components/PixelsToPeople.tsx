@@ -22,7 +22,7 @@ export default function PixelsToPeople() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top top",
-          end: "+=200%",
+          end: () => `+=${window.innerWidth < 768 ? 150 : 200}%`,
           pin: true,
           scrub: 0.8,
           anticipatePin: 1,
@@ -143,7 +143,7 @@ export default function PixelsToPeople() {
       </div>
 
       {/* Typography Content */}
-      <div className="relative z-10 flex flex-col items-center text-center px-6">
+      <div className="relative z-10 flex flex-col items-center text-center px-4 sm:px-6">
         {/* Line 1: "From pixels" */}
         <div
           ref={line1Ref}

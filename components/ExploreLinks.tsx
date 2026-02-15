@@ -44,11 +44,12 @@ export default function ExploreLinks() {
       if (!section) return;
 
       // Master timeline pinned to viewport, scrubbed by scroll
+      const isMobile = window.innerWidth < 768;
       const masterTl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: "+=300%",
+          end: () => `+=${isMobile ? 250 : 300}%`,
           pin: true,
           scrub: 1,
           anticipatePin: 1,
@@ -149,7 +150,7 @@ export default function ExploreLinks() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-off-white/[0.008] rounded-full blur-[160px]" />
       </div>
 
-      <div className="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-10 md:px-16">
+      <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-10 md:px-16">
         {/* Section Label */}
         <p className="explore-progress-label text-off-white/25 text-[10px] sm:text-xs tracking-[0.4em] uppercase font-light mb-8 opacity-0">
           How I Work
@@ -175,24 +176,24 @@ export default function ExploreLinks() {
         </div>
 
         {/* Chapters Container */}
-        <div className="relative min-h-[280px] sm:min-h-[260px]">
+        <div className="relative min-h-[240px] sm:min-h-[260px] md:min-h-[280px]">
           {CHAPTERS.map((chapter, i) => (
             <div
               key={i}
               className={`explore-chapter-${i} absolute inset-0 flex flex-col justify-start opacity-0`}
             >
               {/* Chapter Number */}
-              <span className="chapter-number font-display text-6xl sm:text-7xl md:text-8xl font-bold text-off-white/[0.06] tracking-tighter leading-none mb-4 select-none opacity-0">
+              <span className="chapter-number font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-off-white/[0.06] tracking-tighter leading-none mb-3 sm:mb-4 select-none opacity-0">
                 {chapter.number}
               </span>
 
               {/* Chapter Title */}
-              <h3 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-off-white tracking-tight mb-3">
+              <h3 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-off-white tracking-tight mb-2 sm:mb-3">
                 {chapter.title}
               </h3>
 
               {/* Description */}
-              <p className="text-off-white/40 text-sm sm:text-base md:text-lg font-light leading-relaxed max-w-lg mb-6">
+              <p className="text-off-white/40 text-xs sm:text-sm md:text-base lg:text-lg font-light leading-relaxed max-w-lg mb-4 sm:mb-6">
                 {chapter.description}
               </p>
 

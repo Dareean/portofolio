@@ -48,12 +48,14 @@ export default function Marquee({
       <div className="marquee-container marquee-gradient-mask">
         <div className="marquee-content">
           <span
-            className="font-display text-[10vw] sm:text-[9vw] md:text-[7vw] lg:text-[6vw] uppercase tracking-wider text-off-white/70"
+            className="font-display uppercase tracking-wider text-off-white/70"
+            style={{ fontSize: "clamp(2.5rem, 8vw, 6rem)" }}
           >
             {repeatedText}
           </span>
           <span
-            className="font-display text-[10vw] sm:text-[9vw] md:text-[7vw] lg:text-[6vw] uppercase tracking-wider text-off-white/70"
+            className="font-display uppercase tracking-wider text-off-white/70"
+            style={{ fontSize: "clamp(2.5rem, 8vw, 6rem)" }}
           >
             {repeatedText}
           </span>
