@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useLayoutEffect, useEffect, useState } from "react";
+import { useRef, useLayoutEffect, useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -256,192 +256,174 @@ export default function ExploreLinks() {
         style={{ opacity: 0.5 }}
       />
 
-      {/* Content Overlay */}
+      {/* Content Overlay — Redesigned */}
       <div ref={titleRef} className="relative z-10">
         <motion.div
-          className="text-center"
+          className="max-w-6xl mx-auto"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          {/* Main Title */}
-          <motion.h2
-            className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-off-white tracking-tight leading-tight font-bold mb-6"
+          {/* Editorial Heading */}
+          <motion.div
+            className="text-center mb-8 sm:mb-12"
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            Explore the
-            <br />
-            <span className="bg-gradient-to-r from-off-white via-off-white/80 to-off-white bg-clip-text text-transparent">
-              Possibilities
-            </span>
-          </motion.h2>
+            <motion.p
+              className="text-off-white/40 text-xs sm:text-sm tracking-[0.3em] uppercase font-light mb-4 sm:mb-6"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+            >
+              Beyond the Code
+            </motion.p>
 
-          {/* Subtitle */}
+            <h2 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-off-white tracking-tight leading-[1.1] font-bold">
+              Let&apos;s Build
+              <br />
+              <span
+                className="bg-clip-text text-transparent"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(90deg, #a78bfa, #60a5fa, #34d399, #a78bfa)",
+                  backgroundSize: "200% 100%",
+                  animation: "shimmer 4s linear infinite",
+                }}
+              >
+                Something Extraordinary
+              </span>
+            </h2>
+          </motion.div>
+
+          {/* Tagline */}
           <motion.p
-            className="text-off-white/60 text-sm sm:text-base md:text-lg max-w-2xl mx-auto"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            className="text-center text-off-white/50 text-sm sm:text-base md:text-lg max-w-xl mx-auto font-light leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.3, duration: 0.8 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
           >
-            Interactive experiences crafted with precision and creativity.
-            <br />
+            Where code meets creativity — exploring the intersection of technology and design.
             {!deviceInfo.isLowEnd && (
-              <span className="text-off-white/40 text-xs mt-2 block">
+              <span className="text-off-white/25 text-xs mt-2 block">
                 Move your mouse to interact with the scene
               </span>
             )}
           </motion.p>
 
-          {/* Decorative line */}
+          {/* Decorative divider */}
           <motion.div
-            className="mt-12 mx-auto w-48 h-px bg-gradient-to-r from-transparent via-off-white/30 to-transparent"
+            className="mt-10 sm:mt-14 mx-auto w-48 h-px bg-gradient-to-r from-transparent via-off-white/20 to-transparent"
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.5, duration: 1 }}
           />
 
-          {/* Stats/Achievements Section */}
+          {/* Inline Stats Strip */}
           <motion.div
-            className="mt-16 sm:mt-20 md:mt-24"
-            initial={{ opacity: 0, y: 40 }}
+            className="mt-10 sm:mt-14"
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.6, duration: 0.8 }}
           >
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 max-w-5xl mx-auto">
-              {/* Stat 1 - Years of Experience */}
-              <motion.div
-                className="relative group"
-                whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <div className="glass-card rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center h-full">
-                  <motion.div
-                    className="mb-4 text-off-white/80"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  >
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <circle cx="12" cy="12" r="10" />
-                      <polyline points="12 6 12 12 16 14" />
-                    </svg>
-                  </motion.div>
-                  <motion.div
-                    className="text-4xl font-bold text-off-white mb-2 font-display tracking-tight"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                  >
-                    5+
-                  </motion.div>
-                  <div className="text-xs text-off-white/50 uppercase tracking-widest">
-                    Years Experience
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Stat 2 - Projects Completed */}
-              <motion.div
-                className="relative group"
-                whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <div className="glass-card rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center h-full">
-                  <motion.div
-                    className="mb-4 text-off-white/80"
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                  </motion.div>
-                  <motion.div
-                    className="text-4xl font-bold text-off-white mb-2 font-display tracking-tight"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                  >
-                    15+
-                  </motion.div>
-                  <div className="text-sm text-off-white/50 uppercase tracking-widest text-[10px]">
-                    Projects Done
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Stat 3 - Technologies */}
-              <motion.div
-                className="relative group"
-                whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <div className="glass-card rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center h-full">
-                  <motion.div
-                    className="mb-4 text-off-white/80"
-                    animate={{ y: [0, -3, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <polyline points="16 18 22 12 16 6" />
-                      <polyline points="8 6 2 12 8 18" />
-                    </svg>
-                  </motion.div>
-                  <motion.div
-                    className="text-4xl font-bold text-off-white mb-2 font-display tracking-tight"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                  >
-                    12+
-                  </motion.div>
-                  <div className="text-sm text-off-white/50 uppercase tracking-widest text-[10px]">
-                    Machines Mastered
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Stat 4 - Coffee Consumed */}
-              <motion.div
-                className="relative group"
-                whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <div className="glass-card rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center h-full">
-                  <motion.div
-                    className="mb-4 text-off-white/80"
-                    animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                  >
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
-                      <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
-                      <line x1="6" y1="1" x2="6" y2="4" />
-                      <line x1="10" y1="1" x2="10" y2="4" />
-                      <line x1="14" y1="1" x2="14" y2="4" />
-                    </svg>
-                  </motion.div>
-                  <motion.div
-                    className="text-4xl font-bold text-off-white mb-2 font-display tracking-tight"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                  >
-                    ∞
-                  </motion.div>
-                  <div className="text-sm text-off-white/50 uppercase tracking-widest text-[10px]">
-                    Cups of Coffee
-                  </div>
-                </div>
-              </motion.div>
+            <div className="max-w-3xl mx-auto backdrop-blur-sm bg-off-white/[0.04] border border-off-white/[0.08] rounded-2xl px-4 sm:px-8 py-5 sm:py-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-y-4 md:gap-y-0 md:divide-x md:divide-off-white/10">
+                <StatItem value={5} suffix="+" label="Years Experience" />
+                <StatItem value={15} suffix="+" label="Projects Done" />
+                <StatItem value={12} suffix="+" label="Tech Mastered" />
+                <StatItem value={0} suffix="∞" label="Cups of Coffee" />
+              </div>
             </div>
+          </motion.div>
+
+          {/* CTA Button */}
+          <motion.div
+            className="mt-10 sm:mt-14 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.8, duration: 0.8 }}
+          >
+            <a
+              href="/work"
+              className="group inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 rounded-full border border-off-white/20 text-off-white/80 text-sm sm:text-base font-light tracking-wider uppercase transition-all duration-300 hover:border-off-white/40 hover:text-off-white hover:bg-off-white/[0.06] hover:shadow-[0_0_30px_rgba(255,255,255,0.05)]"
+            >
+              Explore My Work
+              <svg
+                className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </a>
           </motion.div>
         </motion.div>
       </div>
     </section>
+  );
+}
+
+// Counter animation stat item
+function StatItem({
+  value,
+  suffix,
+  label,
+}: {
+  value: number;
+  suffix: string;
+  label: string;
+}) {
+  const [count, setCount] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (hasAnimated || value === 0) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated) {
+          setHasAnimated(true);
+          let start = 0;
+          const duration = 1500;
+          const startTime = performance.now();
+
+          const tick = (now: number) => {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            // Ease out cubic
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const current = Math.round(eased * value);
+            setCount(current);
+            if (progress < 1) requestAnimationFrame(tick);
+          };
+
+          requestAnimationFrame(tick);
+        }
+      },
+      { threshold: 0.5 },
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [value, hasAnimated]);
+
+  return (
+    <div ref={ref} className="flex flex-col items-center justify-center py-1 md:py-0">
+      <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-off-white font-display tracking-tight">
+        {value === 0 ? suffix : `${count}${suffix}`}
+      </span>
+      <span className="text-[10px] sm:text-xs text-off-white/40 uppercase tracking-[0.15em] mt-1">
+        {label}
+      </span>
+    </div>
   );
 }
