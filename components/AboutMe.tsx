@@ -565,14 +565,21 @@ export default function AboutMe() {
                   {/* Contact Button */}
                   <motion.a
                     href="/contact"
-                    className="px-4 py-1.5 bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-400/40 rounded-full hover:from-blue-500/30 hover:to-purple-500/30 hover:border-blue-400/60 transition-all duration-300 group"
+                    className="px-4 py-1.5 bg-gradient-to-r from-[#f0a6ca]/10 to-[#f5d5a0]/10 border border-[#f0a6ca]/20 rounded-full hover:from-[#f0a6ca]/20 hover:to-[#f5d5a0]/20 hover:border-[#f0a6ca]/40 transition-all duration-300 group"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <span className="flex items-center gap-1.5 text-xs font-medium text-blue-300 group-hover:text-blue-200">
-                      Get in Touch
+                    <span className="flex items-center gap-1.5 text-xs font-medium">
+                      <span
+                        className="bg-clip-text text-transparent bg-gradient-to-r from-[#f0a6ca] via-[#efc3a3] to-[#f5d5a0]"
+                        style={{
+                          backgroundSize: "200% auto",
+                        }}
+                      >
+                        Get in Touch
+                      </span>
                       <svg
-                        className="w-3 h-3 group-hover:translate-x-0.5 transition-transform"
+                        className="w-3 h-3 text-[#f0a6ca]/80 group-hover:text-[#f0a6ca] group-hover:translate-x-0.5 transition-all duration-300"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
