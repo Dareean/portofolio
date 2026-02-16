@@ -10,27 +10,27 @@ gsap.registerPlugin(ScrollTrigger);
 const CHAPTERS = [
   {
     number: "01",
-    title: "Design",
-    description: "Crafting intuitive interfaces with Figma and modern design systems.",
-    tags: ["Figma", "UI/UX", "Prototyping"],
+    title: "Design & Empathize",
+    description: "Understanding the people behind the screen first. I research, wireframe, and prototype until every interaction feels intuitive.",
+    tags: ["Figma", "UI/UX", "User Research"],
   },
   {
     number: "02",
-    title: "Develop",
-    description: "Building performant apps with React, Next.js, and TypeScript.",
+    title: "Code & Craft",
+    description: "Translating designs into pixel-perfect, performant frontends with modern tools and obsessive attention to detail.",
     tags: ["React", "Next.js", "TypeScript"],
   },
   {
     number: "03",
-    title: "Backend",
-    description: "Engineering reliable APIs with Node.js, Express, and databases.",
-    tags: ["Node.js", "MySQL", "Prisma"],
+    title: "Lead & Organize",
+    description: "From heading I-Fest as PIC to coordinating Palu Developer Day — I thrive in bringing people together and making things happen.",
+    tags: ["Event Management", "Team Leadership", "Community"],
   },
   {
     number: "04",
-    title: "Ship",
-    description: "Deploying, testing, and iterating to deliver polished products.",
-    tags: ["Git", "CI/CD", "Performance"],
+    title: "Iterate & Grow",
+    description: "Every project teaches something new. I chase feedback, embrace challenges, and keep pushing my craft forward.",
+    tags: ["Continuous Learning", "Problem Solving", "Adaptability"],
   },
 ];
 
