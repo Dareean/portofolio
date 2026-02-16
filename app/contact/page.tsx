@@ -179,7 +179,7 @@ export default function ContactPage() {
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: "spring", duration: 0.6 }}
-                    className="relative z-10"
+                    className="relative z-10 flex flex-col items-center"
                   >
                     <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-off-white/20 backdrop-blur-xl border border-off-white/40 flex items-center justify-center relative">
                       <div className="absolute inset-0 rounded-full bg-off-white/10 blur-xl animate-pulse" />
@@ -194,12 +194,20 @@ export default function ContactPage() {
                       soon as possible.
                     </p>
 
-                    <button
+                    <motion.button
                       onClick={() => setIsSubmitted(false)}
-                      className="px-6 py-3 bg-off-white/10 hover:bg-off-white/20 backdrop-blur-xl border border-off-white/30 rounded-full text-off-white text-sm tracking-wider uppercase transition-all duration-300"
+                      className="relative px-8 py-4 bg-off-white hover:bg-off-white/90 text-void-black font-semibold text-sm tracking-widest uppercase rounded-full transition-all duration-300 overflow-hidden group/btn shadow-2xl"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      Send Another Message
-                    </button>
+                      {/* Shine Effect */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-void-black/10 to-transparent translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-1000" />
+
+                      <span className="relative z-10 flex items-center gap-2">
+                        <Mail className="w-4 h-4" />
+                        Send Another Message
+                      </span>
+                    </motion.button>
                   </motion.div>
                 </motion.div>
               ) : (

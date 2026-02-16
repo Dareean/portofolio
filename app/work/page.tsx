@@ -473,6 +473,13 @@ function BentoCard({
                   <Calendar className="w-3 h-3" />
                   {project.year}
                 </span>
+                {/* Status Badge */}
+                {project.status === "In Progress" && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/20 backdrop-blur-xl rounded-full border border-emerald-500/40 text-emerald-300 text-[10px] sm:text-xs tracking-wider uppercase font-medium animate-pulse">
+                    <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
+                    Working On It
+                  </span>
+                )}
               </motion.div>
 
               {/* Title */}

@@ -7,6 +7,7 @@ export interface Project {
   description?: string;
   featured?: boolean;
   link?: string;
+  status?: "In Progress" | "Completed" | "Planning"; // Current project status
 }
 
 export const PROJECTS: Project[] = [
@@ -108,6 +109,18 @@ export const PROJECTS: Project[] = [
     description:
       "A landing page and portfolio website for Green Generation Indonesia - Central Sulawesi, a youth-led environmental community. Showcases the organization's mission, focus areas, programs, and contribution to Palu becoming Indonesia's best waste transformation city. Features include a partners section, volunteer registration, and responsive design with smooth animations. Built with React, TypeScript, Vite, Tailwind CSS, shadcn/ui components, and Framer Motion.",
     featured: false,
+  },
+  {
+    id: 10,
+    title: "Dareean - Portfolio",
+    link: "",
+    category: "Web Platform",
+    year: "2025",
+    image: "/assets/dareean_web.png",
+    description:
+      "A modern and interactive portfolio website showcasing my work, journey, and skills. Built with Next.js 15, TypeScript, Tailwind CSS, Framer Motion for smooth animations, and GSAP for advanced effects. Features include dynamic project showcase, interactive timeline, contact form with email integration, and responsive design. Currently under active development with continuous improvements and new features being added.",
+    featured: false,
+    status: "In Progress",
   },
 ];
 
