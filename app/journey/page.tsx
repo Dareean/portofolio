@@ -305,7 +305,9 @@ function FilterPills({
           whileTap={{ scale: 0.95 }}
         >
           {filter.label}
-          <span className={`ml-2 ${activeFilter === filter.key ? "opacity-50" : "opacity-40 text-off-white/40"}`}>
+          <span
+            className={`ml-2 ${activeFilter === filter.key ? "opacity-50" : "opacity-40 text-off-white/40"}`}
+          >
             {filterCounts[filter.key]}
           </span>
         </motion.button>
@@ -564,7 +566,7 @@ export default function ExperiencePage() {
       <section className="min-h-screen flex flex-col justify-center items-center px-4 sm:px-6 relative">
         {/* Home Link */}
         <motion.div
-          className="absolute top-6 sm:top-8 md:top-10 left-6 sm:left-8 md:left-20 z-20"
+          className="fixed top-4 sm:top-6 md:top-8 left-6 md:left-12 lg:left-20 z-50"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}

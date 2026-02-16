@@ -17,6 +17,7 @@ import {
   CheckCircle2,
   Sparkles,
   Lightbulb,
+  Instagram,
 } from "lucide-react";
 
 export default function ContactPage() {
@@ -90,6 +91,11 @@ export default function ContactPage() {
       url: "mailto:dmardin@gmail.com",
       icon: <Mail className="w-5 h-5" />,
     },
+    {
+      name: "Instagram",
+      url: "https://instagram.com/darenrafi",
+      icon: <Instagram className="w-5 h-5" />,
+    },
   ];
 
   return (
@@ -98,25 +104,26 @@ export default function ContactPage() {
       <AnimatedBackground />
       <FloatingNav />
 
-      <div className="relative z-10 px-6 md:px-12 lg:px-20 py-20 md:py-32">
-        {/* Back Button */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
+      {/* Back Button - Aligned with Logo */}
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5 }}
+        className="fixed top-4 sm:top-6 md:top-8 left-6 md:left-12 lg:left-20 z-50"
+      >
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-off-white/60 hover:text-off-white transition-colors group"
         >
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-off-white/60 hover:text-off-white mb-12 transition-colors group"
-          >
-            <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
-            <span className="text-sm tracking-wide uppercase">Back</span>
-          </Link>
-        </motion.div>
+          <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
+          <span className="text-sm tracking-wide uppercase">Back</span>
+        </Link>
+      </motion.div>
 
+      <div className="relative z-10 px-6 md:px-12 lg:px-20 pt-24 md:pt-32 pb-20">
         {/* Hero Section */}
         <motion.div
-          className="max-w-7xl mx-auto mb-20"
+          className="max-w-7xl mx-auto mb-16 md:mb-20"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -126,7 +133,7 @@ export default function ContactPage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-off-white/10 backdrop-blur-xl rounded-full border border-off-white/30 mb-8"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-off-white/10 backdrop-blur-xl rounded-full border border-off-white/30 mb-6 md:mb-8"
             >
               <Sparkles className="w-4 h-4 text-off-white" />
               <span className="text-off-white/80 text-sm tracking-wider uppercase">
@@ -134,13 +141,13 @@ export default function ContactPage() {
               </span>
             </motion.div>
 
-            <h1 className="font-display text-5xl md:text-7xl lg:text-8xl text-off-white mb-6 leading-tight">
+            <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-off-white mb-4 md:mb-6 leading-tight">
               Let&apos;s Create
               <br />
               <span className="text-off-white">Something Great</span>
             </h1>
 
-            <p className="text-off-white/60 text-lg md:text-xl leading-relaxed">
+            <p className="text-off-white/60 text-base md:text-lg lg:text-xl leading-relaxed px-4">
               Have a project in mind or just want to connect? I&apos;m always
               open to discussing new opportunities and creative collaborations.
             </p>
@@ -296,7 +303,17 @@ export default function ContactPage() {
                           </select>
                           {/* Custom Chevron */}
                           <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-off-white/40">
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="text-off-white/40"
+                            >
                               <polyline points="6 9 12 15 18 9" />
                             </svg>
                           </div>
@@ -432,32 +449,6 @@ export default function ContactPage() {
               </motion.div>
 
               {/* Response Time Card */}
-              <motion.div
-                className="relative bg-off-white/10 backdrop-blur-xl rounded-3xl border border-off-white/20 p-8 overflow-hidden group"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                {/* Animated Background */}
-                <div className="absolute inset-0 bg-off-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                <div className="relative z-10 flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-off-white/20 backdrop-blur-xl border border-off-white/40 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                    <Lightbulb className="w-6 h-6 text-off-white" />
-                  </div>
-                  <div>
-                    <h4 className="font-display text-lg text-off-white mb-2 flex items-center gap-2">
-                      Quick Response
-                    </h4>
-                    <p className="text-off-white/70 text-sm leading-relaxed">
-                      I typically respond within 24 hours. Whether it&apos;s
-                      about a project, an idea, or just to chat about
-                      tech—I&apos;m here!
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
             </div>
           </div>
         </div>

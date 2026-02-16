@@ -393,8 +393,7 @@ function BentoCard({
 
   const isLargeCard = size === "large" || size === "xlarge";
   const needsReadMore =
-    project.description &&
-    project.description.length > readMoreThreshold[size];
+    project.description && project.description.length > readMoreThreshold[size];
 
   return (
     <motion.div
@@ -692,7 +691,7 @@ export default function WorkPage() {
       {/* Hero Section */}
       <section className="min-h-screen flex items-center justify-center relative overflow-hidden px-6">
         <motion.div
-          className="absolute top-8 left-8 z-20"
+          className="fixed top-4 sm:top-6 md:top-8 left-6 md:left-12 lg:left-20 z-50"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
