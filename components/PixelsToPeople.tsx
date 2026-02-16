@@ -157,7 +157,7 @@ export default function PixelsToPeople() {
         {/* Line 1: "From pixels" */}
         <div
           ref={line1Ref}
-          className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold text-off-white tracking-tight leading-none"
+          className="font-display text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-off-white tracking-tight leading-none"
           style={{ perspective: "800px" }}
         >
           {splitChars("From pixels")}
@@ -166,13 +166,13 @@ export default function PixelsToPeople() {
         {/* Decorative divider */}
         <div
           ref={dividerRef}
-          className="w-24 sm:w-32 h-px bg-gradient-to-r from-transparent via-off-white/40 to-transparent my-6 sm:my-8 origin-center opacity-0"
+          className="w-20 sm:w-32 h-px bg-gradient-to-r from-transparent via-off-white/40 to-transparent my-4 sm:my-8 origin-center opacity-0"
         />
 
         {/* Line 2: "to people." */}
         <div
           ref={line2Ref}
-          className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold tracking-tight leading-none"
+          className="font-display text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tight leading-none"
         >
           <span className="word inline-block mr-[0.3em] text-off-white/60">to</span>
           <span
@@ -187,12 +187,7 @@ export default function PixelsToPeople() {
         </div>
 
         {/* Line 3: subtitle */}
-        <p
-          ref={line3Ref}
-          className="mt-8 sm:mt-10 text-off-white/30 text-xs sm:text-sm tracking-[0.25em] uppercase font-light opacity-0"
-        >
-          crafting experiences that connect
-        </p>
+
       </div>
       {/* Keep Scrolling Indicator */}
       <div

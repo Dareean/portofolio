@@ -162,12 +162,12 @@ export default function ExploreLinks() {
 
       <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-10 md:px-16">
         {/* Section Label */}
-        <p className="explore-progress-label text-off-white/25 text-[10px] sm:text-xs tracking-[0.4em] uppercase font-light mb-8 opacity-0">
+        <p className="explore-progress-label text-off-white/25 text-xs tracking-[0.4em] uppercase font-light mb-6 sm:mb-8 opacity-0">
           How I Work
         </p>
 
         {/* Progress Bar */}
-        <div className="relative mb-12 sm:mb-16">
+        <div className="relative mb-8 sm:mb-12 md:mb-16">
           <div className="w-full h-px bg-off-white/[0.08]" />
           <div
             ref={progressBarRef}
@@ -193,17 +193,17 @@ export default function ExploreLinks() {
               className={`explore-chapter-${i} absolute inset-0 flex flex-col justify-start opacity-0`}
             >
               {/* Chapter Number */}
-              <span className="chapter-number font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-off-white/[0.06] tracking-tighter leading-none mb-3 sm:mb-4 select-none opacity-0">
+              <span className="chapter-number font-display text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-off-white/[0.06] tracking-tighter leading-none mb-2 sm:mb-4 select-none opacity-0">
                 {chapter.number}
               </span>
 
               {/* Chapter Title */}
-              <h3 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-off-white tracking-tight mb-2 sm:mb-3">
+              <h3 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-off-white tracking-tight mb-1.5 sm:mb-3">
                 {chapter.title}
               </h3>
 
               {/* Description */}
-              <p className="text-off-white/40 text-xs sm:text-sm md:text-base lg:text-lg font-light leading-relaxed max-w-lg mb-4 sm:mb-6">
+              <p className="text-off-white/60 text-sm sm:text-base md:text-lg font-light leading-snug sm:leading-relaxed max-w-lg mb-3 sm:mb-6">
                 {chapter.description}
               </p>
 
@@ -212,7 +212,7 @@ export default function ExploreLinks() {
                 {chapter.tags.map((tag, j) => (
                   <span
                     key={j}
-                    className="chapter-tag text-off-white/30 text-[10px] sm:text-xs tracking-[0.15em] uppercase px-3 py-1.5 border border-off-white/[0.08] rounded-full opacity-0"
+                    className="chapter-tag text-off-white/40 text-xs sm:text-sm tracking-[0.15em] uppercase px-3.5 py-1.5 border border-off-white/[0.08] rounded-full opacity-0"
                   >
                     {tag}
                   </span>
@@ -223,10 +223,10 @@ export default function ExploreLinks() {
         </div>
 
         {/* Final CTA */}
-        <div className="explore-final-cta mt-8 opacity-0">
+        <div className="explore-final-cta mt-4 sm:mt-8 opacity-0">
           <a
             href="/work"
-            className="group inline-flex items-center gap-3 text-off-white/35 text-sm tracking-[0.2em] uppercase font-light transition-all duration-500 hover:text-off-white"
+            className="group inline-flex items-center gap-3 text-off-white/60 text-base sm:text-lg tracking-[0.2em] uppercase font-light transition-all duration-500 hover:text-off-white"
           >
             <span className="relative">
               See it in Action
