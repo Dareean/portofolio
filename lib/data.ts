@@ -300,12 +300,17 @@ export const EXPERIENCES: Experience[] = [
   {
     id: 6,
     title: "Programming Tadulako",
-    role: "Community Member",
+    role: "Mentor Coordinator",
     organization: "Programming Community",
     dateStart: "2025-01",
     description:
-      "Joined a programming-focused community to enhance skills and connect with fellow developers.",
-    highlights: ["Networking", "Knowledge Sharing", "Skill Development"],
+      "Coordinated mentors and facilitated communication within the programming community. Managed meeting agendas and ensured qualified instructors were available for each technical learning module, resulting in increased member attendance and engagement in weekly upskilling sessions.",
+    highlights: [
+      "Mentor Coordination",
+      "Meeting Management",
+      "Community Engagement",
+      "Technical Learning Programs",
+    ],
     category: "community",
   },
   {
@@ -355,7 +360,7 @@ export const EXPERIENCES: Experience[] = [
   },
   {
     id: 10,
-    title: "HammerCode - Programming Community",
+    title: "HammerCode Palu",
     role: "Community Member",
     organization: "HammerCode",
     dateStart: "2025-12",
