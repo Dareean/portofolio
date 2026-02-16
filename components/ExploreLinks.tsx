@@ -186,7 +186,7 @@ export default function ExploreLinks() {
         </div>
 
         {/* Chapters Container */}
-        <div className="relative min-h-[240px] sm:min-h-[260px] md:min-h-[280px]">
+        <div className="relative min-h-[380px] sm:min-h-[400px] md:min-h-[420px]">
           {CHAPTERS.map((chapter, i) => (
             <div
               key={i}
@@ -225,7 +225,7 @@ export default function ExploreLinks() {
         {/* Final CTA */}
         <div className="explore-final-cta mt-4 sm:mt-8 opacity-0">
           <a
-            href="/work"
+            href="/journey"
             className="group inline-flex items-center gap-3 text-off-white/60 text-base sm:text-lg tracking-[0.2em] uppercase font-light transition-all duration-500 hover:text-off-white"
           >
             <span className="relative">

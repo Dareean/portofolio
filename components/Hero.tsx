@@ -11,10 +11,10 @@ const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
 
 // Role titles for rotation
 const ROLES = [
-  "Frontend Developer",
+  "Frontend Enthusiast",
   "UI/UX Enthusiast",
-  "Creative Problem Solver",
-  "Storyteller through Code",
+  "Lead Management",
+  "Every Pixels Matters",
 ];
 
 // Scramble text hook - uses ref to avoid re-triggering on delay changes
