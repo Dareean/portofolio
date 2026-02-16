@@ -13,6 +13,7 @@ export default function PixelsToPeople() {
   const line2Ref = useRef<HTMLDivElement>(null);
   const line3Ref = useRef<HTMLDivElement>(null);
   const dividerRef = useRef<HTMLDivElement>(null);
+  const scrollIndicatorRef = useRef<HTMLDivElement>(null);
   const deviceInfo = useDeviceType();
 
   useLayoutEffect(() => {
@@ -90,6 +91,15 @@ export default function PixelsToPeople() {
           { opacity: 0, y: 30 },
           { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
           0.9,
+        );
+      }
+
+      // === Scroll indicator fades out as user scrolls ===
+      if (scrollIndicatorRef.current) {
+        tl.to(
+          scrollIndicatorRef.current,
+          { opacity: 0, y: -10, duration: 0.15, ease: "power2.in" },
+          0.05,
         );
       }
 
@@ -183,6 +193,26 @@ export default function PixelsToPeople() {
         >
           crafting experiences that connect
         </p>
+      </div>
+      {/* Keep Scrolling Indicator */}
+      <div
+        ref={scrollIndicatorRef}
+        className="absolute bottom-20 sm:bottom-24 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 pointer-events-none"
+      >
+        <span className="text-off-white/40 text-[9px] sm:text-[10px] tracking-[0.35em] uppercase font-light">
+          keep scrolling
+        </span>
+        <svg
+          className="w-4 h-4 text-off-white/30 animate-chevron-bounce"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M6 9l6 6 6-6" />
+        </svg>
       </div>
     </section>
   );

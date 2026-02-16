@@ -37,6 +37,7 @@ const CHAPTERS = [
 export default function ExploreLinks() {
   const sectionRef = useRef<HTMLElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
+  const scrollIndicatorRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -127,6 +128,15 @@ export default function ExploreLinks() {
           );
         }
       });
+
+      // ── Scroll indicator fades out as user scrolls ──
+      if (scrollIndicatorRef.current) {
+        masterTl.to(
+          scrollIndicatorRef.current,
+          { opacity: 0, y: -10, duration: 0.2, ease: "power2.in" },
+          0.05,
+        );
+      }
 
       // ── CTA appears at end ──
       masterTl.fromTo(
@@ -233,6 +243,27 @@ export default function ExploreLinks() {
             </svg>
           </a>
         </div>
+      </div>
+
+      {/* Keep Scrolling Indicator */}
+      <div
+        ref={scrollIndicatorRef}
+        className="absolute bottom-20 sm:bottom-24 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 pointer-events-none"
+      >
+        <span className="text-off-white/40 text-[9px] sm:text-[10px] tracking-[0.35em] uppercase font-light">
+          keep scrolling
+        </span>
+        <svg
+          className="w-4 h-4 text-off-white/30 animate-chevron-bounce"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M6 9l6 6 6-6" />
+        </svg>
       </div>
     </section>
   );

@@ -477,4 +477,18 @@ body {
     border-color: rgba(0, 0, 0, 0.2);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
   }
+
+  /* Keep Scrolling chevron bounce animation */
+  @keyframes chevron-bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(6px);
+    }
+  }
+
+  .animate-chevron-bounce {
+    animation: chevron-bounce 2s ease-in-out infinite;
+  }
 }
