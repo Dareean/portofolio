@@ -7,7 +7,6 @@ import IntroTransition from "@/components/IntroTransition";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import WaveTransition from "@/components/WaveTransition";
 import FixedLogo from "@/components/FixedLogo";
-import ShootingStars from "@/components/ShootingStars";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const syne = Syne({
@@ -37,7 +36,6 @@ export default function RootLayout({
         className={`${inter.variable} ${syne.variable} font-sans bg-void-black text-off-white selection:bg-off-white selection:text-void-black antialiased`}
       >
         <ThemeProvider>
-          <ShootingStars />
           <IntroTransition />
           <WaveTransition />
           <LoadingScreen />

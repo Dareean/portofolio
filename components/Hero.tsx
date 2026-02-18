@@ -1,10 +1,14 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  AnimatePresence,
+} from "framer-motion";
 import { useTheme } from "./ThemeProvider";
 import { useDeviceType, getAnimationConfig, useIntroSeen } from "@/lib/hooks";
-import ShootingStars from "./ShootingStars";
 
 // Scramble text characters
 const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
@@ -73,9 +77,7 @@ function useScrambleText(finalText: string, startDelayMs: number) {
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMounted, setIsMounted] = useState(false);
-  const { theme } = useTheme();
   const deviceInfo = useDeviceType();
-  const animConfig = getAnimationConfig(deviceInfo);
   const isIntroSeen = useIntroSeen();
 
   // Animation Delays
@@ -83,10 +85,7 @@ export default function Hero() {
   const scrambleDelay = baseDelay * 1000; // Start scramble exactly when wrapper becomes visible
 
   // Scramble text effect
-  const { displayText, isComplete } = useScrambleText(
-    "DAREEAN",
-    scrambleDelay,
-  );
+  const { displayText, isComplete } = useScrambleText("DAREEAN", scrambleDelay);
 
   // Rotating roles
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
@@ -123,125 +122,8 @@ export default function Hero() {
       ref={containerRef}
       className="relative h-screen flex items-center justify-center overflow-hidden bg-void-black"
     >
-      {/* Shooting Stars */}
-      <ShootingStars />
-
-      {/* Aurora blur background - Light mode only */}
-      <div className="absolute inset-0 bg-void-black overflow-hidden">
-        {theme !== 'dark' && (
-          <>
-            {/* Aurora gradient orbs */}
-            <motion.div
-              className="absolute top-0 -left-1/4 w-[80vw] h-[80vw] rounded-full"
-              style={{
-                background:
-                  "radial-gradient(circle, rgba(99, 102, 241, 0.5) 0%, rgba(99, 102, 241, 0) 70%)",
-                filter: "blur(80px)",
-                opacity: 0.5,
-                willChange: deviceInfo.prefersReducedMotion ? "auto" : "transform",
-              }}
-              animate={
-                animConfig.enabled
-                  ? {
-                      x: [0, 60, 0],
-                      y: [0, 40, 0],
-                      scale: [1, 1.15, 1],
-                    }
-                  : {}
-              }
-              transition={{
-                duration: deviceInfo.isMobile ? 20 : 15,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
-            <motion.div
-              className="absolute top-1/4 -right-1/4 w-[70vw] h-[70vw] rounded-full"
-              style={{
-                background:
-                  "radial-gradient(circle, rgba(34, 197, 94, 0.45) 0%, rgba(34, 197, 94, 0) 70%)",
-                filter: "blur(100px)",
-                opacity: 0.45,
-                willChange: deviceInfo.prefersReducedMotion ? "auto" : "transform",
-              }}
-              animate={
-                animConfig.enabled
-                  ? {
-                      x: [0, -50, 0],
-                      y: [0, 60, 0],
-                      scale: [1, 1.2, 1],
-                    }
-                  : {}
-              }
-              transition={{
-                duration: deviceInfo.isMobile ? 24 : 18,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 2,
-              }}
-            />
-            {/* Additional orbs on desktop */}
-            {!deviceInfo.isMobile && (
-              <>
-                <motion.div
-                  className="absolute bottom-0 left-1/4 w-[75vw] h-[75vw] rounded-full"
-                  style={{
-                    background:
-                      "radial-gradient(circle, rgba(168, 85, 247, 0.5) 0%, rgba(168, 85, 247, 0) 70%)",
-                    filter: "blur(90px)",
-                    opacity: 0.4,
-                    willChange: deviceInfo.prefersReducedMotion
-                      ? "auto"
-                      : "transform",
-                  }}
-                  animate={
-                    animConfig.enabled
-                      ? {
-                          x: [0, -40, 0],
-                          y: [0, -50, 0],
-                          scale: [1, 1.25, 1],
-                        }
-                      : {}
-                  }
-                  transition={{
-                    duration: 20,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 4,
-                  }}
-                />
-                <motion.div
-                  className="absolute top-1/3 right-1/3 w-[60vw] h-[60vw] rounded-full"
-                  style={{
-                    background:
-                      "radial-gradient(circle, rgba(14, 165, 233, 0.45) 0%, rgba(14, 165, 233, 0) 70%)",
-                    filter: "blur(80px)",
-                    opacity: 0.35,
-                    willChange: deviceInfo.prefersReducedMotion
-                      ? "auto"
-                      : "transform",
-                  }}
-                  animate={
-                    animConfig.enabled
-                      ? {
-                          x: [0, 70, 0],
-                          y: [0, -40, 0],
-                          scale: [1, 1.15, 1],
-                        }
-                      : {}
-                  }
-                  transition={{
-                    duration: 22,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 6,
-                  }}
-                />
-              </>
-            )}
-          </>
-        )}
-      </div>
+      {/* Clean background */}
+      <div className="absolute inset-0 bg-void-black" />
 
       {/* Bottom Gradient Fade to blend with next section */}
       <div className="hero-bottom-fade" />
@@ -359,7 +241,13 @@ export default function Hero() {
         {/* Mouse icon outline */}
         <motion.div
           className="w-7 h-11 rounded-full border-2 border-off-white/50 flex items-start justify-center pt-2.5"
-          animate={{ borderColor: ["rgba(255,255,255,0.5)", "rgba(255,255,255,0.25)", "rgba(255,255,255,0.5)"] }}
+          animate={{
+            borderColor: [
+              "rgba(255,255,255,0.5)",
+              "rgba(255,255,255,0.25)",
+              "rgba(255,255,255,0.5)",
+            ],
+          }}
           transition={{ duration: 2, repeat: Infinity }}
         >
           <motion.div
@@ -372,4 +260,3 @@ export default function Hero() {
     </section>
   );
 }
-
