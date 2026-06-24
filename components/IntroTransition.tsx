@@ -1,164 +1,189 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useTheme } from "./ThemeProvider";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
 import Image from "next/image";
+import { useTheme } from "./ThemeProvider";
+import { useDeviceType } from "@/lib/hooks";
 
 export default function IntroTransition() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const logoRef = useRef<HTMLDivElement>(null);
+  const blindsWrapRef = useRef<HTMLDivElement>(null);
+  // Use 8 blinds always in DOM; GSAP picks them all up regardless of device
+  // This avoids SSR hydration mismatch from deviceInfo being default on first render
+  const BLIND_COUNT = 8;
   const [showIntro, setShowIntro] = useState(true);
-  const [showLogo, setShowLogo] = useState(false);
-  const [showText, setShowText] = useState(false);
-  const [logoScale, setLogoScale] = useState(1);
-  const [logoMoveUp, setLogoMoveUp] = useState(false);
-  const [closeBlinds, setCloseBlinds] = useState(false);
   const { theme } = useTheme();
+  const deviceInfo = useDeviceType();
 
   useEffect(() => {
-    // Show logo after blinds start revealing
-    const logoTimer = setTimeout(() => {
-      setShowLogo(true);
-    }, 400);
+    const container = containerRef.current;
+    const logo = logoRef.current;
+    const blindsWrap = blindsWrapRef.current;
 
-    // Show text after logo
-    const textTimer = setTimeout(() => {
-      setShowText(true);
-    }, 750);
+    if (!container || !logo || !blindsWrap) return;
 
-    // Scale up logo (bouncy effect) - 0.55s after text
-    const scaleTimer = setTimeout(() => {
-      setLogoScale(2.5);
-    }, 1300); // 750 + 550
-
-    // After 0.55 second pause, move logo down and close blinds
-    const moveUpTimer = setTimeout(() => {
-      setLogoMoveUp(true);
-      setCloseBlinds(true);
-    }, 1850); // 1300 + 550
-
-    // Hide entire intro after logo moves down
-    const introTimer = setTimeout(() => {
+    // If reduced motion: skip instantly
+    if (deviceInfo.prefersReducedMotion) {
       setShowIntro(false);
-    }, 2350); // Give 0.5s for the downward animation
+      return;
+    }
+
+    const isFast = deviceInfo.isLowEnd || deviceInfo.isMobile;
+
+    // Prevent page scroll during intro
+    document.body.style.overflow = "hidden";
+
+    // Collect blind elements
+    const blindEls = Array.from(blindsWrap.children) as HTMLElement[];
+
+    // Set initial state for blinds & logo via GSAP (avoids CSS conflict)
+    gsap.set(blindEls, { yPercent: 0, willChange: "transform" });
+    gsap.set(logo, { opacity: 0, scale: 0.7, yPercent: 0, willChange: "transform, opacity" });
+
+    // Build coordinated timeline
+    const tl = gsap.timeline({
+      onComplete: () => {
+        // Re-allow scroll, then unmount
+        document.body.style.overflow = "";
+        gsap.set(container, { display: "none" });
+        setShowIntro(false);
+      },
+    });
+
+    if (isFast) {
+      // ─── Fast path: simplified 2-step animation ───
+      // 1. Logo in
+      tl.to(logo, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.35,
+        ease: "power2.out",
+      });
+      // 2. Brief hold
+      tl.to({}, { duration: 0.25 });
+      // 3. Logo out + blinds slide up together
+      tl.to(logo, {
+        yPercent: -120,
+        opacity: 0,
+        duration: 0.35,
+        ease: "power2.in",
+      }, "exit");
+      tl.to(blindEls, {
+        yPercent: -101,
+        duration: 0.4,
+        stagger: {
+          each: 0.03,
+          from: "start",
+        },
+        ease: "power3.inOut",
+      }, "exit");
+    } else {
+      // ─── Full path: premium cinematic sequence ───
+      // 1. Logo fades + scales in
+      tl.to(logo, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.6,
+        ease: "back.out(1.4)",
+      });
+      // 2. Brief hold — let user read the logo
+      tl.to({}, { duration: 0.55 });
+      // 3. Logo zooms up and out (cinematic exit)
+      tl.to(logo, {
+        yPercent: -140,
+        scale: 1.3,
+        opacity: 0,
+        duration: 0.55,
+        ease: "power2.in",
+      }, "exit");
+      // 4. Blinds slide up with stagger — starts same time as logo exit
+      tl.to(blindEls, {
+        yPercent: -101,
+        duration: 0.55,
+        stagger: {
+          each: 0.045,
+          from: "start",
+        },
+        ease: "power3.inOut",
+      }, "exit+=0.05");
+    }
 
     return () => {
-      clearTimeout(logoTimer);
-      clearTimeout(textTimer);
-      clearTimeout(scaleTimer);
-      clearTimeout(moveUpTimer);
-      clearTimeout(introTimer);
+      tl.kill();
+      document.body.style.overflow = "";
     };
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deviceInfo.prefersReducedMotion, deviceInfo.isLowEnd, deviceInfo.isMobile]);
 
-  // Generate 10 vertical blinds
-  const blinds = Array.from({ length: 10 }, (_, i) => i);
+  if (!showIntro) return null;
 
-  // Theme-aware colors
-  const bgColor = theme === "dark" ? "#1A1A1A" : "#F5F5F5";
-  const blindColor1 = theme === "dark" ? "#2A2A2A" : "#E0E0E0";
-  const blindColor2 = theme === "dark" ? "#3A3A3A" : "#D0D0D0";
-  const textColor = theme === "dark" ? "#F5F5F5" : "#1A1A1A";
+  const blinds = Array.from({ length: BLIND_COUNT });
+
+  const bgColor = theme === "dark" ? "#0A1530" : "#FFFFFF";
+  const blindColor = theme === "dark"
+    ? "linear-gradient(to bottom, #1A2A52, #0A1530, #1A2A52)"
+    : "linear-gradient(to bottom, #F0EEEC, #FAFAF9, #EDE9E4)";
 
   return (
-    <AnimatePresence>
-      {showIntro && (
-        <motion.div
-          className="fixed inset-0 z-[9998] flex items-center justify-center"
-          style={{ backgroundColor: bgColor }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          {/* Solid backdrop — stays behind blinds to prevent any page bleed-through */}
+    <div
+      ref={containerRef}
+      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden"
+      style={{ backgroundColor: bgColor }}
+    >
+      {/* ── Vertical Blinds ── */}
+      {/* These slide UPWARD using translateY, not scaleY — smoother on GPU */}
+      <div
+        ref={blindsWrapRef}
+        className="absolute inset-0 flex pointer-events-none"
+      >
+        {blinds.map((_, i) => (
           <div
-            className="absolute inset-0"
-            style={{ backgroundColor: bgColor }}
+            key={i}
+            className="flex-1 h-full"
+            style={{ background: blindColor }}
           />
+        ))}
+      </div>
 
-          {/* Vertical Blinds */}
-          <div className="absolute inset-0 flex z-[1]">
-            {blinds.map((index) => (
-              <motion.div
-                key={index}
-                className="flex-1"
-                style={{
-                  background: `linear-gradient(to bottom, ${blindColor1}, ${blindColor2}, ${blindColor1})`,
-                  transformOrigin: "top",
-                }}
-                initial={{ scaleY: 1 }}
-                animate={{ scaleY: closeBlinds ? 1 : 0 }}
-                transition={{
-                  duration: closeBlinds ? 0.4 : 0.5,
-                  delay: closeBlinds ? index * 0.025 : index * 0.05,
-                  ease: [0.76, 0, 0.24, 1],
-                }}
-              />
-            ))}
-          </div>
+      {/* ── Logo ── */}
+      <div
+        ref={logoRef}
+        className="relative z-10 flex flex-col items-center gap-4 select-none"
+      >
+        <div className="relative">
+          <Image
+            src="/assets/logo_lambang_dareean.png"
+            alt="Dareean"
+            width={96}
+            height={96}
+            priority
+            className="w-20 h-20 sm:w-24 sm:h-24"
+            style={{
+              filter: theme === "dark" ? "invert(1) brightness(1.2)" : "none",
+            }}
+          />
+          {/* Subtle glow ring */}
+          <div
+            className="absolute inset-[-12px] rounded-full blur-xl opacity-20 pointer-events-none"
+            style={{
+              background: "radial-gradient(circle, rgba(86,69,212,0.6) 0%, transparent 70%)",
+            }}
+          />
+        </div>
 
-          {/* Logo Animation */}
-          <AnimatePresence>
-            {showLogo && (
-              <motion.div
-                className="relative z-10 flex flex-col items-center"
-                initial={{ opacity: 0, scale: 0.3, rotate: -15 }}
-                animate={{
-                  opacity: 1,
-                  scale: logoScale,
-                  rotate: 0,
-                  y: logoMoveUp ? 1000 : 0,
-                }}
-                exit={{ opacity: 0, scale: 3 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 200,
-                  damping: 15,
-                  mass: 0.8,
-                }}
-              >
-                {/* Logo Image */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.4, delay: 0.2 }}
-                >
-                  <Image
-                    src="/assets/logo_lambang_dareean.png"
-                    alt="Dareean"
-                    width={120}
-                    height={120}
-                    className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32"
-                    style={{
-                      filter:
-                        theme === "dark"
-                          ? "invert(1) brightness(1.2)"
-                          : "invert(0)",
-                    }}
-                    priority
-                  />
-                </motion.div>
-
-                {/* Logo glow effect */}
-                <motion.div
-                  className="absolute inset-0 blur-2xl opacity-30"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: logoScale * 1.5 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 150,
-                    damping: 20,
-                  }}
-                  style={{
-                    background:
-                      theme === "dark"
-                        ? "radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%)"
-                        : "radial-gradient(circle, rgba(0,0,0,0.2) 0%, transparent 70%)",
-                  }}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        {/* Wordmark below logo */}
+        <p
+          className="text-xs tracking-[0.5em] font-medium uppercase"
+          style={{
+            color: theme === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.35)",
+            fontFamily: "var(--font-notion), Inter, sans-serif",
+          }}
+        >
+          Dareean
+        </p>
+      </div>
+    </div>
   );
 }

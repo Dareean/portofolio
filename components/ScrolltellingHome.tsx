@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useLayoutEffect, useEffect, useState } from "react";
+import { useRef, useLayoutEffect, useState, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { useDeviceType } from "@/lib/hooks";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,423 +15,343 @@ const CHAPTERS = [
     year: "2021",
     heading: "It started with curiosity.",
     body: "I picked up my first line of code — HTML, CSS, JavaScript. No bootcamp, no deadline. Just a kid in Central Sulawesi who wanted to understand how the web worked.",
-    accent: "curiosity",
+    tint: "bg-tint-sky",
+    icon: "</>",
   },
   {
     year: "2023",
     heading: "First real-world code.",
-    body: "Interned at PT. Educa Studio as a web programmer, then joined the Teaching Factory program at Gamelab Indonesia. I learned that production code is a different sport entirely.",
-    accent: "real-world",
+    body: "Interned at PT. Educa Studio as a web programmer, then joined the Teaching Factory program at Gamelab Indonesia. Production code is a different sport entirely.",
+    tint: "bg-tint-mint",
+    icon: "⚡",
   },
   {
     year: "2024",
     heading: "University opened new doors.",
     body: "Started my Informatics degree — combining formal computer science with the practical skills I'd already built. Algorithms met aesthetics.",
-    accent: "new doors",
+    tint: "bg-tint-lavender",
+    icon: "🎓",
   },
   {
     year: "2025 — now",
     heading: "Building, leading, creating.",
     body: "Competing in UI/UX and IoT competitions. Coordinating mentors at Programming Tadulako. Leading I-Fest as PIC. Building for communities, not just clients.",
-    accent: "creating",
+    tint: "bg-tint-rose",
+    icon: "🚀",
   },
 ];
 
-// ─── Split helpers ───
-const splitChars = (text: string) =>
-  text.split("").map((char, i) => (
-    <span
-      key={i}
-      className="st-char inline-block"
-      style={{ perspective: "600px" }}
-    >
-      {char === " " ? "\u00A0" : char}
-    </span>
-  ));
+const STATS = [
+  { label: "Projects Built", value: 10, suffix: "+" },
+  { label: "Communities", value: 4, suffix: "" },
+  { label: "Competitions", value: 3, suffix: "+" },
+  { label: "Years Coding", value: 4, suffix: "" },
+];
 
 const splitWords = (text: string) =>
   text.split(" ").map((word, i) => (
-    <span key={i} className="st-word inline-block mr-[0.3em]">
-      {word}
-    </span>
+    <span key={i} className="st-word inline-block mr-[0.3em]">{word}</span>
   ));
 
 export default function ScrolltellingHome() {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const deviceInfo = useDeviceType();
 
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
-  // ──────────── GSAP master timeline ────────────
+  // GSAP scroll-reveal animations — all "once: true" to kill observers after first fire
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      // ── 1. Opening statement: "I see code as a bridge..." ──
+      if (deviceInfo.prefersReducedMotion || deviceInfo.isLowEnd) {
+        gsap.set(".st-word", { opacity: 1, y: 0 });
+        gsap.set(".st-feature-card", { opacity: 1, y: 0 });
+        gsap.set(".st-banner", { opacity: 1, y: 0 });
+        gsap.set(".st-stat-item", { opacity: 1, y: 0 });
+        gsap.set(".st-cta-item", { opacity: 1, y: 0 });
+        return;
+      }
+
+      const isMob = deviceInfo.isMobile;
+
+      // ── Opening paragraph — no scrub, just once-only fade ──
+      // scrub fires on every pixel scrolled; once fires once and kills the observer
       const openingSection = document.querySelector(".st-opening");
       if (openingSection) {
-        const openingWords = openingSection.querySelectorAll(".st-word");
-        const openingTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: openingSection,
-            start: "top 80%",
-            end: "top 20%",
-            scrub: true,
-          },
-        });
-        openingTl.fromTo(
-          openingWords,
-          { opacity: 0.1, filter: "blur(5px)", y: 10 },
-          {
-            opacity: 1,
-            filter: "blur(0px)",
-            y: 0,
-            stagger: 0.06,
-            ease: "power2.out",
-          },
-        );
-      }
-
-      // ── 2. Each chapter: pinned + sequential reveal ──
-      CHAPTERS.forEach((_, i) => {
-        const section = document.querySelector(`.st-chapter-${i}`);
-        if (!section) return;
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: section,
-            start: "top top",
-            end: () => `+=${isMobile ? 120 : 150}%`,
-            pin: true,
-            scrub: 0.8,
-            anticipatePin: 1,
-          },
-        });
-
-        // Year label slides in
-        tl.fromTo(
-          section.querySelector(".st-year"),
-          { opacity: 0, x: -40 },
-          { opacity: 1, x: 0, duration: 0.3, ease: "power2.out" },
-          0,
-        );
-
-        // Heading chars cascade in
-        const chars = section.querySelectorAll(".st-char");
-        tl.fromTo(
-          chars,
-          { opacity: 0, y: 60, rotateX: -90 },
-          {
-            opacity: 1,
-            y: 0,
-            rotateX: 0,
-            duration: 0.6,
-            stagger: 0.02,
-            ease: "power3.out",
-          },
-          0.15,
-        );
-
-        // Body text fades in word by word
-        const bodyWords = section.querySelectorAll(".st-body .st-word");
-        tl.fromTo(
-          bodyWords,
-          { opacity: 0, y: 20, filter: "blur(4px)" },
-          {
-            opacity: 1,
-            y: 0,
-            filter: "blur(0px)",
-            duration: 0.4,
-            stagger: 0.03,
-            ease: "power2.out",
-          },
-          0.5,
-        );
-
-        // Decorative line scales in
-        tl.fromTo(
-          section.querySelector(".st-line"),
-          { scaleX: 0 },
-          { scaleX: 1, duration: 0.3, ease: "power2.inOut" },
-          0.4,
-        );
-
-        // Hold for reading
-        tl.to({}, { duration: 0.6 });
-
-        // Fade out
-        tl.to(
-          [
-            section.querySelector(".st-year"),
-            section.querySelector(".st-heading"),
-            section.querySelector(".st-body"),
-            section.querySelector(".st-line"),
-          ],
-          {
-            opacity: 0,
-            y: -30,
-            duration: 0.3,
-            stagger: 0.04,
-            ease: "power2.in",
-          },
-        );
-      });
-
-      // ── 3. "From pixels to people" typography moment ──
-      const bridgeSection = document.querySelector(".st-bridge");
-      if (bridgeSection) {
-        const bridgeTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: bridgeSection,
-            start: "top top",
-            end: () => `+=${isMobile ? 130 : 180}%`,
-            pin: true,
-            scrub: 0.8,
-            anticipatePin: 1,
-          },
-        });
-
-        // "From pixels" chars cascade
-        const line1Chars = bridgeSection.querySelectorAll(
-          ".st-bridge-l1 .st-char",
-        );
-        bridgeTl.fromTo(
-          line1Chars,
-          { opacity: 0, y: 80, rotateX: -90 },
-          {
-            opacity: 1,
-            y: 0,
-            rotateX: 0,
-            duration: 0.6,
-            stagger: 0.03,
-            ease: "power3.out",
-          },
-          0,
-        );
-
-        // Divider
-        bridgeTl.fromTo(
-          bridgeSection.querySelector(".st-bridge-divider"),
-          { scaleX: 0, opacity: 0 },
-          { scaleX: 1, opacity: 1, duration: 0.3, ease: "power2.inOut" },
-          0.4,
-        );
-
-        // "to people." word by word
-        const line2Words = bridgeSection.querySelectorAll(
-          ".st-bridge-l2 .st-word",
-        );
-        bridgeTl.fromTo(
-          line2Words,
-          { opacity: 0, y: 60, filter: "blur(8px)" },
-          {
-            opacity: 1,
-            y: 0,
-            filter: "blur(0px)",
-            duration: 0.5,
-            stagger: 0.15,
-            ease: "power2.out",
-          },
-          0.5,
-        );
-
-        // Hold
-        bridgeTl.to({}, { duration: 0.8 });
-
-        // Fade out
-        bridgeTl.to(
-          [
-            bridgeSection.querySelector(".st-bridge-l1"),
-            bridgeSection.querySelector(".st-bridge-divider"),
-            bridgeSection.querySelector(".st-bridge-l2"),
-          ],
-          {
-            opacity: 0,
-            y: -40,
-            duration: 0.4,
-            stagger: 0.05,
-            ease: "power2.in",
-          },
-        );
-      }
-
-      // ── 4. CTA section fade-in ──
-      const ctaSection = document.querySelector(".st-cta");
-      if (ctaSection) {
-        const ctaItems = ctaSection.querySelectorAll(".st-cta-item");
+        const words = openingSection.querySelectorAll(".st-word");
         gsap.fromTo(
-          ctaItems,
-          { opacity: 0, y: 40 },
+          words,
+          { opacity: 0, y: isMob ? 8 : 12 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.8,
-            stagger: 0.15,
+            stagger: isMob ? 0.012 : 0.018,
+            duration: 0.35,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: openingSection,
+              start: "top 80%",
+              once: true,
+            },
+          }
+        );
+      }
+
+      // ── Feature cards — single batch stagger ──
+      const featureCards = document.querySelectorAll(".st-feature-card");
+      if (featureCards.length) {
+        gsap.fromTo(
+          featureCards,
+          { opacity: 0, y: isMob ? 18 : 28 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: isMob ? 0.4 : 0.55,
+            stagger: isMob ? 0.05 : 0.08,
             ease: "power3.out",
             scrollTrigger: {
-              trigger: ctaSection,
-              start: "top 75%",
-              toggleActions: "play none none reverse",
+              trigger: featureCards[0],
+              start: "top 85%",
+              once: true,
             },
-          },
+          }
+        );
+      }
+
+      // ── Bold banner ──
+      const bannerSection = document.querySelector(".st-banner");
+      if (bannerSection) {
+        gsap.fromTo(
+          bannerSection,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.55,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: bannerSection,
+              start: "top 85%",
+              once: true,
+            },
+          }
+        );
+      }
+
+      // ── Stats ──
+      const statItems = document.querySelectorAll(".st-stat-item");
+      if (statItems.length) {
+        gsap.fromTo(
+          statItems,
+          { opacity: 0, y: 14 },
+          {
+            opacity: 1,
+            y: 0,
+            stagger: 0.07,
+            duration: 0.4,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: ".st-stats",
+              start: "top 82%",
+              once: true,
+            },
+          }
+        );
+      }
+
+      // ── CTA ──
+      const ctaItems = document.querySelectorAll(".st-cta-item");
+      if (ctaItems.length) {
+        gsap.fromTo(
+          ctaItems,
+          { opacity: 0, y: 14 },
+          {
+            opacity: 1,
+            y: 0,
+            stagger: 0.08,
+            duration: 0.45,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: ".st-cta",
+              start: "top 85%",
+              once: true,
+            },
+          }
         );
       }
     }, wrapperRef);
 
     return () => ctx.revert();
-  }, [isMobile]);
+  }, [deviceInfo]);
+
+  // Counter component
+  const StatCounter = ({ value, suffix, label }: { value: number; suffix: string; label: string }) => {
+    const [count, setCount] = useState(0);
+    const ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+      if (!ref.current) return;
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            const duration = 2000;
+            const startTime = Date.now();
+            const animate = () => {
+              const elapsed = Date.now() - startTime;
+              const progress = Math.min(elapsed / duration, 1);
+              const eased = 1 - Math.pow(1 - progress, 3);
+              setCount(Math.floor(eased * value));
+              if (progress < 1) requestAnimationFrame(animate);
+            };
+            requestAnimationFrame(animate);
+            observer.disconnect();
+          }
+        },
+        { threshold: 0.5 }
+      );
+      observer.observe(ref.current);
+      return () => observer.disconnect();
+    }, [value]);
+
+    return (
+      <div ref={ref} className="st-stat-item text-center">
+        <div className="stat-counter text-display-lg text-primary font-semibold">
+          {count}{suffix}
+        </div>
+        <div className="mt-2 text-body-sm-medium text-steel uppercase tracking-wider">
+          {label}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div ref={wrapperRef}>
       {/* ═══════════════════════════════════════════
-          Section 1: Opening statement (scroll-reveal)
+          Opening Statement
           ═══════════════════════════════════════════ */}
-      <section className="st-opening relative py-32 md:py-48 px-6 md:px-12 lg:px-20 overflow-hidden">
-        {/* Subtle glow */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-off-white/[0.015] rounded-full blur-[120px]" />
-        </div>
+      <section className="st-opening relative py-section-lg md:py-[120px] px-6 md:px-8 overflow-hidden">
+        <div className="max-w-container mx-auto">
+          <div className="max-w-3xl">
+            {/* Section label */}
+            <div className="flex items-center gap-3 mb-6">
+              <span className="w-8 h-px bg-primary/40" />
+              <span className="text-micro-uppercase text-primary font-semibold tracking-wider">
+                About
+              </span>
+            </div>
 
-        <div className="max-w-4xl mx-auto relative z-10">
-          {/* Label */}
-          <div className="flex items-center gap-4 mb-10">
-            <div className="w-10 h-px bg-off-white/25" />
-            <span className="text-off-white/35 text-[10px] tracking-[0.35em] uppercase font-light">
-              About
-            </span>
-          </div>
-
-          {/* Quote mark */}
-          <div
-            className="text-off-white/[0.06] font-display text-7xl md:text-8xl leading-none mb-3 select-none"
-            aria-hidden="true"
-          >
-            &ldquo;
-          </div>
-
-          {/* Scroll-reveal text */}
-          <p className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] text-off-white leading-relaxed tracking-tight">
-            {splitWords(
-              "I see code not just as syntax, but as a bridge between ideas and reality. My journey is defined by a relentless curiosity — from building smart solutions to nurturing tech communities in Palu.",
-            )}
-          </p>
-
-          <div
-            className="text-off-white/[0.06] font-display text-7xl md:text-8xl leading-none text-right mt-3 select-none"
-            aria-hidden="true"
-          >
-            &rdquo;
+            <p className="text-heading-2 md:text-display-lg text-charcoal font-semibold leading-[1.1] tracking-tight">
+              {splitWords(
+                "I see code not just as syntax, but as a bridge between ideas and reality. My journey is defined by a relentless curiosity — from building smart solutions to nurturing tech communities in Palu.",
+              )}
+            </p>
           </div>
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════
-          Section 2: Chapter cards (pinned scroll)
+          Feature Cards Section — Pastel-tinted cards
           ═══════════════════════════════════════════ */}
-      {CHAPTERS.map((ch, i) => (
-        <section
-          key={i}
-          className={`st-chapter-${i} relative h-screen flex items-center justify-center overflow-hidden bg-void-black`}
-        >
-          <div className="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-10 md:px-16">
-            {/* Year */}
-            <span className="st-year block font-mono text-off-white/20 text-xs sm:text-sm tracking-[0.4em] uppercase mb-6 opacity-0">
-              {ch.year}
-            </span>
-
-            {/* Heading */}
-            <h2
-              className="st-heading font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-off-white font-bold tracking-tight leading-[1.05]"
-              style={{ perspective: "800px" }}
+      <section className="px-6 md:px-8 pb-section-lg">
+        <div className="max-w-container mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          {CHAPTERS.map((ch, i) => (
+            <div
+              key={i}
+              className={`st-feature-card ${ch.tint} rounded-lg p-8 md:p-10 transition-all duration-300 hover:shadow-elevation-2`}
             >
-              {splitChars(ch.heading)}
-            </h2>
-
-            {/* Decorative line */}
-            <div className="st-line w-16 sm:w-24 h-px bg-gradient-to-r from-off-white/30 to-transparent my-6 sm:my-10 origin-left" />
-
-            {/* Body */}
-            <div className="st-body max-w-2xl">
-              <p className="text-off-white/55 text-base sm:text-lg md:text-xl leading-relaxed font-light">
-                {splitWords(ch.body)}
+              <div className="flex items-start justify-between mb-6">
+                <span className="text-caption-bold text-charcoal/60 font-mono">
+                  {ch.year}
+                </span>
+                <span className="text-2xl opacity-60">{ch.icon}</span>
+              </div>
+              <h3 className="text-heading-4 text-charcoal font-semibold mb-3">
+                {ch.heading}
+              </h3>
+              <p className="text-body-md text-slate leading-relaxed">
+                {ch.body}
               </p>
             </div>
-          </div>
-        </section>
-      ))}
+          ))}
+        </div>
+      </section>
 
       {/* ═══════════════════════════════════════════
-          Section 3: "From pixels to people" bridge
+          Bold Yellow Banner — "Ask the assistant" style
           ═══════════════════════════════════════════ */}
-      <section className="st-bridge relative h-screen flex items-center justify-center overflow-hidden bg-void-black">
-        {/* Subtle glow */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-off-white/[0.01] rounded-full blur-[150px]" />
-        </div>
-
-        <div className="relative z-10 flex flex-col items-center text-center px-4 sm:px-6">
-          {/* Line 1 */}
-          <div
-            className="st-bridge-l1 font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold text-off-white tracking-tight leading-none"
-            style={{ perspective: "800px" }}
-          >
-            {splitChars("From pixels")}
-          </div>
-
-          {/* Divider */}
-          <div className="st-bridge-divider w-20 sm:w-32 h-px bg-gradient-to-r from-transparent via-off-white/40 to-transparent my-5 sm:my-8 origin-center opacity-0" />
-
-          {/* Line 2 */}
-          <div className="st-bridge-l2 font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold tracking-tight leading-none">
-            <span className="st-word inline-block mr-[0.3em] text-off-white/60">
-              to
-            </span>
-            <span
-              className="st-word inline-block bg-clip-text text-transparent"
-              style={{
-                backgroundImage:
-                  "linear-gradient(135deg, #f0a6ca, #efc3a3, #f5d5a0)",
-              }}
-            >
-              people.
-            </span>
+      <section className="st-banner px-6 md:px-8 pb-section-lg">
+        <div className="max-w-container mx-auto bg-tint-yellow-bold rounded-lg p-10 md:p-16">
+          <div className="max-w-2xl mx-auto text-center">
+            <span className="text-4xl mb-4 block">💡</span>
+            <h2 className="text-heading-2 md:text-heading-1 text-charcoal font-semibold tracking-tight mb-4">
+              From curiosity to creation
+            </h2>
+            <p className="text-body-md text-slate leading-relaxed max-w-lg mx-auto">
+              Every project starts with a question. What if? Why not? How might we?
+              These questions drive everything I build.
+            </p>
           </div>
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════
-          Section 4: CTA — Explore further
+          Stats Section
           ═══════════════════════════════════════════ */}
-      <section className="st-cta relative py-32 md:py-48 px-6 md:px-12 lg:px-20 bg-void-black">
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Subtitle */}
-          <p className="st-cta-item text-off-white/30 text-xs tracking-[0.35em] uppercase font-light mb-8 opacity-0">
+      <section className="st-stats px-6 md:px-8 pb-section-lg">
+        <div className="max-w-container mx-auto bg-surface rounded-lg p-8 md:p-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+            {STATS.map((stat, i) => (
+              <StatCounter key={i} {...stat} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
+          Bridge Section — "From pixels to people"
+          ═══════════════════════════════════════════ */}
+      <section className="px-6 md:px-8 pb-[120px]">
+        <div className="max-w-container mx-auto text-center">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-heading-2 md:text-display-lg text-charcoal font-semibold tracking-tight leading-[1.1]">
+              From pixels{" "}
+              <span className="text-hairline-strong mx-4">→</span>{" "}
+              <span className="text-primary">to people.</span>
+            </h2>
+            <div className="w-16 h-1 bg-primary/30 mx-auto mt-6 mb-6 rounded-full" />
+            <p className="text-body-md text-slate max-w-xl mx-auto">
+              Technology is meaningless without the people it serves. Every interface
+              is a conversation. Every interaction, a relationship.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
+          CTA Section
+          ═══════════════════════════════════════════ */}
+      <section className="st-cta px-6 md:px-8 pb-section-lg">
+        <div className="max-w-container mx-auto text-center">
+          <p className="st-cta-item text-micro-uppercase text-primary font-semibold mb-4">
             Want to know more?
           </p>
 
-          {/* CTA heading */}
-          <h3 className="st-cta-item font-display text-3xl sm:text-4xl md:text-5xl text-off-white tracking-tight mb-12 opacity-0">
+          <h3 className="st-cta-item text-heading-2 md:text-heading-1 text-charcoal font-semibold tracking-tight mb-8">
             Explore my journey & work
           </h3>
 
-          {/* CTA links */}
-          <div className="st-cta-item flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 opacity-0">
+          <div className="st-cta-item flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/journey"
-              className="group inline-flex items-center gap-3 px-8 py-4 border border-off-white/25 rounded-full text-off-white text-sm tracking-widest uppercase hover:bg-off-white hover:text-void-black transition-all duration-300"
+              className="inline-flex items-center gap-2 px-[18px] py-[10px] bg-primary text-on-primary text-button-md font-medium rounded-md hover:bg-primary-pressed transition-all duration-200"
             >
               My Journey
-              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+              <ArrowRight size={16} />
             </Link>
             <Link
               href="/work"
-              className="group inline-flex items-center gap-3 px-8 py-4 border border-off-white/25 rounded-full text-off-white text-sm tracking-widest uppercase hover:bg-off-white hover:text-void-black transition-all duration-300"
+              className="inline-flex items-center gap-2 px-[18px] py-[10px] bg-transparent text-charcoal text-button-md font-medium rounded-md border border-hairline-strong hover:bg-surface transition-all duration-200"
             >
               My Work
-              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+              <ArrowRight size={16} />
             </Link>
           </div>
         </div>

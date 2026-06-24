@@ -62,11 +62,11 @@ function checkLowEndDevice(): boolean {
   if (cores <= 2) return true;
 
   // Check memory (if available)
-  const memory = (navigator as any).deviceMemory;
+  const memory = (navigator as unknown as { deviceMemory?: number }).deviceMemory;
   if (memory && memory <= 2) return true;
 
   // Check connection (if available)
-  const connection = (navigator as any).connection;
+  const connection = (navigator as unknown as { connection?: { effectiveType: string } }).connection;
   if (connection) {
     const slowConnections = ["slow-2g", "2g", "3g"];
     if (slowConnections.includes(connection.effectiveType)) {

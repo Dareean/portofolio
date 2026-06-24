@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useRef, useEffect, useLayoutEffect } from "react";
-import { motion, useSpring, useMotionValue } from "framer-motion";
+import { useState, useRef, useLayoutEffect } from "react";
+import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { Project } from "@/lib/data";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ExternalLink } from "lucide-react";
+import { useDeviceType } from "@/lib/hooks";
 
 interface WorkListProps {
   projects: Project[];
@@ -14,231 +16,196 @@ interface WorkListProps {
 
 export default function WorkList({ projects }: WorkListProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const projectListRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const viewAllRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const deviceInfo = useDeviceType();
 
-  // Mouse position with spring for smooth cursor following
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const springConfig = { damping: 25, stiffness: 200 };
-  const smoothX = useSpring(mouseX, springConfig);
-  const smoothY = useSpring(mouseY, springConfig);
-
-  useEffect(() => {
-    // Check if mobile
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isMobile) {
-        mouseX.set(e.clientX);
-        mouseY.set(e.clientY);
-      }
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("resize", checkMobile);
-    };
-  }, [mouseX, mouseY, isMobile]);
-
-  // GSAP ScrollTrigger Animations
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
-      // Header animation
+      if (deviceInfo.prefersReducedMotion || deviceInfo.isLowEnd) {
+        // Disable ScrollTriggers, make everything visible immediately
+        if (headerRef.current) gsap.set(headerRef.current, { opacity: 1, y: 0 });
+        if (gridRef.current) {
+          const cards = gridRef.current.querySelectorAll(".work-card");
+          gsap.set(cards, { opacity: 1, y: 0 });
+        }
+        if (viewAllRef.current) gsap.set(viewAllRef.current, { opacity: 1, y: 0 });
+        return;
+      }
+
+      // Header
       if (headerRef.current) {
         gsap.fromTo(
           headerRef.current,
-          { opacity: 0, y: 60, scale: 0.95 },
+          { opacity: 0, y: 30 },
           {
             opacity: 1,
             y: 0,
-            scale: 1,
-            duration: 1,
-            ease: "power4.out",
+            duration: 0.6,
+            ease: "power3.out",
             scrollTrigger: {
               trigger: headerRef.current,
               start: "top 85%",
               toggleActions: "play none none reverse",
             },
-          },
+          }
         );
       }
 
-      // Project items staggered animation
-      if (projectListRef.current) {
-        const projectItems =
-          projectListRef.current.querySelectorAll(".project-item");
+      // Cards stagger
+      if (gridRef.current) {
+        const cards = gridRef.current.querySelectorAll(".work-card");
         gsap.fromTo(
-          projectItems,
-          { opacity: 0, y: 50 },
+          cards,
+          { opacity: 0, y: 40 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.6,
-            stagger: 0.1,
+            duration: 0.5,
+            stagger: deviceInfo.isMobile ? 0.05 : 0.08,
             ease: "power3.out",
             scrollTrigger: {
-              trigger: projectListRef.current,
+              trigger: gridRef.current,
               start: "top 80%",
               toggleActions: "play none none reverse",
             },
-          },
+          }
         );
       }
 
-      // View All button animation
+      // View all
       if (viewAllRef.current) {
         gsap.fromTo(
           viewAllRef.current,
-          { opacity: 0, y: 30 },
+          { opacity: 0, y: 20 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.8,
+            duration: 0.5,
             ease: "power2.out",
             scrollTrigger: {
               trigger: viewAllRef.current,
               start: "top 90%",
               toggleActions: "play none none reverse",
             },
-          },
+          }
         );
       }
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [deviceInfo]);
 
   return (
     <section
       ref={sectionRef}
-      className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 lg:px-16"
+      className="relative py-section-sm md:py-section px-6 md:px-8"
     >
-      {/* Section Header of work (GSAP animated) */}
-      <div ref={headerRef} className="mb-8 sm:mb-12 md:mb-16">
-        <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-off-white">
-          Selected Work
-        </h2>
-      </div>
-
-      {/* Project List (GSAP animated) */}
-      <div ref={projectListRef} className="space-y-0">
-        {projects.map((project, index) => (
-          <motion.div
-            key={project.id}
-            className="project-item group border-t border-off-white/10 cursor-pointer"
-            onMouseEnter={() => setHoveredIndex(index)}
-            onMouseLeave={() => setHoveredIndex(null)}
-          >
-            <motion.div
-              className="py-6 sm:py-8 md:py-12 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 transition-opacity duration-300"
-              animate={{
-                opacity:
-                  hoveredIndex === null || hoveredIndex === index ? 1 : 0.3,
-              }}
-            >
-              {/* Project Info */}
-              <div className="flex items-baseline gap-2 sm:gap-4 md:gap-8">
-                <span className="text-xs sm:text-sm text-off-white/40 font-mono">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <h3 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-5xl xl:text-6xl text-off-white tracking-tight">
-                  {project.title}
-                </h3>
-              </div>
-
-              {/* Project Meta */}
-              <div className="flex sm:hidden md:flex items-center gap-4 sm:gap-8 md:gap-12 ml-6 sm:ml-0">
-                <span className="text-off-white/60 uppercase tracking-widest text-xs sm:text-sm">
-                  {Array.isArray(project.category)
-                    ? project.category.join(" / ")
-                    : project.category}
-                </span>
-                <span className="text-off-white/40 font-mono text-xs sm:text-sm">
-                  {project.year}
-                </span>
-              </div>
-            </motion.div>
-          </motion.div>
-        ))}
-        {/* Bottom border */}
-        <div className="border-t border-off-white/10" />
-      </div>
-
-      {/* View All Link (GSAP animated) */}
-      <div ref={viewAllRef} className="mt-12 text-center">
-        <Link
-          href="/work"
-          className="inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 md:px-10 py-3 sm:py-4 border border-off-white/30 rounded-full text-off-white text-xs sm:text-sm tracking-widest uppercase hover:bg-off-white hover:text-void-black transition-all duration-300"
-        >
-          View All Projects
-          <ArrowRight className="w-4 h-4" />
-        </Link>
-      </div>
-
-      {/* Floating Image Preview - Visible on desktop */}
-      {!isMobile && (
-        <motion.div
-          className="fixed top-0 left-0 w-56 md:w-72 lg:w-80 h-64 md:h-80 lg:h-96 pointer-events-none z-[100] will-change-transform"
-          style={{
-            x: smoothX,
-            y: smoothY,
-            translateX: "-50%",
-            translateY: "-50%",
-          }}
-          animate={{
-            opacity: hoveredIndex !== null ? 1 : 0,
-            scale: hoveredIndex !== null ? 1 : 0.8,
-          }}
-          transition={{ duration: 0.3, ease: "easeOut" }}
-        >
-          <div className="w-full h-full bg-void-black/95 backdrop-blur-sm border-2 border-off-white/30 rounded-lg overflow-hidden shadow-2xl">
-            {hoveredIndex !== null && projects[hoveredIndex] && (
-              <motion.div
-                key={hoveredIndex}
-                className="w-full h-full relative"
-                initial={{ scale: 1.1, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.4 }}
-              >
-                {/* Project Image */}
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{
-                    backgroundImage: `url(${projects[hoveredIndex].image})`,
-                  }}
-                />
-                {/* Overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-void-black via-void-black/60 to-transparent" />
-                {/* Project info overlay */}
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <p className="font-display text-lg text-off-white/90 mb-1">
-                    {projects[hoveredIndex].title}
-                  </p>
-                  <p className="text-xs text-off-white/60 uppercase tracking-wide">
-                    {Array.isArray(projects[hoveredIndex].category)
-                      ? projects[hoveredIndex].category.join(" / ")
-                      : projects[hoveredIndex].category}
-                  </p>
-                </div>
-              </motion.div>
-            )}
+      <div className="max-w-container mx-auto">
+        {/* Section Header */}
+        <div ref={headerRef} className="mb-10 md:mb-12">
+          <div className="flex items-center gap-3 mb-4">
+            <span className="w-8 h-px bg-primary/40" />
+            <span className="text-micro-uppercase text-primary font-semibold tracking-wider">
+              Portfolio
+            </span>
           </div>
-        </motion.div>
-      )}
+          <h2 className="text-heading-2 md:text-heading-1 text-charcoal font-semibold tracking-tight">
+            Selected Work
+          </h2>
+        </div>
+
+        {/* Project Grid - Styled as Notion Database Gallery view */}
+        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {projects.map((project, index) => {
+            return (
+              <motion.div
+                key={project.id}
+                className={`work-card bg-canvas rounded-lg border border-hairline shadow-elevation-1 hover:shadow-elevation-2 overflow-hidden flex flex-col transition-all duration-300 cursor-pointer group ${
+                  hoveredIndex !== null && hoveredIndex !== index ? "opacity-60" : "opacity-100"
+                }`}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                whileHover={{ y: -4, transition: { duration: 0.3 } }}
+              >
+                <Link href={`/work/${project.id}`} className="flex flex-col h-full">
+                  {/* Card Cover Preview */}
+                  <div className="relative w-full aspect-[16/10] overflow-hidden bg-surface border-b border-hairline">
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+
+                  {/* Card Body content */}
+                  <div className="p-5 flex-1 flex flex-col gap-3 bg-canvas">
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="px-2 py-0.5 bg-primary/10 text-primary text-[11px] font-semibold rounded-sm tracking-wider uppercase font-mono">
+                        {Array.isArray(project.category)
+                          ? project.category[0]
+                          : project.category}
+                      </span>
+                      {project.status === "In Progress" && (
+                        <span className="px-2 py-0.5 bg-brand-yellow/30 text-brand-brown text-[11px] font-semibold rounded-sm uppercase font-mono">
+                          In Progress
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="text-heading-5 text-charcoal font-semibold group-hover:text-primary transition-colors duration-200 line-clamp-1">
+                      {project.title}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-body-sm text-slate leading-relaxed flex-1 line-clamp-3">
+                      {project.description}
+                    </p>
+
+                    {/* Bottom Metadata row */}
+                    <div className="flex items-center justify-between mt-2 pt-3 border-t border-hairline">
+                      <span className="text-caption-bold text-steel font-mono">
+                        {project.year}
+                      </span>
+                      {project.link && (
+                        <a
+                          href={project.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-steel hover:text-primary transition-colors duration-200"
+                          onClick={(e) => e.stopPropagation()}
+                          aria-label={`Visit live link for ${project.title}`}
+                        >
+                          <ExternalLink size={16} />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* View All */}
+        <div ref={viewAllRef} className="mt-10 text-center">
+          <Link
+            href="/work"
+            className="inline-flex items-center gap-2 px-[18px] py-[10px] bg-primary text-on-primary text-button-md font-medium rounded-md hover:bg-primary-pressed transition-all duration-200"
+          >
+            View All Projects
+            <ArrowRight size={16} />
+          </Link>
+        </div>
+      </div>
     </section>
   );
 }

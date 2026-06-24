@@ -2,10 +2,11 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { useParams } from "next/navigation";
 import { PROJECTS } from "@/lib/data";
-import FloatingNav from "@/components/FloatingNav";
-import { ChevronLeft, ArrowRight } from "lucide-react";
+import TopNav from "@/components/TopNav";
+import { ChevronLeft, ArrowRight, ExternalLink } from "lucide-react";
 
 export default function ProjectDetailPage() {
   const params = useParams();
@@ -14,15 +15,10 @@ export default function ProjectDetailPage() {
 
   if (!project) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-void-black">
+      <main className="min-h-screen flex items-center justify-center bg-canvas">
         <div className="text-center">
-          <h1 className="font-display text-4xl text-off-white mb-4">
-            Project Not Found
-          </h1>
-          <Link
-            href="/work"
-            className="text-off-white/60 hover:text-off-white transition-colors"
-          >
+          <h1 className="text-heading-2 text-charcoal font-semibold mb-4">Project Not Found</h1>
+          <Link href="/work" className="px-[18px] py-[10px] bg-primary text-on-primary text-button-md font-medium rounded-md hover:bg-primary-pressed transition-colors">
             ← Back to Work
           </Link>
         </div>
@@ -30,126 +26,184 @@ export default function ProjectDetailPage() {
     );
   }
 
-  const categoryDisplay = Array.isArray(project.category)
-    ? project.category.join(", ")
-    : project.category;
+  const categoryDisplay = Array.isArray(project.category) ? project.category.join(", ") : project.category;
+
+  // Determine Notion Emoji based on title
+  const getProjectEmoji = (title: string) => {
+    const t = title.toLowerCase();
+    if (t.includes("medicflow")) return "🏥";
+    if (t.includes("sorot")) return "🌍";
+    if (t.includes("jasakita")) return "🤝";
+    if (t.includes("guard riders") || t.includes("helmet")) return "🪖";
+    if (t.includes("dreampos") || t.includes("pos")) return "💰";
+    if (t.includes("library")) return "📚";
+    if (t.includes("employee")) return "👥";
+    if (t.includes("batik")) return "🎨";
+    if (t.includes("green generation") || t.includes("green")) return "🌿";
+    if (t.includes("portfolio") || t.includes("dareean")) return "⚡";
+    return "💻";
+  };
+  const emoji = getProjectEmoji(project.title);
 
   return (
-    <main className="min-h-screen py-32 px-6 md:px-12 lg:px-20 bg-void-black text-off-white">
-      <FloatingNav />
-      {/* Back Link */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <Link
-          href="/work"
-          className="inline-flex items-center gap-2 text-off-white/60 hover:text-off-white mb-12 transition-colors uppercase tracking-widest text-sm"
+    <main className="min-h-screen py-20 md:py-28 bg-canvas text-ink">
+      <TopNav />
+
+      <div className="max-w-container mx-auto px-6 md:px-8 pt-6">
+        {/* Back Link */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+          <Link href="/work" className="inline-flex items-center gap-2 text-steel hover:text-charcoal mb-6 transition-colors text-body-sm-medium">
+            <ChevronLeft className="w-4 h-4" />
+            Back to Work
+          </Link>
+        </motion.div>
+
+        {/* Notion Page Cover Image */}
+        <motion.div
+          className="relative w-full h-48 sm:h-64 md:h-72 overflow-hidden rounded-lg bg-surface border border-hairline shadow-elevation-1"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
         >
-          <ChevronLeft className="w-4 h-4" />
-          Back to Work
-        </Link>
-      </motion.div>
+          <Image
+            src={project.image}
+            alt={project.title}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+        </motion.div>
 
-      {/* Project Header */}
-      <motion.header
-        className="max-w-5xl mb-16"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.1 }}
-      >
-        <div className="flex flex-wrap items-center gap-6 text-sm mb-8">
-          <span className="text-off-white/60 font-mono">{project.year}</span>
-          <span className="w-px h-4 bg-off-white/20" />
-          <span className="text-off-white/80 uppercase tracking-widest text-xs px-3 py-1 border border-off-white/20 rounded-full">
-            {categoryDisplay}
-          </span>
-          {project.featured && (
-            <span className="inline-flex items-center gap-2 px-3 py-1 bg-off-white text-void-black text-xs tracking-widest uppercase rounded-full">
-              Featured
+        {/* Notion Overlapping Page Icon / Emoji */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
+          className="relative -mt-10 sm:-mt-12 ml-6 mb-4 z-10 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-canvas border border-hairline shadow-elevation-2 flex items-center justify-center text-4xl sm:text-5xl select-none"
+        >
+          {emoji}
+        </motion.div>
+
+        {/* Page title */}
+        <motion.header 
+          className="max-w-4xl mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          <h1 className="text-heading-1 md:text-display-lg text-charcoal font-semibold leading-tight tracking-tight">
+            {project.title}
+          </h1>
+        </motion.header>
+
+        {/* Notion Database-style properties grid */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-6 border-t border-b border-hairline py-6 mb-8 max-w-4xl"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-stone text-micro-uppercase font-semibold w-24">Date</span>
+            <span className="text-body-sm-medium text-charcoal font-mono">{project.year}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-stone text-micro-uppercase font-semibold w-24">Category</span>
+            <span className="px-2 py-0.5 bg-primary/10 text-primary text-[11px] font-semibold rounded-sm uppercase font-mono">
+              {categoryDisplay}
             </span>
+          </div>
+          {project.link && (
+            <div className="flex items-center gap-3">
+              <span className="text-stone text-micro-uppercase font-semibold w-24">Live URL</span>
+              <a 
+                href={project.link} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-body-sm text-link-blue hover:text-link-blue-pressed hover:underline inline-flex items-center gap-1 font-medium font-mono"
+              >
+                {project.link.replace("https://", "").replace("www.", "").split("/")[0]}
+                <ArrowRight className="w-3 h-3" />
+              </a>
+            </div>
           )}
-        </div>
+        </motion.div>
 
-        <h1 className="font-display text-4xl md:text-6xl lg:text-8xl text-off-white leading-none mb-8">
-          {project.title}
-        </h1>
-
-        <div className="flex flex-col md:flex-row gap-8 md:items-start justify-between">
-          <p className="mt-4 text-xl md:text-2xl text-off-white/60 leading-relaxed max-w-2xl">
+        {/* Notion Block-style description content */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="max-w-4xl mb-16"
+        >
+          <h2 className="text-heading-3 text-charcoal font-semibold border-b border-hairline pb-2 mb-4">
+            Description
+          </h2>
+          <p className="text-body-md text-slate leading-relaxed max-w-3xl">
             {project.description}
           </p>
 
           {project.link && (
-            <Link
-              href={project.link}
-              target="_blank"
-              className="inline-flex items-center gap-3 px-8 py-4 bg-off-white text-void-black font-medium tracking-wide uppercase hover:bg-off-white/90 transition-colors whitespace-nowrap"
-            >
-              Visit Project
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          )}
-        </div>
-      </motion.header>
-
-      {/* Featured Image */}
-      <motion.div
-        className="relative w-full aspect-[16/9] mb-24 overflow-hidden rounded-lg bg-off-white/5 border border-off-white/10"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-      >
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${project.image})` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-void-black/80 via-transparent to-transparent" />
-      </motion.div>
-
-      {/* More Projects */}
-      <motion.div
-        className="pt-24 border-t border-off-white/10"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.5 }}
-      >
-        <h3 className="font-display text-2xl text-off-white mb-12 uppercase tracking-widest">
-          Other Projects
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {PROJECTS.filter((p) => p.id !== project.id)
-            .slice(0, 3)
-            .map((relatedProject) => (
-              <Link
-                key={relatedProject.id}
-                href={`/work/${relatedProject.id}`}
-                className="group block"
+            <div className="mt-8">
+              <Link 
+                href={project.link} 
+                target="_blank"
+                className="inline-flex items-center gap-2 px-[18px] py-[10px] bg-primary text-on-primary text-button-md font-medium rounded-md hover:bg-primary-pressed transition-all duration-200"
               >
-                <div className="relative aspect-[4/3] mb-6 overflow-hidden bg-off-white/5 border border-off-white/10 rounded-sm">
-                  <div
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                    style={{ backgroundImage: `url(${relatedProject.image})` }}
-                  />
-                  <div className="absolute inset-0 bg-void-black/20 group-hover:bg-void-black/40 transition-colors" />
-                </div>
-                <h4 className="font-display text-2xl text-off-white group-hover:text-off-white/80 transition-colors mb-2">
-                  {relatedProject.title}
-                </h4>
-                <div className="flex items-center gap-4 text-sm text-off-white/50">
-                  <span>{relatedProject.year}</span>
-                  <span>•</span>
-                  <span>
-                    {Array.isArray(relatedProject.category)
-                      ? relatedProject.category[0]
-                      : relatedProject.category}
-                  </span>
+                Visit Live Site
+                <ExternalLink className="w-4 h-4" />
+              </Link>
+            </div>
+          )}
+        </motion.div>
+
+        {/* More Projects - Gallery card style */}
+        <motion.div 
+          className="pt-12 border-t border-hairline"
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          transition={{ duration: 0.6, delay: 0.6 }}
+        >
+          <h3 className="text-heading-3 text-charcoal font-semibold mb-8 flex items-center gap-2">
+            <span>📋</span> Other Projects Database
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {PROJECTS.filter((p) => p.id !== project.id).slice(0, 3).map((relatedProject) => (
+              <Link key={relatedProject.id} href={`/work/${relatedProject.id}`} className="group block">
+                <div className="bg-canvas border border-hairline rounded-lg shadow-elevation-1 hover:shadow-elevation-2 overflow-hidden flex flex-col h-full transition-all duration-300">
+                  {/* Image Cover */}
+                  <div className="relative aspect-[16/10] overflow-hidden bg-surface border-b border-hairline">
+                    <Image
+                      src={relatedProject.image}
+                      alt={relatedProject.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                  
+                  {/* Details */}
+                  <div className="p-4 flex-1 flex flex-col gap-2.5 bg-canvas">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-semibold rounded-sm uppercase font-mono">
+                        {Array.isArray(relatedProject.category) ? relatedProject.category[0] : relatedProject.category}
+                      </span>
+                      <span className="text-steel font-mono text-[10px] bg-hairline/40 px-2 py-0.5 rounded-sm">
+                        {relatedProject.year}
+                      </span>
+                    </div>
+                    
+                    <h4 className="text-body-md-medium text-charcoal group-hover:text-primary transition-colors line-clamp-1">
+                      {relatedProject.title}
+                    </h4>
+                  </div>
                 </div>
               </Link>
             ))}
-        </div>
-      </motion.div>
+          </div>
+        </motion.div>
+      </div>
     </main>
   );
 }

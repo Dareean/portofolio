@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useRef } from "react";
+import { ReactNode, useEffect } from "react";
 import Lenis from "lenis";
 
 interface SmoothScrollProps {
@@ -8,40 +8,48 @@ interface SmoothScrollProps {
 }
 
 export default function SmoothScroll({ children }: SmoothScrollProps) {
-  const lenisRef = useRef<Lenis | null>(null);
-
   useEffect(() => {
-    // Disable smooth scroll on mobile for better performance
+    // Disable on mobile — native touch scroll is already smooth
     const isMobile = window.innerWidth < 768;
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (isMobile || prefersReduced) return;
 
-    if (isMobile) {
-      return; // Skip Lenis initialization on mobile
-    }
+    // Check low-end device
+    const cores = navigator.hardwareConcurrency || 2;
+    const memory = (navigator as unknown as { deviceMemory?: number }).deviceMemory;
+    const isLowEnd = cores <= 2 || (memory !== undefined && memory <= 2);
+    if (isLowEnd) return;
 
     const lenis = new Lenis({
-      lerp: 0.15, // Higher lerp = more responsive, less floaty (medium pace)
-      duration: 1.2, // Slightly shorter duration
+      // Snappier feel — lower lerp = faster response (less lag)
+      lerp: 0.08,
+      duration: 0.9,
       smoothWheel: true,
-      wheelMultiplier: 0.8, // Slightly reduced speed for control
-      touchMultiplier: 2,
+      wheelMultiplier: 0.9,
+      touchMultiplier: 1.5,
+      // Prevent Lenis from hijacking scroll when user hasn't interacted
+      infinite: false,
     });
 
-    lenisRef.current = lenis;
+    let rafId: number;
 
     function raf(time: number) {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     }
 
-    requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
 
-    // Expose lenis to window for external access
+    // Expose globally so GSAP ScrollTrigger can sync
     (window as unknown as { lenis: Lenis }).lenis = lenis;
 
     return () => {
+      cancelAnimationFrame(rafId);
       lenis.destroy();
+      delete (window as unknown as { lenis?: Lenis }).lenis;
     };
   }, []);
 
   return <>{children}</>;
 }
+

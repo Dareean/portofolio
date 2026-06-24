@@ -107,39 +107,36 @@ export default function Navbar() {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className={`fixed top-4 sm:top-6 right-4 sm:right-6 md:right-16 z-50 w-10 h-10 sm:w-12 sm:h-12 flex flex-col items-center justify-center gap-1 sm:gap-1.5 focus:outline-none rounded-full transition-all duration-500 ${
                 isMenuOpen
-                  ? "bg-gradient-to-br from-white/50 via-white/35 to-white/25 backdrop-blur-[40px] backdrop-saturate-[250%] border-[3px] border-white/70 shadow-[0_8px_32px_rgba(255,255,255,0.4),0_0_60px_rgba(255,255,255,0.2),inset_0_2px_4px_rgba(255,255,255,0.9)]"
+                  ? "bg-ink/40 backdrop-blur-[40px] backdrop-saturate-[250%] border-[3px] border-ink/30 shadow-[0_8px_32px_rgba(var(--color-ink-deep),0.2)]"
                   : isScrolled
-                    ? "bg-gradient-to-br from-white/40 via-white/25 to-white/15 backdrop-blur-[35px] backdrop-saturate-[220%] border-[2.5px] border-white/60 shadow-[0_8px_32px_rgba(255,255,255,0.3),inset_0_2px_4px_rgba(255,255,255,0.7)]"
-                    : "bg-gradient-to-br from-white/30 via-white/20 to-white/10 backdrop-blur-[30px] backdrop-saturate-[200%] border-[2px] border-white/50 shadow-[0_4px_24px_rgba(255,255,255,0.2),inset_0_1px_2px_rgba(255,255,255,0.6)]"
-              } relative overflow-hidden before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-br before:from-white/40 before:via-transparent before:to-transparent before:opacity-70`}
+                    ? "bg-canvas/60 backdrop-blur-[35px] backdrop-saturate-[220%] border-[2.5px] border-hairline shadow-[0_8px_32px_rgba(var(--color-ink-deep),0.1)]"
+                    : "bg-canvas/40 backdrop-blur-[30px] backdrop-saturate-[200%] border-[2px] border-hairline/50 shadow-[0_4px_24px_rgba(var(--color-ink-deep),0.08)]"
+              }`}
               aria-label="Toggle menu"
             >
               <motion.span
                 animate={{
                   rotate: isMenuOpen ? 45 : 0,
                   y: isMenuOpen ? 6 : 0,
-                  backgroundColor: isMenuOpen ? "#F5F5F5" : "#1A1A1A",
                 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="block w-5 sm:w-6 h-0.5 rounded-full"
+                className="block w-5 sm:w-6 h-0.5 rounded-full bg-ink"
               />
               <motion.span
                 animate={{
                   opacity: isMenuOpen ? 0 : 1,
                   scaleX: isMenuOpen ? 0 : 1,
-                  backgroundColor: isMenuOpen ? "#F5F5F5" : "#1A1A1A",
                 }}
                 transition={{ duration: 0.2 }}
-                className="block w-5 sm:w-6 h-0.5 rounded-full"
+                className="block w-5 sm:w-6 h-0.5 rounded-full bg-ink"
               />
               <motion.span
                 animate={{
                   rotate: isMenuOpen ? -45 : 0,
                   y: isMenuOpen ? -6 : 0,
-                  backgroundColor: isMenuOpen ? "#F5F5F5" : "#1A1A1A",
                 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="block w-5 sm:w-6 h-0.5 rounded-full"
+                className="block w-5 sm:w-6 h-0.5 rounded-full bg-ink"
               />
             </motion.button>
           )}
@@ -153,7 +150,7 @@ export default function Navbar() {
               initial="closed"
               animate="open"
               exit="closed"
-              className="fixed inset-0 z-40 bg-off-white flex flex-col items-center justify-center"
+              className="fixed inset-0 z-40 bg-canvas flex flex-col items-center justify-center"
             >
               {/* Background decoration */}
               <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -162,14 +159,14 @@ export default function Navbar() {
                   animate={{ scale: 1, opacity: 0.08 }}
                   exit={{ scale: 0, opacity: 0 }}
                   transition={{ duration: 0.6 }}
-                  className="absolute top-1/4 -right-20 w-96 h-96 bg-void-black rounded-full blur-3xl"
+                  className="absolute top-1/4 -right-20 w-96 h-96 bg-ink rounded-full blur-3xl"
                 />
                 <motion.div
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 0.08 }}
                   exit={{ scale: 0, opacity: 0 }}
                   transition={{ duration: 0.6, delay: 0.1 }}
-                  className="absolute bottom-1/4 -left-20 w-80 h-80 bg-void-black rounded-full blur-3xl"
+                  className="absolute bottom-1/4 -left-20 w-80 h-80 bg-ink rounded-full blur-3xl"
                 />
               </div>
 
@@ -189,15 +186,15 @@ export default function Navbar() {
                       <span
                         className={`font-display text-3xl sm:text-4xl md:text-6xl lg:text-7xl tracking-tight transition-all duration-300 ${
                           pathname === link.href
-                            ? "text-void-black"
-                            : "text-void-black/40 hover:text-void-black"
+                            ? "text-ink"
+                            : "text-ink/40 hover:text-ink"
                         }`}
                       >
                         {link.label}
                       </span>
                       {/* Hover underline */}
                       <motion.span
-                        className="absolute -bottom-2 left-0 w-full h-1 bg-void-black origin-left"
+                        className="absolute -bottom-2 left-0 w-full h-1 bg-ink origin-left"
                         initial={{ scaleX: pathname === link.href ? 1 : 0 }}
                         whileHover={{ scaleX: 1 }}
                         transition={{ duration: 0.3 }}
@@ -210,13 +207,13 @@ export default function Navbar() {
               {/* Footer info */}
               <motion.div
                 variants={linkVariants}
-                className="absolute bottom-8 sm:bottom-12 flex flex-col md:flex-row items-center gap-2 sm:gap-4 md:gap-8 text-void-black/40 text-xs sm:text-sm px-4 text-center"
+                className="absolute bottom-8 sm:bottom-12 flex flex-col md:flex-row items-center gap-2 sm:gap-4 md:gap-8 text-ink/40 text-xs sm:text-sm px-4 text-center"
               >
                 <span>Let&apos;s work together</span>
                 <span className="hidden md:block">•</span>
                 <a
                   href="mailto:hello@dareean.com"
-                  className="hover:text-void-black transition-colors"
+                  className="hover:text-ink transition-colors"
                 >
                   hello@dareean.com
                 </a>
@@ -241,18 +238,18 @@ export default function Navbar() {
       <nav
         className={`flex items-center gap-2 transition-all duration-500 ${
           isScrolled
-            ? "bg-white/95 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] ring-1 ring-black/10"
-            : "bg-white/90 backdrop-blur-lg shadow-[0_4px_24px_rgba(0,0,0,0.08)] ring-1 ring-black/5"
+            ? "bg-canvas/95 backdrop-blur-xl shadow-[0_8px_32px_rgba(var(--color-ink-deep),0.08)] ring-1 ring-ink/10"
+            : "bg-canvas/90 backdrop-blur-lg shadow-[0_4px_24px_rgba(var(--color-ink-deep),0.05)] ring-1 ring-ink/5"
         } rounded-full px-6 py-3 relative overflow-hidden`}
       >
         {/* Liquid Glass Effect Layers */}
         <div className="absolute inset-0 overflow-hidden rounded-full pointer-events-none">
           {/* Top glass highlight */}
-          <div className="absolute top-0 left-0 right-0 h-[50%] bg-gradient-to-b from-white/60 to-transparent" />
+          <div className="absolute top-0 left-0 right-0 h-[50%] bg-gradient-to-b from-canvas/60 to-transparent" />
 
           {/* Animated shimmer */}
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-canvas/40 to-transparent"
             animate={{
               x: ["-100%", "100%"],
             }}
@@ -268,8 +265,8 @@ export default function Navbar() {
           <motion.span
             className={`font-display text-lg md:text-xl tracking-tight font-bold transition-all duration-300 px-4 py-1.5 rounded-full block ${
               pathname === "/"
-                ? "text-void-black bg-black/5"
-                : "text-void-black/60 hover:text-void-black hover:bg-black/5"
+                ? "text-ink bg-ink/5"
+                : "text-ink/60 hover:text-ink hover:bg-ink/5"
             }`}
             whileHover={{ opacity: 1 }}
           >
@@ -278,7 +275,7 @@ export default function Navbar() {
         </Link>
 
         {/* Divider */}
-        <div className="hidden md:block w-px h-6 bg-black/10" />
+        <div className="hidden md:block w-px h-6 bg-ink/10" />
 
         {/* Navigation Links */}
         <div className="hidden md:flex items-center gap-1 relative z-10">
@@ -287,8 +284,8 @@ export default function Navbar() {
               <span
                 className={`text-sm tracking-wide font-medium transition-all duration-300 px-4 py-1.5 rounded-full block ${
                   pathname === link.href
-                    ? "text-void-black bg-black/5"
-                    : "text-void-black/60 hover:text-void-black hover:bg-black/5"
+                    ? "text-ink bg-ink/5"
+                    : "text-ink/60 hover:text-ink hover:bg-ink/5"
                 }`}
               >
                 {link.label}
@@ -297,12 +294,12 @@ export default function Navbar() {
           ))}
 
           {/* Divider before contact */}
-          <div className="w-px h-6 bg-black/10 mx-1" />
+          <div className="w-px h-6 bg-ink/10 mx-1" />
 
           {/* CTA Button for Contact */}
           <Link href="/contact" className="hidden md:block relative group">
-            <span className="px-4 py-1.5 bg-void-black text-white text-sm font-medium rounded-full block transition-all duration-300 hover:bg-void-black/90 hover:shadow-lg relative overflow-hidden">
-              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+            <span className="px-4 py-1.5 bg-ink-deep text-canvas text-sm font-medium rounded-full block transition-all duration-300 hover:bg-ink-deep/90 hover:shadow-lg relative overflow-hidden">
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-canvas/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
               <span className="relative z-10">Contact</span>
             </span>
           </Link>

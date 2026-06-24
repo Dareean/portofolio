@@ -9,82 +9,41 @@ interface MarqueeProps {
 }
 
 export default function Marquee({
-    text = "DRIVEN • CREATIVE • DEDICATED • EVOLVING",    
+    text = "DRIVEN • CREATIVE • DEDICATED • EVOLVING",
 }: MarqueeProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const repeatedText = `${text} • `.repeat(6);
 
-  // GSAP ScrollTrigger Animation
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
-      if (sectionRef.current) {
-        gsap.fromTo(sectionRef.current,
-          { opacity: 0, y: 50 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top 90%",
-              toggleActions: "play none none reverse",
-            }
-          }
-        );
-      }
+      const track = sectionRef.current?.querySelector(".marquee-track");
+      if (!track) return;
+
+      gsap.to(track, {
+        xPercent: -50,
+        duration: 25,
+        ease: "none",
+        repeat: -1,
+      });
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
   return (
-    <section 
-      ref={sectionRef}
-      className="py-12 sm:py-16 md:py-24 overflow-hidden border-y border-off-white/10"
-    >
-      <div className="marquee-container marquee-gradient-mask">
-        <div className="marquee-content">
-          <span
-            className="font-display uppercase tracking-wider text-off-white/70"
-            style={{ fontSize: "clamp(2.5rem, 8vw, 6rem)" }}
-          >
+    <section ref={sectionRef} className="relative py-12 overflow-hidden border-y border-hairline bg-surface">
+      <div className="marquee-gradient-mask">
+        <div className="marquee-track flex whitespace-nowrap">
+          <span className="text-heading-5 text-muted font-semibold uppercase tracking-widest px-8">
             {repeatedText}
           </span>
-          <span
-            className="font-display uppercase tracking-wider text-off-white/70"
-            style={{ fontSize: "clamp(2.5rem, 8vw, 6rem)" }}
-          >
+          <span className="text-heading-5 text-muted font-semibold uppercase tracking-widest px-8" aria-hidden>
             {repeatedText}
           </span>
         </div>
       </div>
-
-      <style jsx>{`
-        .marquee-container {
-          width: 100%;
-          overflow: hidden;
-        }
-        .marquee-content {
-          display: flex;
-          white-space: nowrap;
-          animation: marquee 10s linear infinite;
-        }
-        .marquee-content span {
-          flex-shrink: 0;
-          padding-right: 2rem;
-        }
-        @keyframes marquee {
-          0% {
-            transform: translateX(0%);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-      `}</style>
     </section>
   );
 }

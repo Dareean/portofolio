@@ -3,7 +3,7 @@
 import { useRef, useLayoutEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useDeviceType } from "@/lib/hooks";
+
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,7 +14,7 @@ export default function PixelsToPeople() {
   const line3Ref = useRef<HTMLDivElement>(null);
   const dividerRef = useRef<HTMLDivElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
-  const deviceInfo = useDeviceType();
+
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -134,13 +134,7 @@ export default function PixelsToPeople() {
       </span>
     ));
 
-  // Split text into word spans
-  const splitWords = (text: string) =>
-    text.split(" ").map((word, i) => (
-      <span key={i} className="word inline-block mr-[0.3em]">
-        {word}
-      </span>
-    ));
+
 
   return (
     <section

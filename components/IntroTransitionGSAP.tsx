@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import { useDeviceType, getAnimationConfig } from "@/lib/hooks";
+import { useDeviceType } from "@/lib/hooks";
 
 // This version requires GSAP
 // Install with: npm install gsap
@@ -13,7 +12,6 @@ export default function IntroTransitionGSAP() {
   const logoRef = useRef<SVGSVGElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const deviceInfo = useDeviceType();
-  const animConfig = getAnimationConfig(deviceInfo);
 
   useEffect(() => {
     // Dynamically import GSAP (client-side only)
