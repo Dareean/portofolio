@@ -1,25 +1,35 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { EXPERIENCES, Experience } from "@/lib/data";
 import TopNav from "@/components/TopNav";
-import { ChevronLeft, ChevronRight, Inbox, GraduationCap, Briefcase, Trophy, Users, HeartHandshake, ClipboardList } from "lucide-react";
-import { useDeviceType, getAnimationConfig } from "@/lib/hooks";
+import Footer from "@/components/Footer";
+import {
+  ChevronLeft,
+  ChevronDown,
+  Briefcase,
+  Trophy,
+  Users,
+  GraduationCap,
+  HeartHandshake,
+  ClipboardList,
+  Layers,
+} from "lucide-react";
+import { useDeviceType } from "@/lib/hooks";
 
-// Filter type
-type FilterType = "all" | "professional" | "volunteer" | "community";
+type FilterType = "all" | "work" | "community" | "award" | "committee" | "education";
 
-// Category styling
-const categoryStyles: Record<string, { bg: string; text: string; border: string }> = {
-  education: { bg: "bg-primary/10", text: "text-primary", border: "border-primary/30" },
-  work: { bg: "bg-tint-mint", text: "text-brand-green", border: "border-brand-green/30" },
-  award: { bg: "bg-tint-yellow-bold", text: "text-brand-brown", border: "border-brand-brown/30" },
-  community: { bg: "bg-tint-lavender", text: "text-brand-purple-800", border: "border-brand-purple/30" },
-  volunteer: { bg: "bg-tint-sky", text: "text-link-blue", border: "border-link-blue/30" },
-  committee: { bg: "bg-tint-peach", text: "text-brand-orange-deep", border: "border-brand-orange/30" },
-};
+const FILTERS: { id: FilterType; label: string }[] = [
+  { id: "all", label: "All Milestones" },
+  { id: "community", label: "Community & Leadership" },
+  { id: "work", label: "Work & Industry" },
+  { id: "award", label: "Competitions & Awards" },
+  { id: "committee", label: "Committees & Events" },
+  { id: "education", label: "Education" },
+];
 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr + "-01");
@@ -30,379 +40,321 @@ function getYear(dateStr: string): number {
   return new Date(dateStr + "-01").getFullYear();
 }
 
-// Timeline Experience Card sitting on a vertical line
-function ExperienceCard({ experience, isOngoing, index, deviceInfo, animConfig }: {
-  experience: Experience;
-  isOngoing?: boolean;
-  index: number;
-  deviceInfo: ReturnType<typeof useDeviceType>;
-  animConfig: ReturnType<typeof getAnimationConfig>;
-}) {
-  const style = categoryStyles[experience.category] || categoryStyles.work;
-  const [isDescExpanded, setIsDescExpanded] = useState(false);
-  
-  const categoryIcons: Record<string, React.ReactNode> = {
-    education: <GraduationCap className="w-4 h-4 text-primary" />,
-    work: <Briefcase className="w-4 h-4 text-emerald-600" />,
-    award: <Trophy className="w-4 h-4 text-amber-600" />,
-    community: <Users className="w-4 h-4 text-purple-600" />,
-    volunteer: <HeartHandshake className="w-4 h-4 text-blue-600" />,
-    committee: <ClipboardList className="w-4 h-4 text-orange-600" />,
-  };
-  const categoryIcon = categoryIcons[experience.category] || <Briefcase className="w-4 h-4 text-steel" />;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: (deviceInfo.isMobile || deviceInfo.isLowEnd) ? 15 : 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{
-        duration: deviceInfo.prefersReducedMotion ? 0.01 : deviceInfo.isLowEnd ? 0.25 : 0.5,
-        delay: deviceInfo.prefersReducedMotion ? 0 : deviceInfo.isLowEnd ? (index * 0.02) : (index * 0.08)
-      }}
-      className="relative pl-8 sm:pl-10"
-    >
-      {/* Timeline Node sitting on the vertical line */}
-      <div className="absolute left-0 top-2.5 -translate-x-1/2 w-8 h-8 rounded-full bg-canvas border border-hairline flex items-center justify-center shadow-elevation-1 z-10 select-none">
-        {categoryIcon}
-      </div>
-
-      {/* Timeline Card */}
-      <div className="p-5 md:p-6 bg-canvas border border-hairline rounded-lg shadow-elevation-1 hover:shadow-elevation-2 hover:border-primary/20 transition-all duration-300">
-        {/* Meta Info Row */}
-        <div className="flex items-center gap-2 md:gap-3 mb-3 flex-wrap">
-          <span className={`px-2 py-0.5 rounded text-micro-uppercase font-semibold ${style.bg} ${style.text}`}>
-            {experience.category}
-          </span>
-          <span className="text-muted text-xs">•</span>
-          <span className="text-steel text-micro font-mono">
-            {formatDate(experience.dateStart)}
-            {experience.dateEnd ? ` — ${formatDate(experience.dateEnd)}` : " — Now"}
-          </span>
-          {isOngoing && (
-            <>
-              <span className="text-muted text-xs">•</span>
-              <span className="px-1.5 py-0.2 rounded bg-surface border border-hairline text-micro font-mono text-steel uppercase">
-                Active
-              </span>
-            </>
-          )}
-        </div>
-
-        {/* Title */}
-        <h3 className="text-heading-4 text-charcoal font-semibold tracking-tight mb-1">
-          {experience.title}
-        </h3>
-
-        {/* Role & Org */}
-        <div className="mb-3">
-          <p className="text-body-md-medium text-charcoal/80">
-            {experience.role}
-          </p>
-          <p className="text-body-sm text-steel">{experience.organization}</p>
-        </div>
-
-        {/* Description */}
-        <div className="mb-4">
-          <p className={`text-body-sm text-slate leading-relaxed ${isDescExpanded ? "" : "line-clamp-3"}`}>
-            {experience.description}
-          </p>
-          {experience.description.length > 180 && (
-            <button
-              className="read-more-btn mt-1.5 inline-flex items-center gap-1 text-steel hover:text-charcoal text-micro font-semibold uppercase transition-colors duration-200"
-              onClick={() => setIsDescExpanded(!isDescExpanded)}
-            >
-              <motion.span animate={{ rotate: isDescExpanded ? 180 : 0 }} transition={{ duration: 0.2 }} className="inline-block">
-                <ChevronRight className="w-3 h-3" />
-              </motion.span>
-              <span>{isDescExpanded ? "Less" : "More"}</span>
-            </button>
-          )}
-        </div>
-
-        {/* Highlights */}
-        {experience.highlights && experience.highlights.length > 0 && (
-          <div className="flex flex-wrap gap-2 pt-3 border-t border-hairline mt-2">
-            {experience.highlights.map((highlight, i) => (
-              <span key={i} className="text-micro text-steel bg-surface px-2 py-0.5 rounded-sm border border-hairline">
-                {highlight}
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
-    </motion.div>
-  );
-}
-
-// Year Section
-function YearSection({ year, experiences, ongoingIds, deviceInfo, animConfig }: {
-  year: number | "ongoing";
-  experiences: Experience[];
-  ongoingIds: Set<number>;
-  deviceInfo: ReturnType<typeof useDeviceType>;
-  animConfig: ReturnType<typeof getAnimationConfig>;
-}) {
-  return (
-    <div className="mb-12 sm:mb-16 md:mb-20">
-      {/* Year Header */}
-      <motion.div
-        initial={{ opacity: 0, x: (deviceInfo.isMobile || deviceInfo.isLowEnd) ? -15 : -30 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: deviceInfo.prefersReducedMotion ? 0.01 : deviceInfo.isLowEnd ? 0.3 : 0.5 }}
-        className="mb-6"
-      >
-        <div className="flex items-baseline gap-4 mb-2">
-          <h2 className="text-heading-2 md:text-heading-1 text-charcoal font-semibold leading-none">
-            {year === "ongoing" ? "Now" : year}
-          </h2>
-          {year === "ongoing" && (
-            <span className="px-2 py-0.5 rounded bg-surface border border-hairline text-micro-uppercase text-steel font-semibold font-mono">
-              Ongoing
-            </span>
-          )}
-        </div>
-        <div className="h-px bg-hairline" />
-      </motion.div>
-
-      {/* Timeline List Connector */}
-      <div className="relative border-l border-hairline ml-4 space-y-6 pt-2 pb-2">
-        {experiences.map((exp, index) => (
-          <ExperienceCard
-            key={exp.id}
-            experience={exp}
-            isOngoing={ongoingIds.has(exp.id)}
-            index={index}
-            deviceInfo={deviceInfo}
-            animConfig={animConfig}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// Filter Pills - Styled as Notion pill tabs
-function FilterPills({ activeFilter, setActiveFilter, filterCounts }: {
-  activeFilter: FilterType;
-  setActiveFilter: (filter: FilterType) => void;
-  filterCounts: Record<FilterType, number>;
-}) {
-  const filters: { key: FilterType; label: string }[] = [
-    { key: "all", label: "All" },
-    { key: "professional", label: "Professional" },
-    { key: "volunteer", label: "Volunteer" },
-    { key: "community", label: "Community" },
-  ];
-
-  return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 mb-12 py-1">
-      {filters.map((filter) => (
-        <button
-          key={filter.key}
-          onClick={() => setActiveFilter(filter.key)}
-          className={`px-4 py-1.5 rounded-full text-body-sm-medium transition-all duration-200 whitespace-nowrap border ${
-            activeFilter === filter.key
-              ? "bg-ink-deep text-on-dark border-ink-deep font-semibold shadow-elevation-1"
-              : "bg-transparent text-steel border-hairline hover:text-charcoal hover:bg-hairline/20"
-          }`}
-        >
-          {filter.label}
-          <span className={`ml-1.5 text-xs ${activeFilter === filter.key ? "opacity-60" : "text-muted"}`}>
-            {filterCounts[filter.key]}
-          </span>
-        </button>
-      ))}
-    </motion.div>
-  );
-}
-
-export default function ExperiencePage() {
-  const deviceInfo = useDeviceType();
-  const animConfig = getAnimationConfig(deviceInfo);
-
+export default function JourneyPage() {
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
+  const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
+  const deviceInfo = useDeviceType();
 
-  const sortedExperiences = [...EXPERIENCES].sort(
-    (a, b) => new Date(b.dateStart).getTime() - new Date(a.dateStart).getTime(),
-  );
-
-  const ongoingExperiences = sortedExperiences.filter((exp) => !exp.dateEnd);
-  const ongoingIds = new Set(ongoingExperiences.map((exp) => exp.id));
-
-  const filteredExperiences = useMemo(() => {
-    let filtered = sortedExperiences;
-    if (activeFilter === "professional") {
-      filtered = filtered.filter((exp) => ["work", "education", "award"].includes(exp.category));
-    } else if (activeFilter === "volunteer") {
-      filtered = filtered.filter((exp) => exp.category === "volunteer");
-    } else if (activeFilter === "community") {
-      filtered = filtered.filter((exp) => ["community", "committee"].includes(exp.category));
-    }
-    return filtered;
-  }, [activeFilter, sortedExperiences]);
-
-  const experiencesByYear = useMemo(() => {
-    const grouped: Partial<Record<number | "ongoing", Experience[]>> = {};
-    if (ongoingExperiences.length > 0 && activeFilter === "all") {
-      grouped["ongoing"] = ongoingExperiences;
-    }
-    filteredExperiences.forEach((exp) => {
-      if (!exp.dateEnd) return;
-      const year = getYear(exp.dateStart);
-      if (!grouped[year]) grouped[year] = [];
-      grouped[year].push(exp);
+  // Toggle single item expansion
+  const toggleExpand = (id: number) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
     });
-    return grouped;
-  }, [filteredExperiences, ongoingExperiences, activeFilter]);
-
-  const sortedYears = Object.keys(experiencesByYear).sort((a, b) => {
-    if (a === "ongoing") return -1;
-    if (b === "ongoing") return 1;
-    return Number(b) - Number(a);
-  });
-
-  const filterCounts = {
-    all: sortedExperiences.length,
-    professional: sortedExperiences.filter((exp) => ["work", "education", "award"].includes(exp.category)).length,
-    volunteer: sortedExperiences.filter((exp) => exp.category === "volunteer").length,
-    community: sortedExperiences.filter((exp) => ["community", "committee"].includes(exp.category)).length,
   };
 
+  // Toggle expand all / collapse all
+  const toggleExpandAll = () => {
+    if (expandedIds.size === filteredExperiences.length) {
+      setExpandedIds(new Set());
+    } else {
+      setExpandedIds(new Set(filteredExperiences.map((e) => e.id)));
+    }
+  };
+
+  // Filter experiences
+  const filteredExperiences = useMemo(() => {
+    if (activeFilter === "all") return EXPERIENCES;
+    if (activeFilter === "committee") {
+      return EXPERIENCES.filter((e) => e.category === "committee" || e.category === "volunteer");
+    }
+    return EXPERIENCES.filter((e) => e.category === activeFilter);
+  }, [activeFilter]);
+
+  // Group filtered experiences by year (descending)
+  const groupedExperiences = useMemo(() => {
+    const groups: { [year: string]: Experience[] } = {};
+
+    filteredExperiences.forEach((exp) => {
+      const year = getYear(exp.dateStart);
+      const isNow = !exp.dateEnd || exp.dateEnd >= "2026-01";
+      const groupKey = isNow && year >= 2026 ? "2026 — Present" : year.toString();
+
+      if (!groups[groupKey]) {
+        groups[groupKey] = [];
+      }
+      groups[groupKey].push(exp);
+    });
+
+    // Sort experiences within groups (newest dateStart first)
+    Object.keys(groups).forEach((key) => {
+      groups[key].sort((a, b) => (b.dateStart > a.dateStart ? 1 : -1));
+    });
+
+    // Return ordered array of groups
+    return Object.entries(groups).sort((a, b) => (b[0] > a[0] ? 1 : -1));
+  }, [filteredExperiences]);
+
   return (
-    <main className="min-h-screen relative overflow-x-hidden bg-canvas">
+    <div className="min-h-screen bg-canvas text-ink flex flex-col justify-between">
       <TopNav />
 
-      {/* Static decorative background — no parallax */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 right-20 w-96 h-96 bg-primary/[0.03] rounded-full blur-3xl" />
-        <div className="absolute bottom-40 left-20 w-80 h-80 bg-primary/[0.03] rounded-full blur-3xl" />
-      </div>
-
-      {/* Editorial Hero Header */}
-      <section className="pt-28 pb-10 md:pt-36 md:pb-12 px-6 md:px-8 relative">
-        <div className="max-w-container mx-auto">
-          {/* Breadcrumb / Back button */}
-          <motion.div
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4 }}
-            className="mb-8"
-          >
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 text-steel hover:text-charcoal transition-colors group text-body-sm-medium"
-            >
-              <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-              <span>Back to Home</span>
-            </Link>
-          </motion.div>
-
-          <div className="max-w-3xl">
+      <main className="flex-1 pb-20">
+        {/* ═══════════════════════════════════════════
+            Editorial Hero Header (Consistent with Home / Work)
+            ═══════════════════════════════════════════ */}
+        <section className="relative pt-28 md:pt-36 pb-12 md:pb-16 px-6 md:px-8 border-b border-hairline bg-canvas">
+          <div className="max-w-container mx-auto">
+            {/* Back link */}
             <motion.div
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="flex items-center gap-3 mb-4"
+              transition={{ duration: 0.4 }}
+              className="mb-6"
             >
-              <span className="w-8 h-px bg-primary/40" />
-              <span className="text-micro-uppercase text-primary font-semibold tracking-wider">
-                My Journey &amp; Milestones
-              </span>
+              <Link
+                href="/"
+                className="inline-flex items-center gap-1.5 text-steel hover:text-charcoal text-caption font-mono transition-colors duration-200 group"
+              >
+                <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform duration-200" />
+                <span>Back to Overview</span>
+              </Link>
             </motion.div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-heading-1 md:text-display-lg text-charcoal font-semibold tracking-tight mb-4"
-            >
-              Experience &amp; Story
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-body-md md:text-subtitle text-slate leading-relaxed mb-6"
-            >
-              Tracing my path from self-directed curiosity in Central Sulawesi through industry internships, formal informatics, and community mentorship.
-            </motion.p>
-
-            {/* Quick Milestones Chips */}
+            {/* Section Tag */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="flex flex-wrap items-center gap-2.5"
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="flex items-center gap-3 mb-4"
             >
-              <span className="inline-flex items-center px-3 py-1 rounded-md bg-surface border border-hairline text-charcoal text-caption font-mono">
-                <span>2021: First Curiosity</span>
-              </span>
-              <span className="inline-flex items-center px-3 py-1 rounded-md bg-surface border border-hairline text-charcoal text-caption font-mono">
-                <span>2023: Industry Code</span>
-              </span>
-              <span className="inline-flex items-center px-3 py-1 rounded-md bg-surface border border-hairline text-charcoal text-caption font-mono">
-                <span>2024: Computer Science</span>
-              </span>
-              <span className="inline-flex items-center px-3 py-1 rounded-md bg-surface border border-hairline text-charcoal text-caption font-mono">
-                <span>2025–Now: Tech Leadership</span>
+              <span className="w-8 h-px bg-primary/60" />
+              <span className="text-micro-uppercase text-primary font-semibold tracking-wider font-mono">
+                Trajectory &amp; Experience
               </span>
             </motion.div>
+
+            {/* Title & Subtitle */}
+            <div className="max-w-3xl">
+              <motion.h1
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-display-lg md:text-display-xl font-semibold text-charcoal tracking-tight mb-4"
+              >
+                The Journey
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.25 }}
+                className="text-body-md md:text-subtitle text-slate leading-relaxed mb-8"
+              >
+                A structured ledger of professional programming internships, computer science education, regional tech leadership in Central Sulawesi, and product competitions.
+              </motion.p>
+
+              {/* Metric Badges */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="flex flex-wrap items-center gap-2.5"
+              >
+                <span className="inline-flex items-center px-3 py-1 rounded-md bg-surface border border-hairline text-charcoal text-caption font-mono">
+                  <span>14 Milestones Logged</span>
+                </span>
+                <span className="inline-flex items-center px-3 py-1 rounded-md bg-surface border border-hairline text-charcoal text-caption font-mono">
+                  <span>Palu, Indonesia → Global</span>
+                </span>
+                <span className="inline-flex items-center px-3 py-1 rounded-md bg-surface border border-hairline text-charcoal text-caption font-mono">
+                  <span>2021 — Present</span>
+                </span>
+              </motion.div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Main Timeline Content */}
-      <section className="px-6 md:px-8 py-section relative">
-        <div className="max-w-container mx-auto">
-          <FilterPills activeFilter={activeFilter} setActiveFilter={setActiveFilter} filterCounts={filterCounts} />
+        {/* ═══════════════════════════════════════════
+            Filter Bar & Quick Actions
+            ═══════════════════════════════════════════ */}
+        <section className="px-6 md:px-8 py-6 border-b border-hairline sticky top-16 md:top-20 z-20 bg-canvas/90 backdrop-blur-md">
+          <div className="max-w-container mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            {/* Filter Pills */}
+            <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+              {FILTERS.map((filter) => {
+                const isActive = activeFilter === filter.id;
+                return (
+                  <button
+                    key={filter.id}
+                    onClick={() => setActiveFilter(filter.id)}
+                    className={`px-3 py-1.5 rounded-md text-caption font-mono transition-all duration-200 whitespace-nowrap ${
+                      isActive
+                        ? "bg-charcoal text-white font-medium shadow-elevation-1"
+                        : "bg-surface border border-hairline text-steel hover:text-charcoal hover:border-charcoal/20"
+                    }`}
+                  >
+                    {filter.label}
+                  </button>
+                );
+              })}
+            </div>
 
-          <div className="space-y-16 sm:space-y-24">
-            {sortedYears.map((yearKey) => {
-              const year = yearKey === "ongoing" ? "ongoing" : Number(yearKey);
-              const experiences = experiencesByYear[year] || [];
-              return (
-                <YearSection
-                  key={yearKey}
-                  year={year}
-                  experiences={experiences}
-                  ongoingIds={ongoingIds}
-                  deviceInfo={deviceInfo}
-                  animConfig={animConfig}
-                />
-              );
-            })}
+            {/* Expand / Collapse All Toggle */}
+            <button
+              onClick={toggleExpandAll}
+              className="text-caption text-steel hover:text-charcoal font-mono self-end sm:self-auto transition-colors duration-200"
+            >
+              {expandedIds.size === filteredExperiences.length ? "Collapse All" : "Expand All Details"}
+            </button>
           </div>
+        </section>
 
-          {/* Empty State */}
-          {sortedYears.length === 0 && (
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-16">
-              <div className="w-20 h-20 mx-auto mb-6 bg-surface rounded-full flex items-center justify-center">
-                <Inbox className="w-10 h-10 text-muted" />
+        {/* ═══════════════════════════════════════════
+            Minimalist Editorial Ledger (Year Grouped)
+            ═══════════════════════════════════════════ */}
+        <section className="px-6 md:px-8 py-10 md:py-14">
+          <div className="max-w-container mx-auto space-y-12 md:space-y-16">
+            {groupedExperiences.map(([yearLabel, items], groupIndex) => (
+              <div key={yearLabel} className="space-y-4">
+                {/* Year Ledger Header */}
+                <div className="flex items-center gap-4">
+                  <h2 className="text-heading-3 md:text-heading-2 font-semibold text-charcoal font-mono tracking-tight">
+                    {yearLabel}
+                  </h2>
+                  <div className="h-px flex-1 bg-hairline" />
+                  <span className="text-caption text-muted font-mono">
+                    {items.length} {items.length === 1 ? "entry" : "entries"}
+                  </span>
+                </div>
+
+                {/* Ledger Items Table / Rows */}
+                <div className="border border-hairline rounded-xl bg-surface overflow-hidden divide-y divide-hairline shadow-elevation-0">
+                  {items.map((exp, itemIndex) => {
+                    const isExpanded = expandedIds.has(exp.id);
+                    const isOngoing = !exp.dateEnd || exp.dateEnd >= "2026-01";
+
+                    return (
+                      <div
+                        key={exp.id}
+                        className={`transition-colors duration-200 ${
+                          isExpanded ? "bg-canvas/60" : "hover:bg-canvas/30"
+                        }`}
+                      >
+                        {/* Primary Row Trigger */}
+                        <button
+                          type="button"
+                          onClick={() => toggleExpand(exp.id)}
+                          className="w-full text-left p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-8 group cursor-pointer"
+                        >
+                          {/* Left Column: Date & Category */}
+                          <div className="flex items-center gap-3 md:w-56 flex-shrink-0">
+                            <span className="text-caption text-steel font-mono font-medium">
+                              {formatDate(exp.dateStart)}
+                              {exp.dateEnd ? ` — ${formatDate(exp.dateEnd)}` : " — Present"}
+                            </span>
+                            {isOngoing && (
+                              <span className="px-1.5 py-0.5 rounded bg-charcoal/5 border border-charcoal/10 text-[10px] font-mono text-charcoal uppercase tracking-wider font-semibold">
+                                Active
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Center Column: Role & Organization */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex flex-wrap items-baseline gap-2 mb-1">
+                              <h3 className="text-heading-4 text-charcoal font-semibold tracking-tight group-hover:text-primary transition-colors duration-200">
+                                {exp.role}
+                              </h3>
+                              <span className="text-caption text-steel">
+                                @ {exp.organization}
+                              </span>
+                            </div>
+                            <p className="text-body-sm text-slate line-clamp-1">
+                              {exp.title}
+                            </p>
+                          </div>
+
+                          {/* Right Column: Category Badge & Chevron */}
+                          <div className="flex items-center gap-3 flex-shrink-0 self-start md:self-center">
+                            <span className="px-2.5 py-1 rounded bg-canvas border border-hairline text-caption font-mono text-steel uppercase tracking-wider text-[11px]">
+                              {exp.category}
+                            </span>
+                            <div
+                              className={`w-7 h-7 rounded-full bg-canvas border border-hairline flex items-center justify-center text-steel group-hover:text-charcoal transition-transform duration-200 ${
+                                isExpanded ? "rotate-180 bg-primary/10 text-primary border-primary/30" : ""
+                              }`}
+                            >
+                              <ChevronDown size={14} />
+                            </div>
+                          </div>
+                        </button>
+
+                        {/* Expandable Detail Drawer */}
+                        <AnimatePresence>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: "auto" }}
+                              exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                              className="overflow-hidden border-t border-hairline bg-canvas/40"
+                            >
+                              <div className="p-5 md:p-6 md:pl-64 space-y-4">
+                                {/* Detailed Description */}
+                                <p className="text-body-sm md:text-body-md text-slate leading-relaxed max-w-3xl">
+                                  {exp.description}
+                                </p>
+
+                                {/* Highlights / Skills Tags */}
+                                {exp.highlights && exp.highlights.length > 0 && (
+                                  <div className="flex flex-wrap items-center gap-2 pt-2">
+                                    <span className="text-micro font-mono text-muted uppercase tracking-wider mr-1">
+                                      Focus:
+                                    </span>
+                                    {exp.highlights.map((tag, i) => (
+                                      <span
+                                        key={i}
+                                        className="px-2.5 py-1 rounded bg-surface border border-hairline text-caption text-charcoal font-mono text-xs"
+                                      >
+                                        {tag}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* Attached Image if any (e.g. Guard Riders / RSICT) */}
+                                {exp.image && (
+                                  <div className="pt-3">
+                                    <div className="relative w-full max-w-md h-52 rounded-lg overflow-hidden border border-hairline shadow-elevation-1">
+                                      <Image
+                                        src={exp.image}
+                                        alt={exp.title}
+                                        fill
+                                        className="object-cover"
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-              <h3 className="text-heading-5 text-charcoal mb-2">No experiences found</h3>
-              <button onClick={() => setActiveFilter("all")} className="px-[18px] py-[10px] bg-primary text-on-primary text-button-md font-medium rounded-md hover:bg-primary-pressed transition-colors">
-                View All
-              </button>
-            </motion.div>
-          )}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      </main>
 
-      {/* Footer CTA */}
-      <motion.section initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: deviceInfo.prefersReducedMotion ? 0.01 : 0.8 }}
-        className="px-6 md:px-8 py-section-lg text-center"
-      >
-        <h2 className="text-heading-2 text-charcoal font-semibold mb-4">Want to work together?</h2>
-        <p className="text-body-md text-slate mb-8 max-w-xl mx-auto">
-          I&apos;m always open to discussing new opportunities, collaborations, or just having a chat.
-        </p>
-        <Link href="/contact" className="inline-flex items-center gap-2 px-[18px] py-[10px] bg-primary text-on-primary text-button-md font-medium rounded-md hover:bg-primary-pressed transition-all duration-200">
-          Get in Touch
-        </Link>
-      </motion.section>
-    </main>
+      <Footer />
+    </div>
   );
 }
