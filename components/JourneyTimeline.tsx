@@ -3,16 +3,17 @@
 import { useRef, useLayoutEffect } from "react";
 import { motion } from "framer-motion";
 import { JOURNEY_ITEMS } from "@/lib/data";
+import { Rocket, Code, GraduationCap, Trophy, Briefcase, Users } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-const typeIcons: Record<string, string> = {
-  milestone: "🚀",
-  project: "💻",
-  education: "📚",
-  award: "🏆",
-  experience: "💼",
-  community: "🤝",
+const typeIcons: Record<string, React.ReactNode> = {
+  milestone: <Rocket className="w-4 h-4 text-blue-400" />,
+  project: <Code className="w-4 h-4 text-purple-400" />,
+  education: <GraduationCap className="w-4 h-4 text-emerald-400" />,
+  award: <Trophy className="w-4 h-4 text-amber-400" />,
+  experience: <Briefcase className="w-4 h-4 text-rose-400" />,
+  community: <Users className="w-4 h-4 text-cyan-400" />,
 };
 
 const typeColors: Record<string, string> = {

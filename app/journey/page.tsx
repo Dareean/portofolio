@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { EXPERIENCES, Experience } from "@/lib/data";
 import TopNav from "@/components/TopNav";
-import { ChevronLeft, ChevronRight, Inbox } from "lucide-react";
+import { ChevronLeft, ChevronRight, Inbox, GraduationCap, Briefcase, Trophy, Users, HeartHandshake, ClipboardList } from "lucide-react";
 import { useDeviceType, getAnimationConfig } from "@/lib/hooks";
 
 // Filter type
@@ -41,15 +41,15 @@ function ExperienceCard({ experience, isOngoing, index, deviceInfo, animConfig }
   const style = categoryStyles[experience.category] || categoryStyles.work;
   const [isDescExpanded, setIsDescExpanded] = useState(false);
   
-  const categoryEmojis: Record<string, string> = {
-    education: "🎓",
-    work: "💼",
-    award: "🏆",
-    community: "🤝",
-    volunteer: "🙋‍♂️",
-    committee: "📋",
+  const categoryIcons: Record<string, React.ReactNode> = {
+    education: <GraduationCap className="w-4 h-4 text-primary" />,
+    work: <Briefcase className="w-4 h-4 text-emerald-600" />,
+    award: <Trophy className="w-4 h-4 text-amber-600" />,
+    community: <Users className="w-4 h-4 text-purple-600" />,
+    volunteer: <HeartHandshake className="w-4 h-4 text-blue-600" />,
+    committee: <ClipboardList className="w-4 h-4 text-orange-600" />,
   };
-  const emoji = categoryEmojis[experience.category] || "💼";
+  const categoryIcon = categoryIcons[experience.category] || <Briefcase className="w-4 h-4 text-steel" />;
 
   return (
     <motion.div
@@ -63,8 +63,8 @@ function ExperienceCard({ experience, isOngoing, index, deviceInfo, animConfig }
       className="relative pl-8 sm:pl-10"
     >
       {/* Timeline Node sitting on the vertical line */}
-      <div className="absolute left-0 top-2.5 -translate-x-1/2 w-8 h-8 rounded-full bg-canvas border border-hairline flex items-center justify-center text-sm shadow-elevation-1 z-10 select-none">
-        {emoji}
+      <div className="absolute left-0 top-2.5 -translate-x-1/2 w-8 h-8 rounded-full bg-canvas border border-hairline flex items-center justify-center shadow-elevation-1 z-10 select-none">
+        {categoryIcon}
       </div>
 
       {/* Timeline Card */}
@@ -82,10 +82,9 @@ function ExperienceCard({ experience, isOngoing, index, deviceInfo, animConfig }
           {isOngoing && (
             <>
               <span className="text-muted text-xs">•</span>
-              <div className="flex items-center gap-1.5">
-                <motion.div className="w-1.5 h-1.5 bg-brand-green rounded-full" animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2, repeat: Infinity }} />
-                <span className="text-micro text-brand-green font-medium">Active</span>
-              </div>
+              <span className="px-1.5 py-0.2 rounded bg-surface border border-hairline text-micro font-mono text-steel uppercase">
+                Active
+              </span>
             </>
           )}
         </div>
@@ -159,10 +158,9 @@ function YearSection({ year, experiences, ongoingIds, deviceInfo, animConfig }: 
             {year === "ongoing" ? "Now" : year}
           </h2>
           {year === "ongoing" && (
-            <div className="flex items-center gap-2">
-              <motion.div className="w-2 h-2 bg-brand-green rounded-full" animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2, repeat: Infinity }} />
-              <span className="text-micro-uppercase text-brand-green font-semibold">ONGOING</span>
-            </div>
+            <span className="px-2 py-0.5 rounded bg-surface border border-hairline text-micro-uppercase text-steel font-semibold font-mono">
+              Ongoing
+            </span>
           )}
         </div>
         <div className="h-px bg-hairline" />
@@ -282,34 +280,78 @@ export default function ExperiencePage() {
         <div className="absolute bottom-40 left-20 w-80 h-80 bg-primary/[0.03] rounded-full blur-3xl" />
       </div>
 
-      {/* Hero Section */}
-      <section className="min-h-screen flex flex-col justify-center items-center px-6 relative">
-        <motion.div className="fixed top-20 left-6 md:left-8 z-50" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.3 }}>
-          <Link href="/" className="inline-flex items-center gap-2 text-steel hover:text-charcoal transition-colors group">
-            <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
-            <span className="text-body-sm-medium tracking-wide">Home</span>
-          </Link>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: (deviceInfo.isMobile || deviceInfo.isLowEnd) ? 20 : 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: deviceInfo.prefersReducedMotion ? 0.01 : 0.8 }} className="text-center max-w-4xl">
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="flex items-center justify-center gap-3 mb-4">
-            <span className="w-8 h-px bg-primary/40" />
-            <span className="text-micro-uppercase text-primary font-semibold tracking-wider">My Journey</span>
-            <span className="w-8 h-px bg-primary/40" />
+      {/* Editorial Hero Header */}
+      <section className="pt-28 pb-10 md:pt-36 md:pb-12 px-6 md:px-8 relative">
+        <div className="max-w-container mx-auto">
+          {/* Breadcrumb / Back button */}
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+            className="mb-8"
+          >
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-steel hover:text-charcoal transition-colors group text-body-sm-medium"
+            >
+              <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+              <span>Back to Home</span>
+            </Link>
           </motion.div>
 
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.8 }}
-            className="text-heading-1 md:text-display-lg text-charcoal font-semibold mb-4"
-          >
-            Experience
-          </motion.h1>
+          <div className="max-w-3xl">
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="flex items-center gap-3 mb-4"
+            >
+              <span className="w-8 h-px bg-primary/40" />
+              <span className="text-micro-uppercase text-primary font-semibold tracking-wider">
+                My Journey &amp; Milestones
+              </span>
+            </motion.div>
 
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.8 }}
-            className="text-body-md text-slate max-w-2xl mx-auto"
-          >
-            An editorial view of my journey — organized by time, focused on the story.
-          </motion.p>
-        </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-heading-1 md:text-display-lg text-charcoal font-semibold tracking-tight mb-4"
+            >
+              Experience &amp; Story
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-body-md md:text-subtitle text-slate leading-relaxed mb-6"
+            >
+              Tracing my path from self-directed curiosity in Central Sulawesi through industry internships, formal informatics, and community mentorship.
+            </motion.p>
+
+            {/* Quick Milestones Chips */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="flex flex-wrap items-center gap-2.5"
+            >
+              <span className="inline-flex items-center px-3 py-1 rounded-md bg-surface border border-hairline text-charcoal text-caption font-mono">
+                <span>2021: First Curiosity</span>
+              </span>
+              <span className="inline-flex items-center px-3 py-1 rounded-md bg-surface border border-hairline text-charcoal text-caption font-mono">
+                <span>2023: Industry Code</span>
+              </span>
+              <span className="inline-flex items-center px-3 py-1 rounded-md bg-surface border border-hairline text-charcoal text-caption font-mono">
+                <span>2024: Computer Science</span>
+              </span>
+              <span className="inline-flex items-center px-3 py-1 rounded-md bg-surface border border-hairline text-charcoal text-caption font-mono">
+                <span>2025–Now: Tech Leadership</span>
+              </span>
+            </motion.div>
+          </div>
+        </div>
       </section>
 
       {/* Main Timeline Content */}

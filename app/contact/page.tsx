@@ -15,7 +15,6 @@ import {
   Linkedin,
   Loader2,
   CheckCircle2,
-  Sparkles,
   Instagram,
 } from "lucide-react";
 import { useDeviceType } from "@/lib/hooks";
@@ -225,8 +224,7 @@ export default function ContactPage() {
               <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }}
                 className="bg-canvas border border-hairline rounded-lg p-6 shadow-elevation-1"
               >
-                <h3 className="text-heading-5 text-charcoal font-semibold mb-5 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-primary" />
+                <h3 className="text-heading-5 text-charcoal font-semibold mb-5">
                   Connect With Me
                 </h3>
                 <div className="space-y-2">

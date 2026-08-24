@@ -16,7 +16,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Star,
-  Sparkles,
   FolderOpen,
 } from "lucide-react";
 import { useDeviceType, getAnimationConfig } from "@/lib/hooks";
@@ -101,7 +100,6 @@ function FeaturedProjectCard({
                 className="flex items-center gap-1.5 px-2.5 py-1 bg-primary/10 rounded-sm"
                 animate={{ scale: isHovered ? 1.05 : 1 }}
               >
-                <Sparkles className="w-3 h-3 text-primary" />
                 <span className="text-micro-uppercase text-primary font-semibold">Featured</span>
               </motion.div>
               <span className="text-muted text-xs">•</span>
@@ -370,37 +368,74 @@ export default function WorkPage() {
         <div className="absolute bottom-40 left-20 w-[400px] h-[400px] bg-primary/[0.02] rounded-full blur-[80px]" />
       </div>
 
-      {/* Hero Section */}
-      <section className="min-h-screen flex items-center justify-center relative overflow-hidden px-6">
-        <motion.div className="fixed top-20 left-6 md:left-8 z-50" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.3 }}>
-          <Link href="/" className="inline-flex items-center gap-2 text-steel hover:text-charcoal transition-colors group">
-            <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
-            <span className="text-body-sm-medium tracking-wide">Home</span>
-          </Link>
-        </motion.div>
-
-        <div className="text-center relative z-10 max-w-4xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="mb-6">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <span className="w-8 h-px bg-primary/40" />
-              <span className="text-micro-uppercase text-primary font-semibold tracking-wider">Portfolio</span>
-              <span className="w-8 h-px bg-primary/40" />
-            </div>
+      {/* Editorial Hero Header */}
+      <section className="pt-28 pb-10 md:pt-36 md:pb-12 px-6 md:px-8 relative">
+        <div className="max-w-container mx-auto">
+          {/* Breadcrumb / Back button */}
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+            className="mb-8"
+          >
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-steel hover:text-charcoal transition-colors group text-body-sm-medium"
+            >
+              <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+              <span>Back to Home</span>
+            </Link>
           </motion.div>
 
-          <motion.h1 initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }}
-            className="text-heading-1 md:text-display-lg text-charcoal font-semibold leading-[0.9] mb-6 md:mb-8"
-          >
-            The
-            <br />
-            <span className="text-steel">Archive</span>
-          </motion.h1>
+          <div className="max-w-3xl">
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="flex items-center gap-3 mb-4"
+            >
+              <span className="w-8 h-px bg-primary/40" />
+              <span className="text-micro-uppercase text-primary font-semibold tracking-wider">
+                Portfolio &amp; Work
+              </span>
+            </motion.div>
 
-          <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-body-md text-slate max-w-xl mx-auto leading-relaxed"
-          >
-            A curated collection of digital craftsmanship.
-          </motion.p>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-heading-1 md:text-display-lg text-charcoal font-semibold tracking-tight mb-4"
+            >
+              The Archive &amp; Projects
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-body-md md:text-subtitle text-slate leading-relaxed mb-6"
+            >
+              A curated catalog of full-stack web platforms, geospatial systems, and mobile applications built with focus on speed, utility, and human experience.
+            </motion.p>
+
+            {/* Quick Metrics / Focus Badges */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="flex flex-wrap items-center gap-2.5"
+            >
+              <span className="inline-flex items-center px-3 py-1 rounded-md bg-surface border border-hairline text-charcoal text-caption font-mono">
+                <span>10+ Systems Built</span>
+              </span>
+              <span className="inline-flex items-center px-3 py-1 rounded-md bg-surface border border-hairline text-charcoal text-caption font-mono">
+                <span>Production &amp; Open-Source</span>
+              </span>
+              <span className="inline-flex items-center px-3 py-1 rounded-md bg-surface border border-hairline text-charcoal text-caption font-mono">
+                <span>Web · Mobile · Spatial</span>
+              </span>
+            </motion.div>
+          </div>
         </div>
       </section>
 

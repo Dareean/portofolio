@@ -176,16 +176,18 @@ export default function WorkList({ projects }: WorkListProps) {
                         {project.year}
                       </span>
                       {project.link && (
-                        <a
-                          href={project.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            window.open(project.link, "_blank", "noopener,noreferrer");
+                          }}
                           className="text-steel hover:text-primary transition-colors duration-200"
-                          onClick={(e) => e.stopPropagation()}
                           aria-label={`Visit live link for ${project.title}`}
                         >
                           <ExternalLink size={16} />
-                        </a>
+                        </button>
                       )}
                     </div>
                   </div>

@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import { PROJECTS } from "@/lib/data";
 import TopNav from "@/components/TopNav";
-import { ChevronLeft, ArrowRight, ExternalLink } from "lucide-react";
+import { ChevronLeft, ArrowRight, ExternalLink, Stethoscope, Globe, Users, ShieldAlert, CreditCard, BookOpen, UserCheck, Palette, Leaf, Zap, Code, LayoutGrid } from "lucide-react";
 
 export default function ProjectDetailPage() {
   const params = useParams();
@@ -28,22 +28,22 @@ export default function ProjectDetailPage() {
 
   const categoryDisplay = Array.isArray(project.category) ? project.category.join(", ") : project.category;
 
-  // Determine Notion Emoji based on title
-  const getProjectEmoji = (title: string) => {
+  // Determine Icon based on title
+  const getProjectIcon = (title: string) => {
     const t = title.toLowerCase();
-    if (t.includes("medicflow")) return "🏥";
-    if (t.includes("sorot")) return "🌍";
-    if (t.includes("jasakita")) return "🤝";
-    if (t.includes("guard riders") || t.includes("helmet")) return "🪖";
-    if (t.includes("dreampos") || t.includes("pos")) return "💰";
-    if (t.includes("library")) return "📚";
-    if (t.includes("employee")) return "👥";
-    if (t.includes("batik")) return "🎨";
-    if (t.includes("green generation") || t.includes("green")) return "🌿";
-    if (t.includes("portfolio") || t.includes("dareean")) return "⚡";
-    return "💻";
+    if (t.includes("medicflow")) return <Stethoscope className="w-8 h-8 text-blue-500" />;
+    if (t.includes("sorot")) return <Globe className="w-8 h-8 text-emerald-500" />;
+    if (t.includes("jasakita")) return <Users className="w-8 h-8 text-indigo-500" />;
+    if (t.includes("guard riders") || t.includes("helmet")) return <ShieldAlert className="w-8 h-8 text-amber-500" />;
+    if (t.includes("dreampos") || t.includes("pos")) return <CreditCard className="w-8 h-8 text-rose-500" />;
+    if (t.includes("library")) return <BookOpen className="w-8 h-8 text-cyan-500" />;
+    if (t.includes("employee")) return <UserCheck className="w-8 h-8 text-violet-500" />;
+    if (t.includes("batik")) return <Palette className="w-8 h-8 text-orange-500" />;
+    if (t.includes("green generation") || t.includes("green")) return <Leaf className="w-8 h-8 text-emerald-600" />;
+    if (t.includes("portfolio") || t.includes("dareean")) return <Zap className="w-8 h-8 text-blue-500" />;
+    return <Code className="w-8 h-8 text-slate-500" />;
   };
-  const emoji = getProjectEmoji(project.title);
+  const projectIcon = getProjectIcon(project.title);
 
   return (
     <main className="min-h-screen py-20 md:py-28 bg-canvas text-ink">
@@ -82,7 +82,7 @@ export default function ProjectDetailPage() {
           transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
           className="relative -mt-10 sm:-mt-12 ml-6 mb-4 z-10 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-canvas border border-hairline shadow-elevation-2 flex items-center justify-center text-4xl sm:text-5xl select-none"
         >
-          {emoji}
+          {projectIcon}
         </motion.div>
 
         {/* Page title */}
@@ -166,7 +166,7 @@ export default function ProjectDetailPage() {
           transition={{ duration: 0.6, delay: 0.6 }}
         >
           <h3 className="text-heading-3 text-charcoal font-semibold mb-8 flex items-center gap-2">
-            <span>📋</span> Other Projects Database
+            <LayoutGrid className="w-5 h-5 text-steel" /> Other Projects Database
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {PROJECTS.filter((p) => p.id !== project.id).slice(0, 3).map((relatedProject) => (

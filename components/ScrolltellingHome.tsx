@@ -4,7 +4,7 @@ import { useRef, useLayoutEffect, useState, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Code2, Zap, GraduationCap, Rocket, Lightbulb } from "lucide-react";
 import { useDeviceType } from "@/lib/hooks";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -16,28 +16,28 @@ const CHAPTERS = [
     heading: "It started with curiosity.",
     body: "I picked up my first line of code — HTML, CSS, JavaScript. No bootcamp, no deadline. Just a kid in Central Sulawesi who wanted to understand how the web worked.",
     tint: "bg-tint-sky",
-    icon: "</>",
+    icon: <Code2 className="w-5 h-5 text-blue-600" />,
   },
   {
     year: "2023",
     heading: "First real-world code.",
     body: "Interned at PT. Educa Studio as a web programmer, then joined the Teaching Factory program at Gamelab Indonesia. Production code is a different sport entirely.",
     tint: "bg-tint-mint",
-    icon: "⚡",
+    icon: <Zap className="w-5 h-5 text-emerald-600" />,
   },
   {
     year: "2024",
     heading: "University opened new doors.",
     body: "Started my Informatics degree — combining formal computer science with the practical skills I'd already built. Algorithms met aesthetics.",
     tint: "bg-tint-lavender",
-    icon: "🎓",
+    icon: <GraduationCap className="w-5 h-5 text-purple-600" />,
   },
   {
     year: "2025 — now",
     heading: "Building, leading, creating.",
     body: "Competing in UI/UX and IoT competitions. Coordinating mentors at Programming Tadulako. Leading I-Fest as PIC. Building for communities, not just clients.",
     tint: "bg-tint-rose",
-    icon: "🚀",
+    icon: <Rocket className="w-5 h-5 text-rose-600" />,
   },
 ];
 
@@ -280,7 +280,7 @@ export default function ScrolltellingHome() {
       <section className="st-banner px-6 md:px-8 pb-section-lg">
         <div className="max-w-container mx-auto bg-tint-yellow-bold rounded-lg p-10 md:p-16">
           <div className="max-w-2xl mx-auto text-center">
-            <span className="text-4xl mb-4 block">💡</span>
+            <Lightbulb className="w-8 h-8 text-amber-600 mb-4 inline-block" />
             <h2 className="text-heading-2 md:text-heading-1 text-charcoal font-semibold tracking-tight mb-4">
               From curiosity to creation
             </h2>

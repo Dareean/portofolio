@@ -22,10 +22,22 @@ export default function IntroTransition() {
     const logo = logoRef.current;
     const blindsWrap = blindsWrapRef.current;
 
-    if (!container || !logo || !blindsWrap) return;
+    // Safety fallback: Ensure intro unmounts after 3.5s max even if GSAP or client JS hangs
+    const safetyTimer = setTimeout(() => {
+      document.body.style.overflow = "";
+      if (container) container.style.display = "none";
+      setShowIntro(false);
+    }, 3500);
+
+    if (!container || !logo || !blindsWrap) {
+      clearTimeout(safetyTimer);
+      return;
+    }
 
     // If reduced motion: skip instantly
     if (deviceInfo.prefersReducedMotion) {
+      clearTimeout(safetyTimer);
+      document.body.style.overflow = "";
       setShowIntro(false);
       return;
     }
@@ -111,6 +123,7 @@ export default function IntroTransition() {
     }
 
     return () => {
+      clearTimeout(safetyTimer);
       tl.kill();
       document.body.style.overflow = "";
     };

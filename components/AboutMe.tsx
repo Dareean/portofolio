@@ -5,6 +5,7 @@ import { useRef, useLayoutEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { RefreshCw, Users, Target, Zap } from "lucide-react";
 
 export default function AboutMe() {
   const containerRef = useRef<HTMLElement>(null);
@@ -146,16 +147,16 @@ export default function AboutMe() {
             {/* Working Style Traits */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
               {[
-                { label: "Agile Mindset", desc: "Iterative approach", icon: "🔄" },
-                { label: "Collaborative", desc: "Team player", icon: "🤝" },
-                { label: "Detail-Oriented", desc: "Quality focused", icon: "🎯" },
-                { label: "Fast Learner", desc: "Adapts quickly", icon: "⚡" },
+                { label: "Agile Mindset", desc: "Iterative approach", icon: <RefreshCw className="w-6 h-6 text-blue-500 mx-auto" /> },
+                { label: "Collaborative", desc: "Team player", icon: <Users className="w-6 h-6 text-emerald-500 mx-auto" /> },
+                { label: "Detail-Oriented", desc: "Quality focused", icon: <Target className="w-6 h-6 text-rose-500 mx-auto" /> },
+                { label: "Fast Learner", desc: "Adapts quickly", icon: <Zap className="w-6 h-6 text-amber-500 mx-auto" /> },
               ].map((trait) => (
                 <div
                   key={trait.label}
                   className="about-card rounded-lg bg-surface border border-hairline p-4 md:p-5 text-center hover:border-primary/20 hover:shadow-elevation-1 transition-all duration-300"
                 >
-                  <span className="text-2xl mb-2 block">{trait.icon}</span>
+                  <div className="mb-2 flex justify-center">{trait.icon}</div>
                   <div className="text-caption-bold text-charcoal mb-0.5">{trait.label}</div>
                   <div className="text-micro text-steel">{trait.desc}</div>
                 </div>
