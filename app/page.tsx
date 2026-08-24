@@ -1,4 +1,5 @@
 import Hero from "@/components/Hero";
+import ScrollRevealStatement from "@/components/ScrollRevealStatement";
 import WorkList from "@/components/WorkList";
 import AboutBento from "@/components/AboutBento";
 import WritingFeed from "@/components/WritingFeed";
@@ -10,6 +11,12 @@ export default function Home() {
     <main className="min-h-screen relative overflow-x-hidden">
       {/* Hero Section — dark kinetic statement & 3 core pillars */}
       <Hero />
+
+      {/* Scroll Text Reveal Narrative — buttery smooth scroll-linked word illumination */}
+      <ScrollRevealStatement />
+
+      {/* Section Divider */}
+      <div className="section-divider mx-auto max-w-5xl" />
 
       {/* Selected Work — direct proof of craftsmanship */}
       <div id="work" className="py-section-sm md:py-section">
