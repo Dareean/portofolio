@@ -42,7 +42,7 @@
     "portraitImage": "/assets/foto_closeup.jpg",
     "fullName": "Dareean Ahmad Raffi",
     "roleTag": "Full-Stack & UI/UX",
-    "locationText": "Palu, Central Sulawesi · 0°53' S",
+    "locationText": "Palu, Central Sulawesi ",
     "philosophyHeading": "From pixel to people — turning complex engineering into human-centered software.",
     "philosophyBio": "I see code not merely as syntax, but as a bridge between ideas and reality. Based in Central Sulawesi, I combine formal computer science fundamentals with hands-on product craft — building everything from clinical platforms to geospatial disaster tools and empowering regional tech communities.",
     "resumeUrl": "/assets/CV-Rafi(English).pdf",
@@ -59,16 +59,46 @@
       }
     ],
     "techStack": [
-      { "name": "Next.js 14", "category": "Framework" },
-      { "name": "TypeScript", "category": "Language" },
-      { "name": "React 19", "category": "Library" },
-      { "name": "Tailwind CSS", "category": "Styling" },
-      { "name": "Node.js", "category": "Backend" },
-      { "name": "Prisma ORM", "category": "Database" },
-      { "name": "QGIS", "category": "Spatial" },
-      { "name": "Figma", "category": "Design" },
-      { "name": "Python", "category": "Language" },
-      { "name": "IoT / ESP32", "category": "Hardware" }
+      {
+        "name": "Next.js 14",
+        "category": "Framework"
+      },
+      {
+        "name": "TypeScript",
+        "category": "Language"
+      },
+      {
+        "name": "React 19",
+        "category": "Library"
+      },
+      {
+        "name": "Tailwind CSS",
+        "category": "Styling"
+      },
+      {
+        "name": "Node.js",
+        "category": "Backend"
+      },
+      {
+        "name": "Prisma ORM",
+        "category": "Database"
+      },
+      {
+        "name": "QGIS",
+        "category": "Spatial"
+      },
+      {
+        "name": "Figma",
+        "category": "Design"
+      },
+      {
+        "name": "Python",
+        "category": "Language"
+      },
+      {
+        "name": "IoT / ESP32",
+        "category": "Hardware"
+      }
     ]
   },
   "projects": [
@@ -82,10 +112,22 @@
       "link": "https://medicflow.example.com",
       "featured": true,
       "description": "Medicflow is a comprehensive medical record platform designed to streamline clinical workflows and facilitate interaction between patients and doctors. It allows users to effortlessly handle patient records, history, and appointments in one place, reducing paperwork and increasing time for patient care.",
-      "technologies": ["Next.js", "TypeScript", "Tailwind CSS", "Prisma", "PostgreSQL"],
+      "technologies": [
+        "Next.js",
+        "TypeScript",
+        "Tailwind CSS",
+        "Prisma",
+        "PostgreSQL"
+      ],
       "metrics": [
-        { "label": "Workflow Efficiency", "value": "+40%" },
-        { "label": "Patient Records", "value": "1,000+" }
+        {
+          "label": "Workflow Efficiency",
+          "value": "+40%"
+        },
+        {
+          "label": "Patient Records",
+          "value": "1,000+"
+        }
       ]
     },
     {
@@ -98,10 +140,22 @@
       "link": "https://sorot.example.com",
       "featured": true,
       "description": "Developed a comprehensive prototype geospatial reporting system enabling citizens to report environmental issues with automatic GPS mapping. The platform features real-time monitoring through QGIS integration and a responsive admin dashboard for efficient issue management.",
-      "technologies": ["Flutter", "Dart", "QGIS", "Firebase", "Google Maps API"],
+      "technologies": [
+        "Flutter",
+        "Dart",
+        "QGIS",
+        "Firebase",
+        "Google Maps API"
+      ],
       "metrics": [
-        { "label": "GPS Accuracy", "value": "< 5m" },
-        { "label": "Response Time", "value": "Real-time" }
+        {
+          "label": "GPS Accuracy",
+          "value": "< 5m"
+        },
+        {
+          "label": "Response Time",
+          "value": "Real-time"
+        }
       ]
     },
     {
@@ -114,10 +168,22 @@
       "link": "https://dreampos.example.com",
       "featured": true,
       "description": "A comprehensive web-based inventory management system designed to efficiently manage stock, products, brands, and categories. Features include product management with image upload, multi-level category organization, role-based access control, automatic barcode generation, Excel export, and tax management.",
-      "technologies": ["PHP", "MySQL", "Bootstrap", "PHPMailer", "PHPSpreadsheet"],
+      "technologies": [
+        "PHP",
+        "MySQL",
+        "Bootstrap",
+        "PHPMailer",
+        "PHPSpreadsheet"
+      ],
       "metrics": [
-        { "label": "SKU Capacity", "value": "10,000+" },
-        { "label": "Export Formats", "value": "Excel/PDF" }
+        {
+          "label": "SKU Capacity",
+          "value": "10,000+"
+        },
+        {
+          "label": "Export Formats",
+          "value": "Excel/PDF"
+        }
       ]
     },
     {
@@ -130,9 +196,16 @@
       "link": "https://greengenerationsulteng.org",
       "featured": false,
       "description": "An environmental awareness platform built for the youth community in Central Sulawesi, focusing on conservation campaigns, event registration, and eco-initiatives across regional districts.",
-      "technologies": ["Next.js", "Tailwind CSS", "Framer Motion"],
+      "technologies": [
+        "Next.js",
+        "Tailwind CSS",
+        "Framer Motion"
+      ],
       "metrics": [
-        { "label": "Active Members", "value": "300+" }
+        {
+          "label": "Active Members",
+          "value": "300+"
+        }
       ]
     },
     {
@@ -145,9 +218,17 @@
       "link": "https://jasakita.example.com",
       "featured": false,
       "description": "A lightweight, localized peer-to-peer service discovery platform connecting local freelancers and skilled tradespeople in Central Sulawesi with direct client inquiries.",
-      "technologies": ["React", "Tailwind CSS", "Node.js", "Express"],
+      "technologies": [
+        "React",
+        "Tailwind CSS",
+        "Node.js",
+        "Express"
+      ],
       "metrics": [
-        { "label": "Listing Growth", "value": "+150%" }
+        {
+          "label": "Listing Growth",
+          "value": "+150%"
+        }
       ]
     }
   ],
@@ -189,7 +270,12 @@
       "dateStart": "2026-01",
       "dateEnd": "",
       "description": "Leading as Person In Charge (PIC) for I-Fest 2026, taking on comprehensive responsibility in organizing the annual informatics festival. Overseeing event planning, managing committee teams, coordinating with sponsors, and driving the vision for an impactful tech event.",
-      "highlights": ["Leadership", "Event Management", "Team Coordination", "Strategic Planning"],
+      "highlights": [
+        "Leadership",
+        "Event Management",
+        "Team Coordination",
+        "Strategic Planning"
+      ],
       "category": "committee"
     },
     {
@@ -200,7 +286,12 @@
       "dateStart": "2025-12",
       "dateEnd": "",
       "description": "Active member of HammerCode, an Eastern Indonesia programming community focused on collaborative learning, code sharing, workshops, code reviews, and hackathon preparations.",
-      "highlights": ["Collaborative Learning", "Code Reviews", "Open Source", "Hackathons"],
+      "highlights": [
+        "Collaborative Learning",
+        "Code Reviews",
+        "Open Source",
+        "Hackathons"
+      ],
       "category": "community"
     },
     {
@@ -211,7 +302,11 @@
       "dateStart": "2025-11",
       "dateEnd": "",
       "description": "Active member of Himpunan Mahasiswa Teknik Informatika (HMTI), participating in workshops, seminars, and collaborative development initiatives.",
-      "highlights": ["Workshop Participation", "Technical Seminars", "Student Community"],
+      "highlights": [
+        "Workshop Participation",
+        "Technical Seminars",
+        "Student Community"
+      ],
       "category": "community"
     },
     {
@@ -222,7 +317,11 @@
       "dateStart": "2025-11",
       "dateEnd": "2026-01",
       "description": "Managed media relations, promo content creation, and community engagement for the premier Palu Developer Day 2026 tech conference.",
-      "highlights": ["Media Relations", "Content Creation", "Community Engagement"],
+      "highlights": [
+        "Media Relations",
+        "Content Creation",
+        "Community Engagement"
+      ],
       "category": "committee"
     },
     {
@@ -233,7 +332,11 @@
       "dateStart": "2025-11",
       "dateEnd": "2025-12",
       "description": "Coordinated communication between committee divisions, managed external partnerships, and ensured smooth logistics flow throughout event preparation and execution.",
-      "highlights": ["Cross-team Coordination", "Stakeholder Management", "Event Logistics"],
+      "highlights": [
+        "Cross-team Coordination",
+        "Stakeholder Management",
+        "Event Logistics"
+      ],
       "category": "volunteer"
     },
     {
@@ -244,7 +347,11 @@
       "dateStart": "2025-06",
       "dateEnd": "2025-10",
       "description": "Contributed to the annual commemoration event by showcasing innovative student projects at the Expo Innovation exhibition, demonstrating technological solutions to visitors.",
-      "highlights": ["Innovation Showcase", "Project Exhibition", "Public Engagement"],
+      "highlights": [
+        "Innovation Showcase",
+        "Project Exhibition",
+        "Public Engagement"
+      ],
       "category": "volunteer"
     },
     {
@@ -255,7 +362,11 @@
       "dateStart": "2025-05",
       "dateEnd": "2025-07",
       "description": "Collaborated on the design of an IoT smart helmet to enhance motorcycle road safety. Advanced to the competition finals with automated impact sensors and telemetry.",
-      "highlights": ["IoT Development", "Safety Innovation", "Competition Finals"],
+      "highlights": [
+        "IoT Development",
+        "Safety Innovation",
+        "Competition Finals"
+      ],
       "category": "award",
       "image": "/assets/rsict_2025.jpeg"
     },
@@ -267,7 +378,11 @@
       "dateStart": "2025-01",
       "dateEnd": "",
       "description": "Spearheaded communication campaigns for regional environmental preservation, plastic reduction programs, and community clean-ups across Palu.",
-      "highlights": ["Environmental Awareness", "Community Service", "Sustainability"],
+      "highlights": [
+        "Environmental Awareness",
+        "Community Service",
+        "Sustainability"
+      ],
       "category": "community"
     },
     {
@@ -278,7 +393,12 @@
       "dateStart": "2025-01",
       "dateEnd": "",
       "description": "Coordinated mentors, structured technical learning modules, and facilitated weekly coding labs in web development and algorithms for university freshmen.",
-      "highlights": ["Mentor Coordination", "Meeting Management", "Community Engagement", "Technical Learning"],
+      "highlights": [
+        "Mentor Coordination",
+        "Meeting Management",
+        "Community Engagement",
+        "Technical Learning"
+      ],
       "category": "community"
     },
     {
@@ -289,7 +409,11 @@
       "dateStart": "2025-01",
       "dateEnd": "2025-01",
       "description": "Competed as a team in a campus-wide UI/UX Design competition, developing user-centered healthcare interface prototypes and presenting design rationale.",
-      "highlights": ["User Research", "Interface Design", "Prototyping"],
+      "highlights": [
+        "User Research",
+        "Interface Design",
+        "Prototyping"
+      ],
       "category": "award"
     },
     {
@@ -300,7 +424,11 @@
       "dateStart": "2024-08",
       "dateEnd": "",
       "description": "Began formal bachelor's degree in Informatics, combining theoretical computer science foundations, discrete mathematics, and algorithms with practical product building.",
-      "highlights": ["Computer Science", "Software Engineering", "Algorithms"],
+      "highlights": [
+        "Computer Science",
+        "Software Engineering",
+        "Algorithms"
+      ],
       "category": "education"
     },
     {
@@ -311,7 +439,11 @@
       "dateStart": "2023-09",
       "dateEnd": "2024-06",
       "description": "Completed intensive Teaching Factory program at PT. Educa Studio, developing production-ready web applications according to professional industry standards.",
-      "highlights": ["Production Environment", "Industry Standards", "Full-Stack Development"],
+      "highlights": [
+        "Production Environment",
+        "Industry Standards",
+        "Full-Stack Development"
+      ],
       "category": "work"
     },
     {
@@ -322,7 +454,11 @@
       "dateStart": "2023-07",
       "dateEnd": "2023-09",
       "description": "First software engineering internship focusing on PHP and MySQL development, mastering team workflows, version control, and collaborative debugging.",
-      "highlights": ["Professional Development", "Team Collaboration", "Web Development"],
+      "highlights": [
+        "Professional Development",
+        "Team Collaboration",
+        "Web Development"
+      ],
       "category": "work"
     },
     {
@@ -333,7 +469,11 @@
       "dateStart": "2021-06",
       "dateEnd": "2023-06",
       "description": "Began learning web fundamentals (HTML, CSS, JavaScript) independently in Central Sulawesi, building custom personal experiments and discovery tools.",
-      "highlights": ["HTML/CSS", "JavaScript", "Responsive Design"],
+      "highlights": [
+        "HTML/CSS",
+        "JavaScript",
+        "Responsive Design"
+      ],
       "category": "education"
     }
   ],

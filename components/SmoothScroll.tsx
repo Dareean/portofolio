@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 
 interface SmoothScrollProps {
@@ -8,7 +9,12 @@ interface SmoothScrollProps {
 }
 
 export default function SmoothScroll({ children }: SmoothScrollProps) {
+  const pathname = usePathname();
+
   useEffect(() => {
+    // Disable on CMS admin dashboard — standard native scrolling needed
+    if (pathname?.startsWith("/cms")) return;
+
     // Disable on mobile — native touch scroll is already smooth
     const isMobile = window.innerWidth < 768;
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -48,8 +54,7 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
       lenis.destroy();
       delete (window as unknown as { lenis?: Lenis }).lenis;
     };
-  }, []);
+  }, [pathname]);
 
   return <>{children}</>;
 }
-

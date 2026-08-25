@@ -357,7 +357,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
         </div>
 
         {/* Navigation */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+        <div data-lenis-prevent className="flex-1 overflow-y-auto p-4 space-y-6">
           {navGroups.map((group, gIdx) => (
             <div key={gIdx} className="space-y-1.5">
               <div className="px-2.5 text-[10px] font-mono font-semibold uppercase text-[#64748B] tracking-wider">
@@ -435,7 +435,10 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
       {/* ═══════════════════════════════════════════
           MAIN WORKSPACE
           ═══════════════════════════════════════════ */}
-      <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden bg-[#F8FAFC]">
+      <div
+        data-lenis-prevent
+        className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden bg-[#F8FAFC]"
+      >
         {/* Top Header Bar */}
         <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between bg-white/95 backdrop-blur-md border-b border-[#E2E8F0] px-6 md:px-8">
           <div className="flex items-center gap-3">
