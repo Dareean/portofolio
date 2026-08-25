@@ -48,51 +48,53 @@ export default function CMSLoginForm({ onSuccess }: CMSLoginFormProps) {
   };
 
   return (
-    <div className="min-h-screen bg-ink text-white flex flex-col justify-between items-center p-6 relative overflow-hidden">
-      {/* Background Noise / Subtle Ambient */}
-      <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none opacity-50" />
-      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
-
+    <div className="min-h-screen bg-canvas text-ink flex flex-col justify-between items-center p-6 relative">
       {/* Top Header Link */}
-      <div className="w-full max-w-md pt-4 z-10">
+      <div className="w-full max-w-sm pt-6 z-10">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-white/50 hover:text-white text-caption font-mono transition-colors duration-200 group"
+          className="inline-flex items-center gap-2 text-steel hover:text-charcoal text-caption font-mono transition-colors duration-200 group"
         >
           <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform duration-200" />
           <span>Back to Portfolio</span>
         </Link>
       </div>
 
-      {/* Login Card */}
+      {/* Login Card — Clean Editorial / Swiss Style */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className="w-full max-w-md bg-surface-dark border border-white/[0.1] rounded-2xl p-8 md:p-10 shadow-elevation-3 z-10"
+        transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="w-full max-w-sm bg-surface border border-hairline rounded-xl p-8 shadow-elevation-1 z-10"
       >
         {/* Monogram / Header */}
-        <div className="mb-8 text-center">
-          <div className="w-12 h-12 rounded-xl bg-white text-ink font-mono font-bold text-lg flex items-center justify-center mx-auto mb-4 shadow-elevation-1">
-            D
+        <div className="mb-6 text-left">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-9 h-9 rounded-lg bg-charcoal text-white font-mono font-bold text-sm flex items-center justify-center">
+              D
+            </div>
+            <div>
+              <div className="text-micro font-mono uppercase tracking-widest text-primary font-semibold">
+                Control Plane
+              </div>
+              <h1 className="text-heading-4 font-semibold text-charcoal tracking-tight">
+                CMS Access
+              </h1>
+            </div>
           </div>
-          <h1 className="text-heading-3 font-semibold text-white tracking-tight">
-            CMS Control Plane
-          </h1>
-          <p className="text-caption font-mono text-white/40 mt-1">
-            Enter credentials to manage portfolio content
+          <p className="text-caption text-slate">
+            Enter administrator credentials to manage portfolio content.
           </p>
         </div>
 
         {/* Error Alert */}
         {error && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.97 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mb-6 p-3.5 rounded-lg bg-rose-500/10 border border-rose-500/30 flex items-center gap-2.5 text-rose-400 text-caption font-mono"
+            className="mb-5 p-3 rounded-lg bg-rose-50 border border-rose-200 flex items-center gap-2.5 text-rose-700 text-caption font-mono"
           >
-            <AlertCircle size={15} className="flex-shrink-0" />
+            <AlertCircle size={14} className="flex-shrink-0" />
             <span>{error}</span>
           </motion.div>
         )}
@@ -100,12 +102,12 @@ export default function CMSLoginForm({ onSuccess }: CMSLoginFormProps) {
         {/* Form */}
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-micro font-mono text-white/50 uppercase tracking-wider mb-1.5">
+            <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
               Username
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-white/30">
-                <User size={15} />
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-steel">
+                <User size={14} />
               </div>
               <input
                 type="text"
@@ -113,18 +115,18 @@ export default function CMSLoginForm({ onSuccess }: CMSLoginFormProps) {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="dareean"
-                className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-white/[0.04] border border-white/[0.1] text-white font-mono text-body-sm placeholder:text-white/20 focus:border-primary focus:bg-white/[0.08] focus:outline-none transition-all duration-200"
+                className="w-full pl-9 pr-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-micro font-mono text-white/50 uppercase tracking-wider mb-1.5">
+            <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
               Password
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-white/30">
-                <Lock size={15} />
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-steel">
+                <Lock size={14} />
               </div>
               <input
                 type={showPassword ? "text" : "password"}
@@ -132,15 +134,15 @@ export default function CMSLoginForm({ onSuccess }: CMSLoginFormProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="w-full pl-10 pr-10 py-2.5 rounded-lg bg-white/[0.04] border border-white/[0.1] text-white font-mono text-body-sm placeholder:text-white/20 focus:border-primary focus:bg-white/[0.08] focus:outline-none transition-all duration-200"
+                className="w-full pl-9 pr-10 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none transition-colors"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-white/30 hover:text-white/70 transition-colors"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-steel hover:text-charcoal transition-colors cursor-pointer"
                 title={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
               </button>
             </div>
           </div>
@@ -149,35 +151,35 @@ export default function CMSLoginForm({ onSuccess }: CMSLoginFormProps) {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 rounded-lg bg-primary hover:bg-primary-hover text-on-primary text-button-md font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-elevation-1 disabled:opacity-50 cursor-pointer"
+              className="w-full py-2.5 rounded-lg bg-charcoal hover:bg-ink-deep text-white text-button-md font-mono font-medium transition-colors duration-200 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-elevation-1"
             >
               {isLoading ? (
                 <>
-                  <RefreshCw size={15} className="animate-spin" />
-                  <span>Authenticating...</span>
+                  <RefreshCw size={14} className="animate-spin" />
+                  <span>Verifying...</span>
                 </>
               ) : (
                 <>
-                  <span>Authenticate &amp; Enter</span>
-                  <ArrowRight size={15} />
+                  <span>Sign In</span>
+                  <ArrowRight size={14} />
                 </>
               )}
             </button>
           </div>
         </form>
 
-        {/* Demo Hint Footer */}
-        <div className="mt-8 pt-4 border-t border-white/[0.06] text-center">
-          <p className="text-micro font-mono text-white/30">
-            Default credentials: <span className="text-white/50">dareean</span> / <span className="text-white/50">dareean2026</span>
+        {/* Credentials hint */}
+        <div className="mt-6 pt-4 border-t border-hairline text-center">
+          <p className="text-micro font-mono text-muted">
+            Default credentials: <span className="text-steel font-semibold">dareean</span> / <span className="text-steel font-semibold">dareean2026</span>
           </p>
         </div>
       </motion.div>
 
       {/* Footer copyright */}
-      <div className="pb-4 text-center z-10">
-        <p className="text-micro font-mono text-white/25">
-          Dareean Portfolio CMS · Secure Session Management
+      <div className="pb-6 text-center z-10">
+        <p className="text-micro font-mono text-muted">
+          Dareean Portfolio · Integrated Content Management
         </p>
       </div>
     </div>

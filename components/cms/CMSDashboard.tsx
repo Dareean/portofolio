@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   PortfolioCMSData,
@@ -25,6 +26,28 @@ import {
   Sliders,
   LogOut,
   ExternalLink,
+  Star,
+  Edit3,
+  X,
+  Eye,
+  Sparkles,
+  ChevronRight,
+  FolderOpen,
+  Calendar,
+  Clock,
+  Tag,
+  Briefcase,
+  Trophy,
+  Users as UsersIcon,
+  GraduationCap,
+  HeartHandshake,
+  ArrowRight,
+  CheckCircle2,
+  Upload,
+  Database,
+  Cloud,
+  HardDrive,
+  FileUp,
 } from "lucide-react";
 
 type CMSTab = "hero" | "projects" | "about" | "writing" | "journey" | "site";
@@ -32,14 +55,63 @@ type CMSTab = "hero" | "projects" | "about" | "writing" | "journey" | "site";
 export default function CMSDashboard({ initialData }: { initialData: PortfolioCMSData }) {
   const [data, setData] = useState<PortfolioCMSData>(initialData);
   const [isSaving, setIsSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<CMSTab>("hero");
+  const [activeTab, setActiveTab] = useState<CMSTab>("projects");
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+
+  // Modal / Drawer state for deep project editing
+  const [editingProject, setEditingProject] = useState<CMSProject | null>(null);
+
+  // Uploading states
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadTarget, setUploadTarget] = useState<string | null>(null);
+
+  // Hidden file inputs
+  const projectFileInputRef = useRef<HTMLInputElement>(null);
+  const portraitFileInputRef = useRef<HTMLInputElement>(null);
+  const resumeFileInputRef = useRef<HTMLInputElement>(null);
+
+  // New tech input state
+  const [newTechName, setNewTechName] = useState("");
+  const [newTechCategory, setNewTechCategory] = useState("Framework");
 
   const showToast = (message: string, type: "success" | "error" = "success") => {
     setToast({ message, type });
     setTimeout(() => {
       setToast(null);
     }, 3500);
+  };
+
+  // Upload file helper (uploads to Supabase Storage / local fallback)
+  const handleFileUpload = async (
+    file: File,
+    folder: string = "projects",
+    onSuccess: (url: string) => void
+  ) => {
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", folder);
+
+      const res = await fetch("/api/cms/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const json = await res.json();
+      if (res.ok && json.success) {
+        onSuccess(json.url);
+        const storageLabel = json.storage === "supabase" ? "Supabase Cloud Storage" : "Local Storage (/uploads)";
+        showToast(`Uploaded successfully to ${storageLabel}!`);
+      } else {
+        showToast(json.error || "Upload failed", "error");
+      }
+    } catch (err) {
+      showToast("Network error during file upload", "error");
+    } finally {
+      setIsUploading(false);
+      setUploadTarget(null);
+    }
   };
 
   // Save full data to API
@@ -54,7 +126,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
       });
       const json = await res.json();
       if (json.success) {
-        showToast("All changes saved to portfolio_cms.json!");
+        showToast("All changes published to portfolio_cms.json!");
       } else {
         showToast(json.error || "Failed to save changes", "error");
       }
@@ -65,66 +137,243 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
     }
   };
 
+  // Quick toggle featured for a project
+  const toggleProjectFeatured = (id: number) => {
+    const updated = data.projects.map((p) =>
+      p.id === id ? { ...p, featured: !p.featured } : p
+    );
+    setData({ ...data, projects: updated });
+    showToast(`Project visibility updated!`);
+  };
+
+  // Save edited project from modal
+  const saveProjectModal = (updatedProject: CMSProject) => {
+    const updated = data.projects.map((p) =>
+      p.id === updatedProject.id ? updatedProject : p
+    );
+    setData({ ...data, projects: updated });
+    setEditingProject(null);
+    showToast("Project details updated!");
+  };
+
+  // Add new project
+  const handleAddNewProject = () => {
+    const newProj: CMSProject = {
+      id: Date.now(),
+      title: "New Project Showcase",
+      slug: `project-${Date.now()}`,
+      category: "Web Platform",
+      year: new Date().getFullYear(),
+      image: "/assets/greengnsulteng_web.png",
+      link: "https://example.com",
+      featured: false,
+      description: "Comprehensive case study of the system architecture, stack, and problem solved.",
+      technologies: ["React", "TypeScript", "Tailwind CSS"],
+      metrics: [{ label: "Impact", value: "+30%" }],
+    };
+    setData({ ...data, projects: [newProj, ...data.projects] });
+    setEditingProject(newProj);
+    showToast("New project created! You can now upload images and edit details.");
+  };
+
+  // Delete a project
+  const handleDeleteProject = (id: number, title: string) => {
+    if (confirm(`Are you sure you want to delete "${title}"?`)) {
+      const updated = data.projects.filter((p) => p.id !== id);
+      setData({ ...data, projects: updated });
+      if (editingProject?.id === id) setEditingProject(null);
+      showToast("Project removed.");
+    }
+  };
+
+  // Add new tech stack chip
+  const handleAddTechStack = () => {
+    if (!newTechName.trim()) return;
+    const updated = [...data.about.techStack, { name: newTechName.trim(), category: newTechCategory }];
+    setData({ ...data, about: { ...data.about, techStack: updated } });
+    setNewTechName("");
+    showToast(`Added ${newTechName} to tech stack!`);
+  };
+
+  // Remove tech stack chip
+  const handleRemoveTechStack = (index: number) => {
+    const updated = data.about.techStack.filter((_, i) => i !== index);
+    setData({ ...data, about: { ...data.about, techStack: updated } });
+  };
+
   const navItems = [
-    { id: "hero", label: "Hero & Narrative", icon: Sliders, count: null },
-    { id: "projects", label: "Projects Catalog", icon: Layers, count: data.projects.length },
-    { id: "about", label: "Profile & Bento", icon: User, count: null },
-    { id: "writing", label: "Writing & Blog", icon: FileText, count: data.stories.length },
-    { id: "journey", label: "Journey Milestones", icon: Compass, count: data.experiences.length },
-    { id: "site", label: "Site & Social", icon: Globe, count: null },
+    {
+      id: "projects",
+      num: "01",
+      label: "Projects & Work",
+      icon: Layers,
+      count: data.projects.length,
+      desc: "Visual Catalog & Uploads",
+    },
+    {
+      id: "hero",
+      num: "02",
+      label: "Hero & Headlines",
+      icon: Sliders,
+      count: null,
+      desc: "Live Kinetic Preview",
+    },
+    {
+      id: "about",
+      num: "03",
+      label: "About & Bento",
+      icon: User,
+      count: null,
+      desc: "Portrait, Bio & Tech Stack",
+    },
+    {
+      id: "writing",
+      num: "04",
+      label: "Writing & Stories",
+      icon: FileText,
+      count: data.stories.length,
+      desc: "Publication Feeds",
+    },
+    {
+      id: "journey",
+      num: "05",
+      label: "Journey Timeline",
+      icon: Compass,
+      count: data.experiences.length,
+      desc: "Milestones & Roles",
+    },
+    {
+      id: "site",
+      num: "06",
+      label: "Supabase & Settings",
+      icon: Globe,
+      count: null,
+      desc: "Storage & Cloud Sync",
+    },
   ];
 
+  const currentNav = navItems.find((n) => n.id === activeTab) || navItems[0];
+  const featuredCount = data.projects.filter((p) => p.featured).length;
+
   return (
-    <div className="min-h-screen bg-canvas text-charcoal flex flex-col md:flex-row">
+    <div className="min-h-screen bg-canvas text-charcoal flex flex-col md:flex-row font-sans selection:bg-primary/20 selection:text-ink">
       {/* Toast Notification */}
       <AnimatePresence>
         {toast && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className={`fixed top-6 right-6 z-50 px-4 py-3 rounded-lg shadow-elevation-3 border flex items-center gap-2.5 text-caption font-mono ${
+            initial={{ opacity: 0, y: -20, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.98 }}
+            className={`fixed top-6 right-6 z-50 px-4 py-3 rounded-xl shadow-elevation-3 border flex items-center gap-3 text-caption font-mono ${
               toast.type === "success"
-                ? "bg-charcoal text-white border-white/10"
+                ? "bg-charcoal text-white border-charcoal shadow-elevation-2"
                 : "bg-rose-600 text-white border-rose-700"
             }`}
           >
-            {toast.type === "success" ? <Check size={16} /> : <AlertCircle size={16} />}
-            <span>{toast.message}</span>
+            {toast.type === "success" ? <CheckCircle2 size={16} className="text-emerald-400" /> : <AlertCircle size={16} />}
+            <span className="font-medium">{toast.message}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* Hidden File Inputs for Direct Media Uploads */}
+      <input
+        type="file"
+        ref={projectFileInputRef}
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file && editingProject) {
+            handleFileUpload(file, "projects", (url) => {
+              setEditingProject({ ...editingProject, image: url });
+            });
+          }
+        }}
+      />
+
+      <input
+        type="file"
+        ref={portraitFileInputRef}
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            handleFileUpload(file, "profile", (url) => {
+              setData({ ...data, about: { ...data.about, portraitImage: url } });
+            });
+          }
+        }}
+      />
+
+      <input
+        type="file"
+        ref={resumeFileInputRef}
+        accept=".pdf"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            handleFileUpload(file, "documents", (url) => {
+              setData({ ...data, about: { ...data.about, resumeUrl: url } });
+            });
+          }
+        }}
+      />
+
       {/* ═══════════════════════════════════════════
-          LEFT SIDEBAR NAVIGATION (CMS-Exclusive)
+          LEFT SIDEBAR (Refined Studio Workspace)
           ═══════════════════════════════════════════ */}
       <aside className="w-full md:w-64 lg:w-72 bg-surface border-r border-hairline flex flex-col justify-between md:h-screen md:sticky md:top-0 z-30 flex-shrink-0">
         <div>
-          {/* Brand Header */}
-          <div className="p-6 border-b border-hairline">
+          {/* Workspace Identity */}
+          <div className="p-5 border-b border-hairline">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-charcoal text-white flex items-center justify-center font-mono font-bold text-base shadow-elevation-1">
+              <div className="w-10 h-10 rounded-xl bg-charcoal text-white flex items-center justify-center font-mono font-bold text-base shadow-elevation-1">
                 D
               </div>
-              <div>
-                <h1 className="text-body-md-medium font-semibold text-charcoal tracking-tight">
-                  CMS Control Plane
-                </h1>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between">
+                  <h1 className="text-body-sm-medium font-semibold text-charcoal tracking-tight truncate">
+                    Portfolio Studio
+                  </h1>
+                  <span className="px-1.5 py-0.5 rounded bg-primary/10 text-primary font-mono text-[10px] font-semibold">
+                    Supabase Ready
+                  </span>
+                </div>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-steel font-medium">
-                    Local JSON DB
+                  <span className="text-[11px] font-mono text-steel truncate">
+                    {data.about.fullName || "Dareean"}
                   </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Navigation Links */}
-          <nav className="p-3 space-y-1">
-            <div className="px-3 py-2 text-[11px] font-mono uppercase tracking-wider text-muted font-semibold">
-              Content Sections
+          {/* Quick Snapshot Metrics */}
+          <div className="p-3 border-b border-hairline bg-surface-soft grid grid-cols-2 gap-2 text-center">
+            <div className="p-2 rounded-lg bg-canvas border border-hairline">
+              <div className="text-[10px] font-mono uppercase text-muted font-semibold">Featured</div>
+              <div className="text-body-sm font-bold text-primary font-mono mt-0.5">
+                {featuredCount} / {data.projects.length}
+              </div>
             </div>
+            <div className="p-2 rounded-lg bg-canvas border border-hairline">
+              <div className="text-[10px] font-mono uppercase text-muted font-semibold">Milestones</div>
+              <div className="text-body-sm font-bold text-charcoal font-mono mt-0.5">
+                {data.experiences.length}
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation Workspaces */}
+          <nav className="p-3 space-y-1">
+            <div className="px-3 py-1.5 text-micro-uppercase text-muted font-semibold font-mono">
+              Workspaces
+            </div>
+
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -132,19 +381,23 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id as CMSTab)}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-body-sm font-mono transition-all duration-200 cursor-pointer ${
+                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-body-sm font-mono transition-all duration-150 cursor-pointer ${
                     isActive
-                      ? "bg-charcoal text-white font-semibold shadow-elevation-1"
+                      ? "bg-charcoal text-white font-medium shadow-elevation-1"
                       : "text-steel hover:text-charcoal hover:bg-canvas"
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <Icon size={16} />
-                    <span>{item.label}</span>
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className={`text-micro font-mono ${isActive ? "text-white/60" : "text-muted"}`}>
+                      /{item.num}
+                    </span>
+                    <Icon size={15} />
+                    <span className="truncate">{item.label}</span>
                   </div>
+
                   {item.count !== null && (
                     <span
-                      className={`text-[11px] px-1.5 py-0.5 rounded font-mono ${
+                      className={`text-micro px-1.5 py-0.5 rounded font-mono ${
                         isActive ? "bg-white/20 text-white" : "bg-canvas border border-hairline text-steel"
                       }`}
                     >
@@ -158,17 +411,17 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
         </div>
 
         {/* Sidebar Footer Actions */}
-        <div className="p-4 border-t border-hairline space-y-2 bg-canvas/40">
+        <div className="p-3 border-t border-hairline space-y-1.5 bg-surface-soft">
           <Link
             href="/"
             target="_blank"
-            className="w-full flex items-center justify-between px-3.5 py-2 rounded-lg bg-surface border border-hairline text-charcoal text-caption font-mono hover:border-primary/40 transition-colors"
+            className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-canvas border border-hairline text-charcoal text-caption font-mono hover:border-steel transition-colors group"
           >
             <div className="flex items-center gap-2">
-              <ExternalLink size={14} className="text-steel" />
-              <span>View Live Website</span>
+              <ExternalLink size={13} className="text-steel group-hover:text-charcoal" />
+              <span>Preview Live Website</span>
             </div>
-            <ArrowUpRight size={13} className="text-steel" />
+            <ArrowUpRight size={13} className="text-steel group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </Link>
 
           <button
@@ -177,68 +430,232 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
               await fetch("/api/cms/auth", { method: "DELETE" });
               window.location.reload();
             }}
-            className="w-full flex items-center gap-2 px-3.5 py-2 rounded-lg text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 text-caption font-mono transition-colors cursor-pointer"
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-rose-600 hover:bg-rose-50 text-caption font-mono transition-colors cursor-pointer"
           >
-            <LogOut size={14} />
-            <span>Log Out</span>
+            <LogOut size={13} />
+            <span>Sign Out</span>
           </button>
         </div>
       </aside>
 
       {/* ═══════════════════════════════════════════
-          RIGHT MAIN CONTENT AREA
+          RIGHT MAIN WORKSPACE
           ═══════════════════════════════════════════ */}
       <main className="flex-1 min-w-0 bg-canvas min-h-screen flex flex-col justify-between">
         <div>
-          {/* Top Sticky Bar */}
-          <div className="sticky top-0 z-20 border-b border-hairline bg-surface/90 backdrop-blur-md px-6 md:px-8 py-4 flex items-center justify-between">
-            <div>
-              <span className="text-micro font-mono uppercase tracking-wider text-muted font-semibold">
-                Editing Section
+          {/* Top Sticky Action Bar */}
+          <div className="sticky top-0 z-20 border-b border-hairline bg-surface/95 backdrop-blur-md px-6 md:px-8 py-3.5 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-micro font-mono text-primary font-bold uppercase tracking-wider">
+                /{currentNav.num}
               </span>
-              <h2 className="text-heading-4 font-semibold text-charcoal tracking-tight capitalize">
-                {navItems.find((n) => n.id === activeTab)?.label}
-              </h2>
+              <span className="w-1 h-1 rounded-full bg-hairline-strong" />
+              <div>
+                <h2 className="text-body-md font-semibold text-charcoal tracking-tight">
+                  {currentNav.label}
+                </h2>
+                <p className="text-micro text-steel font-mono hidden sm:block">
+                  {currentNav.desc}
+                </p>
+              </div>
             </div>
 
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={isSaving}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-charcoal text-white text-caption font-mono font-semibold hover:bg-ink-deep transition-all duration-200 disabled:opacity-50 shadow-elevation-1 cursor-pointer"
-            >
-              {isSaving ? (
-                <>
-                  <RefreshCw size={14} className="animate-spin" />
-                  <span>Saving Changes...</span>
-                </>
-              ) : (
-                <>
-                  <Save size={14} />
-                  <span>Save All Changes</span>
-                </>
-              )}
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={isSaving}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary hover:bg-primary-pressed text-white text-caption font-mono font-medium transition-colors duration-150 disabled:opacity-50 shadow-elevation-1 cursor-pointer"
+              >
+                {isSaving ? (
+                  <>
+                    <RefreshCw size={13} className="animate-spin" />
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save size={13} />
+                    <span>Save All Changes</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
 
-          {/* Form Content */}
-          <div className="p-6 md:p-8 lg:p-10 max-w-5xl">
-            {/* ── TAB 1: HERO & NARRATIVE STATEMENT ── */}
-            {activeTab === "hero" && (
-              <div className="space-y-8">
-                {/* Hero Section Headlines */}
-                <div className="p-6 md:p-8 rounded-xl bg-surface border border-hairline space-y-6 shadow-elevation-0">
-                  <div className="flex items-center justify-between">
+          {/* Content Body */}
+          <div className="p-6 md:p-8 max-w-6xl space-y-6">
+            {/* ═══════════════════════════════════════════
+                WORKSPACE 1: PROJECTS & WORK (Visual Catalog)
+                ═══════════════════════════════════════════ */}
+            {activeTab === "projects" && (
+              <div className="space-y-6">
+                {/* Header with Stats & Add Button */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl bg-surface border border-hairline">
+                  <div>
                     <h3 className="text-heading-4 font-semibold text-charcoal tracking-tight">
-                      Hero Statement &amp; Headlines
+                      Projects &amp; Selected Work
                     </h3>
-                    <span className="text-micro font-mono text-steel uppercase">#hero</span>
+                    <p className="text-body-sm text-slate mt-0.5">
+                      Toggle the star icon to feature projects on the homepage. Click <strong>Edit</strong> to upload screenshots and manage stack.
+                    </p>
                   </div>
+
+                  <button
+                    type="button"
+                    onClick={handleAddNewProject}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-charcoal text-white rounded-lg text-caption font-mono font-medium hover:bg-ink-deep transition-colors cursor-pointer shadow-elevation-1 flex-shrink-0"
+                  >
+                    <Plus size={15} />
+                    <span>Add New Project</span>
+                  </button>
+                </div>
+
+                {/* Visual Project Cards Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {data.projects.map((project, index) => (
+                    <div
+                      key={project.id}
+                      className={`group rounded-xl border transition-all duration-200 flex flex-col justify-between overflow-hidden bg-surface ${
+                        project.featured
+                          ? "border-primary/40 shadow-elevation-1 ring-1 ring-primary/20"
+                          : "border-hairline hover:border-hairline-strong"
+                      }`}
+                    >
+                      {/* Image Thumbnail Preview */}
+                      <div className="relative h-40 bg-surface-soft border-b border-hairline overflow-hidden">
+                        {project.image ? (
+                          <Image
+                            src={project.image}
+                            alt={project.title}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-muted font-mono text-xs">
+                            No image preview
+                          </div>
+                        )}
+
+                        {/* Top Badges */}
+                        <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between z-10">
+                          <span className="px-2 py-0.5 rounded bg-surface/90 backdrop-blur-md border border-hairline text-charcoal font-mono text-[11px] font-semibold">
+                            {project.category} · {project.year}
+                          </span>
+
+                          {/* Quick Star Toggle Button */}
+                          <button
+                            type="button"
+                            onClick={() => toggleProjectFeatured(project.id)}
+                            className={`p-1.5 rounded-md backdrop-blur-md transition-all cursor-pointer ${
+                              project.featured
+                                ? "bg-primary text-white shadow-elevation-1"
+                                : "bg-surface/90 text-steel hover:text-charcoal hover:bg-surface"
+                            }`}
+                            title={project.featured ? "Featured on Home (Click to unfeature)" : "Click to feature on Home"}
+                          >
+                            <Star size={14} className={project.featured ? "fill-white" : ""} />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Card Body */}
+                      <div className="p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-start justify-between gap-2 mb-1">
+                            <h4 className="font-semibold text-charcoal text-body-md leading-tight line-clamp-1">
+                              {project.title}
+                            </h4>
+                          </div>
+
+                          <p className="text-slate text-body-sm line-clamp-2 leading-relaxed mb-3">
+                            {project.description}
+                          </p>
+
+                          {/* Tech stack chips */}
+                          <div className="flex flex-wrap gap-1 mb-4">
+                            {project.technologies.slice(0, 3).map((tech, i) => (
+                              <span
+                                key={i}
+                                className="px-1.5 py-0.5 rounded bg-canvas border border-hairline text-steel text-[10px] font-mono"
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                            {project.technologies.length > 3 && (
+                              <span className="px-1.5 py-0.5 rounded bg-canvas border border-hairline text-steel text-[10px] font-mono">
+                                +{project.technologies.length - 3}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Card Footer Actions */}
+                        <div className="pt-3 border-t border-hairline flex items-center justify-between">
+                          <button
+                            type="button"
+                            onClick={() => setEditingProject(project)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-canvas border border-hairline text-charcoal hover:border-steel text-caption font-mono font-medium transition-colors cursor-pointer"
+                          >
+                            <Edit3 size={13} />
+                            <span>Edit Details &amp; Upload</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteProject(project.id, project.title)}
+                            className="p-1.5 text-steel hover:text-rose-600 hover:bg-rose-50 rounded transition-colors cursor-pointer"
+                            title="Delete project"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* ═══════════════════════════════════════════
+                WORKSPACE 2: HERO & NARRATIVE (Live Kinetic Preview)
+                ═══════════════════════════════════════════ */}
+            {activeTab === "hero" && (
+              <div className="space-y-6">
+                {/* Live Simulation Box */}
+                <div className="p-6 md:p-8 rounded-xl bg-charcoal text-white space-y-4 shadow-elevation-2">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                    <span className="text-micro font-mono text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                      Live Landing Page Simulation
+                    </span>
+                    <span className="text-micro font-mono text-white/50">#hero</span>
+                  </div>
+
+                  <div className="py-4">
+                    <div className="text-heading-2 md:text-display-sm font-bold tracking-tight leading-none uppercase">
+                      <span>{data.hero.headlineLine1 || "FROM PIXEL"} </span>
+                      <span className="text-white/40">{data.hero.headlineLine2 || "TO"} </span>
+                      <span className="text-primary-deep bg-white px-2 py-0.5 rounded ml-1">
+                        {data.hero.headlineAccent || "PEOPLE."}
+                      </span>
+                    </div>
+
+                    <p className="text-body-md text-white/70 max-w-2xl mt-4 leading-relaxed">
+                      {data.hero.subtitle || "Bridging technical execution with human impact."}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Direct Editing Form */}
+                <div className="p-6 rounded-xl bg-surface border border-hairline space-y-5">
+                  <h3 className="text-heading-5 font-semibold text-charcoal tracking-tight border-b border-hairline pb-3">
+                    Edit Headline Typography
+                  </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-caption font-mono text-steel mb-1.5">
-                        Line 1 (e.g. FROM PIXEL)
+                      <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
+                        Line 1
                       </label>
                       <input
                         type="text"
@@ -254,8 +671,8 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     </div>
 
                     <div>
-                      <label className="block text-caption font-mono text-steel mb-1.5">
-                        Line 2 (e.g. TO)
+                      <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
+                        Line 2
                       </label>
                       <input
                         type="text"
@@ -271,8 +688,8 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     </div>
 
                     <div>
-                      <label className="block text-caption font-mono text-steel mb-1.5">
-                        Accent Line (e.g. PEOPLE.)
+                      <label className="block text-micro font-mono text-primary font-semibold uppercase tracking-wider mb-1.5">
+                        Accent Word
                       </label>
                       <input
                         type="text"
@@ -283,14 +700,14 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                             hero: { ...data.hero, headlineAccent: e.target.value },
                           })
                         }
-                        className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-primary font-mono text-body-sm font-semibold focus:border-primary focus:outline-none"
+                        className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-primary/40 text-primary font-mono text-body-sm font-semibold focus:border-primary focus:outline-none"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-caption font-mono text-steel mb-1.5">
-                      Hero Subtitle Paragraph
+                    <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
+                      Subtitle Paragraph
                     </label>
                     <textarea
                       rows={3}
@@ -301,34 +718,23 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                           hero: { ...data.hero, subtitle: e.target.value },
                         })
                       }
-                      className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none"
+                      className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none leading-relaxed"
                     />
                   </div>
                 </div>
 
                 {/* 3 Core Focus Pillars */}
-                <div className="p-6 md:p-8 rounded-xl bg-surface border border-hairline space-y-6 shadow-elevation-0">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-heading-4 font-semibold text-charcoal tracking-tight">
-                        3 Core Focus Pillars
-                      </h3>
-                      <p className="text-caption text-slate mt-0.5">
-                        The 3 interactive focus cards featured directly underneath the Hero statement
-                      </p>
-                    </div>
-                    <span className="text-micro font-mono text-steel uppercase">3 Pillars</span>
-                  </div>
+                <div className="p-6 rounded-xl bg-surface border border-hairline space-y-4">
+                  <h3 className="text-heading-5 font-semibold text-charcoal tracking-tight border-b border-hairline pb-3">
+                    3 Core Focus Pillars (Row underneath Hero)
+                  </h3>
 
-                  <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {data.hero.pillars.map((pillar, index) => (
-                      <div
-                        key={pillar.id || index}
-                        className="p-5 rounded-lg bg-canvas border border-hairline space-y-3"
-                      >
+                      <div key={pillar.id || index} className="p-4 rounded-lg bg-canvas border border-hairline space-y-3">
                         <div className="flex items-center justify-between">
-                          <span className="text-caption font-mono font-semibold text-primary">
-                            Pillar #{pillar.num}
+                          <span className="text-caption font-mono font-bold text-primary">
+                            /{pillar.num}
                           </span>
                           <input
                             type="text"
@@ -339,65 +745,51 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                               updated[index].tags = e.target.value;
                               setData({ ...data, hero: { ...data.hero, pillars: updated } });
                             }}
-                            className="px-2.5 py-1 rounded bg-surface border border-hairline text-steel text-micro font-mono"
+                            className="px-2 py-0.5 rounded bg-surface border border-hairline text-steel text-micro font-mono text-right"
                           />
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          <div>
-                            <label className="block text-micro font-mono text-steel mb-1">
-                              Pillar Title
-                            </label>
-                            <input
-                              type="text"
-                              value={pillar.title}
-                              onChange={(e) => {
-                                const updated = [...data.hero.pillars];
-                                updated[index].title = e.target.value;
-                                setData({ ...data, hero: { ...data.hero, pillars: updated } });
-                              }}
-                              className="w-full px-3 py-2 rounded bg-surface border border-hairline text-charcoal font-semibold text-body-sm focus:border-primary focus:outline-none"
-                            />
-                          </div>
+                        <div>
+                          <label className="block text-micro font-mono text-steel mb-1">Title</label>
+                          <input
+                            type="text"
+                            value={pillar.title}
+                            onChange={(e) => {
+                              const updated = [...data.hero.pillars];
+                              updated[index].title = e.target.value;
+                              setData({ ...data, hero: { ...data.hero, pillars: updated } });
+                            }}
+                            className="w-full px-3 py-1.5 rounded bg-surface border border-hairline text-charcoal font-semibold text-body-sm focus:border-primary focus:outline-none"
+                          />
+                        </div>
 
-                          <div>
-                            <label className="block text-micro font-mono text-steel mb-1">
-                              Description
-                            </label>
-                            <textarea
-                              rows={2}
-                              value={pillar.desc}
-                              onChange={(e) => {
-                                const updated = [...data.hero.pillars];
-                                updated[index].desc = e.target.value;
-                                setData({ ...data, hero: { ...data.hero, pillars: updated } });
-                              }}
-                              className="w-full px-3 py-2 rounded bg-surface border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none"
-                            />
-                          </div>
+                        <div>
+                          <label className="block text-micro font-mono text-steel mb-1">Description</label>
+                          <textarea
+                            rows={3}
+                            value={pillar.desc}
+                            onChange={(e) => {
+                              const updated = [...data.hero.pillars];
+                              updated[index].desc = e.target.value;
+                              setData({ ...data, hero: { ...data.hero, pillars: updated } });
+                            }}
+                            className="w-full px-3 py-1.5 rounded bg-surface border border-hairline text-charcoal text-caption focus:border-primary focus:outline-none leading-relaxed"
+                          />
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* Scroll Reveal Narrative Statement */}
-                <div className="p-6 md:p-8 rounded-xl bg-surface border border-hairline space-y-4 shadow-elevation-0">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-heading-4 font-semibold text-charcoal tracking-tight">
-                        Scroll Reveal Statement
-                      </h3>
-                      <p className="text-caption text-slate mt-0.5">
-                        The buttery smooth scroll-illuminated text reveal right after the Hero
-                      </p>
-                    </div>
-                    <span className="text-micro font-mono text-steel uppercase">Scroll Kinetic</span>
-                  </div>
+                {/* Scroll Reveal Narrative */}
+                <div className="p-6 rounded-xl bg-surface border border-hairline space-y-4">
+                  <h3 className="text-heading-5 font-semibold text-charcoal tracking-tight border-b border-hairline pb-3">
+                    Scroll Reveal Narrative Statement
+                  </h3>
 
                   <div>
-                    <label className="block text-caption font-mono text-steel mb-1.5">
-                      Narrative Text (Words will illuminate word-by-word on scroll)
+                    <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
+                      Statement (Words illuminate sequentially on scroll)
                     </label>
                     <textarea
                       rows={4}
@@ -408,278 +800,125 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                           narrative: { ...data.narrative, statement: e.target.value },
                         })
                       }
-                      className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm leading-relaxed focus:border-primary focus:outline-none"
+                      className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none leading-relaxed"
                     />
                   </div>
                 </div>
               </div>
             )}
 
-            {/* ── TAB 2: PROJECTS (SELECTED WORK) ── */}
-            {activeTab === "projects" && (
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-heading-3 font-semibold text-charcoal tracking-tight">
-                      Projects Catalog
-                    </h3>
-                    <p className="text-body-sm text-slate mt-0.5">
-                      Manage all case studies shown on Homepage (#work) and /work page
-                    </p>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const newProject: CMSProject = {
-                        id: Date.now(),
-                        title: "New Project Showcase",
-                        slug: `project-${Date.now()}`,
-                        category: "Web Platform",
-                        year: new Date().getFullYear(),
-                        image: "/assets/greengnsulteng_web.png",
-                        link: "https://example.com",
-                        featured: true,
-                        description: "Detailed overview of the engineering architecture and problem solved.",
-                        technologies: ["React", "TypeScript", "Tailwind CSS"],
-                        metrics: [{ label: "Efficiency", value: "+30%" }],
-                      };
-                      setData({ ...data, projects: [newProject, ...data.projects] });
-                    }}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-charcoal text-white rounded-lg text-caption font-mono font-medium hover:bg-ink-deep transition-colors duration-200 shadow-elevation-1 cursor-pointer"
-                  >
-                    <Plus size={14} />
-                    <span>Add Project</span>
-                  </button>
-                </div>
-
-                <div className="space-y-4">
-                  {data.projects.map((project, index) => (
-                    <div
-                      key={project.id}
-                      className="p-6 rounded-xl bg-surface border border-hairline space-y-4 shadow-elevation-0 hover:border-hairline-strong transition-all duration-200"
-                    >
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-hairline pb-4">
-                        <div className="flex items-center gap-3">
-                          <span className="w-8 h-8 rounded bg-canvas border border-hairline flex items-center justify-center font-mono text-caption text-steel font-bold">
-                            #{index + 1}
-                          </span>
-                          <div>
-                            <input
-                              type="text"
-                              value={project.title}
-                              onChange={(e) => {
-                                const updated = [...data.projects];
-                                updated[index].title = e.target.value;
-                                setData({ ...data, projects: updated });
-                              }}
-                              className="font-semibold text-heading-4 text-charcoal bg-transparent border-b border-transparent hover:border-hairline focus:border-primary focus:outline-none px-1"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                          <label className="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-canvas border border-hairline cursor-pointer text-caption font-mono">
-                            <input
-                              type="checkbox"
-                              checked={project.featured}
-                              onChange={(e) => {
-                                const updated = [...data.projects];
-                                updated[index].featured = e.target.checked;
-                                setData({ ...data, projects: updated });
-                              }}
-                              className="w-4 h-4 text-primary rounded"
-                            />
-                            <span className={project.featured ? "text-primary font-semibold" : "text-steel"}>
-                              {project.featured ? "Featured on Home" : "Standard Archive"}
-                            </span>
-                          </label>
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (confirm(`Delete project "${project.title}"?`)) {
-                                const updated = data.projects.filter((p) => p.id !== project.id);
-                                setData({ ...data, projects: updated });
-                              }
-                            }}
-                            className="p-2 rounded hover:bg-rose-50 text-steel hover:text-rose-600 transition-colors cursor-pointer"
-                            title="Delete project"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <label className="block text-micro font-mono text-steel mb-1">Category</label>
-                          <input
-                            type="text"
-                            value={project.category}
-                            onChange={(e) => {
-                              const updated = [...data.projects];
-                              updated[index].category = e.target.value;
-                              setData({ ...data, projects: updated });
-                            }}
-                            className="w-full px-3 py-2 rounded bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-micro font-mono text-steel mb-1">Year</label>
-                          <input
-                            type="number"
-                            value={project.year}
-                            onChange={(e) => {
-                              const updated = [...data.projects];
-                              updated[index].year = parseInt(e.target.value) || 2025;
-                              setData({ ...data, projects: updated });
-                            }}
-                            className="w-full px-3 py-2 rounded bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-micro font-mono text-steel mb-1">Live / Demo Link</label>
-                          <input
-                            type="text"
-                            value={project.link}
-                            onChange={(e) => {
-                              const updated = [...data.projects];
-                              updated[index].link = e.target.value;
-                              setData({ ...data, projects: updated });
-                            }}
-                            className="w-full px-3 py-2 rounded bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-micro font-mono text-steel mb-1">Description</label>
-                        <textarea
-                          rows={3}
-                          value={project.description}
-                          onChange={(e) => {
-                            const updated = [...data.projects];
-                            updated[index].description = e.target.value;
-                            setData({ ...data, projects: updated });
-                          }}
-                          className="w-full px-3 py-2 rounded bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none leading-relaxed"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-micro font-mono text-steel mb-1">
-                            Technologies (comma separated)
-                          </label>
-                          <input
-                            type="text"
-                            value={project.technologies.join(", ")}
-                            onChange={(e) => {
-                              const updated = [...data.projects];
-                              updated[index].technologies = e.target.value.split(",").map((s) => s.trim()).filter(Boolean);
-                              setData({ ...data, projects: updated });
-                            }}
-                            className="w-full px-3 py-2 rounded bg-canvas border border-hairline text-charcoal text-body-sm font-mono focus:border-primary focus:outline-none"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-micro font-mono text-steel mb-1">
-                            Image Asset Path
-                          </label>
-                          <input
-                            type="text"
-                            value={project.image}
-                            onChange={(e) => {
-                              const updated = [...data.projects];
-                              updated[index].image = e.target.value;
-                              setData({ ...data, projects: updated });
-                            }}
-                            className="w-full px-3 py-2 rounded bg-canvas border border-hairline text-charcoal text-body-sm font-mono focus:border-primary focus:outline-none"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* ── TAB 3: ABOUT & PROFILE BENTO ── */}
+            {/* ═══════════════════════════════════════════
+                WORKSPACE 3: ABOUT & BENTO (Visual Studio)
+                ═══════════════════════════════════════════ */}
             {activeTab === "about" && (
-              <div className="space-y-8">
-                {/* Identity & Portrait */}
-                <div className="p-6 md:p-8 rounded-xl bg-surface border border-hairline space-y-6 shadow-elevation-0">
-                  <h3 className="text-heading-4 font-semibold text-charcoal tracking-tight">
+              <div className="space-y-6">
+                {/* Visual Identity Deck (Live portrait + Profile inputs side-by-side) */}
+                <div className="p-6 rounded-xl bg-surface border border-hairline space-y-5">
+                  <h3 className="text-heading-5 font-semibold text-charcoal tracking-tight border-b border-hairline pb-3">
                     Profile Identity &amp; Portrait
                   </h3>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-caption font-mono text-steel mb-1.5">Full Name</label>
-                      <input
-                        type="text"
-                        value={data.about.fullName}
-                        onChange={(e) =>
-                          setData({ ...data, about: { ...data.about, fullName: e.target.value } })
-                        }
-                        className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none"
-                      />
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+                    {/* Live Portrait Preview + Upload Button */}
+                    <div className="p-4 rounded-lg bg-canvas border border-hairline flex flex-col items-center text-center">
+                      <div className="w-28 h-28 rounded-xl overflow-hidden border border-hairline bg-surface mb-3 relative group">
+                        <Image
+                          src={data.about.portraitImage || "/assets/foto_closeup.jpg"}
+                          alt={data.about.fullName}
+                          fill
+                          className="object-cover object-top"
+                        />
+                      </div>
+
+                      <button
+                        type="button"
+                        disabled={isUploading}
+                        onClick={() => portraitFileInputRef.current?.click()}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface border border-hairline hover:border-steel text-charcoal text-micro font-mono font-medium transition-colors cursor-pointer mb-2"
+                      >
+                        <Upload size={12} />
+                        <span>{isUploading ? "Uploading..." : "Upload New Photo"}</span>
+                      </button>
+
+                      <div className="text-body-sm-medium font-semibold text-charcoal">
+                        {data.about.fullName}
+                      </div>
+                      <div className="text-micro font-mono text-primary font-semibold mt-0.5">
+                        {data.about.roleTag}
+                      </div>
                     </div>
 
-                    <div>
-                      <label className="block text-caption font-mono text-steel mb-1.5">Role Tag Badge</label>
-                      <input
-                        type="text"
-                        value={data.about.roleTag}
-                        onChange={(e) =>
-                          setData({ ...data, about: { ...data.about, roleTag: e.target.value } })
-                        }
-                        className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
-                      />
-                    </div>
+                    {/* Inputs */}
+                    <div className="md:col-span-2 space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
+                            Full Name
+                          </label>
+                          <input
+                            type="text"
+                            value={data.about.fullName}
+                            onChange={(e) =>
+                              setData({ ...data, about: { ...data.about, fullName: e.target.value } })
+                            }
+                            className="w-full px-3 py-2 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none"
+                          />
+                        </div>
 
-                    <div>
-                      <label className="block text-caption font-mono text-steel mb-1.5">
-                        Portrait Photo Path
-                      </label>
-                      <input
-                        type="text"
-                        value={data.about.portraitImage}
-                        onChange={(e) =>
-                          setData({ ...data, about: { ...data.about, portraitImage: e.target.value } })
-                        }
-                        className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
-                      />
-                    </div>
+                        <div>
+                          <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
+                            Role Tag
+                          </label>
+                          <input
+                            type="text"
+                            value={data.about.roleTag}
+                            onChange={(e) =>
+                              setData({ ...data, about: { ...data.about, roleTag: e.target.value } })
+                            }
+                            className="w-full px-3 py-2 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
+                          />
+                        </div>
 
-                    <div>
-                      <label className="block text-caption font-mono text-steel mb-1.5">
-                        Location &amp; Coordinates
-                      </label>
-                      <input
-                        type="text"
-                        value={data.about.locationText}
-                        onChange={(e) =>
-                          setData({ ...data, about: { ...data.about, locationText: e.target.value } })
-                        }
-                        className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
-                      />
+                        <div>
+                          <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
+                            Portrait Image URL / Path
+                          </label>
+                          <input
+                            type="text"
+                            value={data.about.portraitImage}
+                            onChange={(e) =>
+                              setData({ ...data, about: { ...data.about, portraitImage: e.target.value } })
+                            }
+                            className="w-full px-3 py-2 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
+                            Location &amp; Coordinates
+                          </label>
+                          <input
+                            type="text"
+                            value={data.about.locationText}
+                            onChange={(e) =>
+                              setData({ ...data, about: { ...data.about, locationText: e.target.value } })
+                            }
+                            className="w-full px-3 py-2 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Philosophy & Bio */}
-                <div className="p-6 md:p-8 rounded-xl bg-surface border border-hairline space-y-4 shadow-elevation-0">
-                  <h3 className="text-heading-4 font-semibold text-charcoal tracking-tight">
-                    Philosophy &amp; Ethos
+                <div className="p-6 rounded-xl bg-surface border border-hairline space-y-4">
+                  <h3 className="text-heading-5 font-semibold text-charcoal tracking-tight border-b border-hairline pb-3">
+                    Philosophy &amp; Bio Statement
                   </h3>
 
                   <div>
-                    <label className="block text-caption font-mono text-steel mb-1.5">
+                    <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
                       Philosophy Headline
                     </label>
                     <input
@@ -696,11 +935,11 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                   </div>
 
                   <div>
-                    <label className="block text-caption font-mono text-steel mb-1.5">
-                      Bio Paragraph
+                    <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
+                      Bio Narrative
                     </label>
                     <textarea
-                      rows={4}
+                      rows={3}
                       value={data.about.philosophyBio}
                       onChange={(e) =>
                         setData({
@@ -712,24 +951,35 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                     <div>
-                      <label className="block text-caption font-mono text-steel mb-1.5">
-                        Resume PDF Path
-                      </label>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className="block text-micro font-mono text-steel uppercase tracking-wider">
+                          Resume PDF File URL
+                        </label>
+                        <button
+                          type="button"
+                          disabled={isUploading}
+                          onClick={() => resumeFileInputRef.current?.click()}
+                          className="inline-flex items-center gap-1 text-micro font-mono text-primary font-semibold hover:underline cursor-pointer"
+                        >
+                          <Upload size={11} />
+                          <span>Upload PDF</span>
+                        </button>
+                      </div>
                       <input
                         type="text"
                         value={data.about.resumeUrl}
                         onChange={(e) =>
                           setData({ ...data, about: { ...data.about, resumeUrl: e.target.value } })
                         }
-                        className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
+                        className="w-full px-3.5 py-2 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-caption font-mono text-steel mb-1.5">
-                        Status Tag (e.g. Remote Ready)
+                      <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
+                        Status Badge (e.g. Remote Ready)
                       </label>
                       <input
                         type="text"
@@ -737,34 +987,111 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         onChange={(e) =>
                           setData({ ...data, about: { ...data.about, statusTag: e.target.value } })
                         }
-                        className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
+                        className="w-full px-3.5 py-2 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
                       />
                     </div>
                   </div>
                 </div>
 
+                {/* Interactive Tech Stack Manager (Chips Tagging UI) */}
+                <div className="p-6 rounded-xl bg-surface border border-hairline space-y-4">
+                  <div className="flex items-center justify-between border-b border-hairline pb-3">
+                    <div>
+                      <h3 className="text-heading-5 font-semibold text-charcoal tracking-tight">
+                        Active Tech Stack ({data.about.techStack.length} chips)
+                      </h3>
+                      <p className="text-caption text-slate mt-0.5">
+                        Click the &times; on any chip to remove it, or add new technologies below.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Active Chips */}
+                  <div className="flex flex-wrap gap-2 p-3 rounded-lg bg-canvas border border-hairline min-h-[50px]">
+                    {data.about.techStack.map((tech, index) => (
+                      <div
+                        key={index}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-hairline text-charcoal font-mono text-caption shadow-elevation-0 hover:border-steel transition-colors"
+                      >
+                        <span className="font-semibold">{tech.name}</span>
+                        <span className="text-muted text-xs font-normal">({tech.category})</span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveTechStack(index)}
+                          className="ml-1 text-steel hover:text-rose-600 transition-colors cursor-pointer"
+                          title="Remove tech"
+                        >
+                          <X size={13} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Quick Add Tech Bar */}
+                  <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                    <input
+                      type="text"
+                      placeholder="Tech name (e.g. Supabase, Docker, Golang)"
+                      value={newTechName}
+                      onChange={(e) => setNewTechName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddTechStack();
+                        }
+                      }}
+                      className="flex-1 px-3.5 py-2 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm font-mono focus:border-primary focus:outline-none"
+                    />
+
+                    <select
+                      value={newTechCategory}
+                      onChange={(e) => setNewTechCategory(e.target.value)}
+                      className="px-3 py-2 rounded-lg bg-canvas border border-hairline text-charcoal text-caption font-mono focus:border-primary focus:outline-none"
+                    >
+                      <option value="Framework">Framework</option>
+                      <option value="Language">Language</option>
+                      <option value="Database">Database</option>
+                      <option value="Library">Library</option>
+                      <option value="Styling">Styling</option>
+                      <option value="Spatial">Spatial</option>
+                      <option value="Design">Design</option>
+                      <option value="Hardware">Hardware</option>
+                      <option value="Tool">Tool</option>
+                    </select>
+
+                    <button
+                      type="button"
+                      onClick={handleAddTechStack}
+                      className="px-4 py-2 bg-charcoal hover:bg-ink-deep text-white text-caption font-mono font-medium rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5 flex-shrink-0"
+                    >
+                      <Plus size={14} />
+                      <span>Add Chip</span>
+                    </button>
+                  </div>
+                </div>
+
                 {/* Community Roles */}
-                <div className="p-6 md:p-8 rounded-xl bg-surface border border-hairline space-y-4 shadow-elevation-0">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-heading-4 font-semibold text-charcoal tracking-tight">
+                <div className="p-6 rounded-xl bg-surface border border-hairline space-y-4">
+                  <div className="flex items-center justify-between border-b border-hairline pb-3">
+                    <h3 className="text-heading-5 font-semibold text-charcoal tracking-tight">
                       Community Leadership Roles
                     </h3>
                     <button
                       type="button"
                       onClick={() => {
-                        const updated = [...data.about.communityRoles, { org: "New Community", role: "Role Title" }];
+                        const updated = [...data.about.communityRoles, { org: "Organization Name", role: "Role Title" }];
                         setData({ ...data, about: { ...data.about, communityRoles: updated } });
                       }}
-                      className="inline-flex items-center gap-1.5 text-caption font-mono text-primary font-semibold hover:underline cursor-pointer"
+                      className="inline-flex items-center gap-1 text-caption font-mono text-primary font-semibold hover:underline cursor-pointer"
                     >
-                      <Plus size={14} />
+                      <Plus size={13} />
                       <span>Add Role</span>
                     </button>
                   </div>
 
-                  <div className="space-y-3">
+                  <div className="space-y-2.5">
                     {data.about.communityRoles.map((role, idx) => (
-                      <div key={idx} className="flex items-center gap-3 p-3 rounded-lg bg-canvas border border-hairline">
+                      <div key={idx} className="flex items-center gap-3 p-2.5 rounded-lg bg-canvas border border-hairline">
                         <input
                           type="text"
                           placeholder="Organization Name"
@@ -795,66 +1122,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                           }}
                           className="p-1.5 text-steel hover:text-rose-600 transition-colors cursor-pointer"
                         >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Active Tech Stack */}
-                <div className="p-6 md:p-8 rounded-xl bg-surface border border-hairline space-y-4 shadow-elevation-0">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-heading-4 font-semibold text-charcoal tracking-tight">
-                      Active Tech Stack
-                    </h3>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const updated = [...data.about.techStack, { name: "New Tech", category: "Tool" }];
-                        setData({ ...data, about: { ...data.about, techStack: updated } });
-                      }}
-                      className="inline-flex items-center gap-1.5 text-caption font-mono text-primary font-semibold hover:underline cursor-pointer"
-                    >
-                      <Plus size={14} />
-                      <span>Add Tech</span>
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                    {data.about.techStack.map((tech, idx) => (
-                      <div key={idx} className="flex items-center gap-2 p-2.5 rounded-lg bg-canvas border border-hairline">
-                        <input
-                          type="text"
-                          placeholder="Name"
-                          value={tech.name}
-                          onChange={(e) => {
-                            const updated = [...data.about.techStack];
-                            updated[idx].name = e.target.value;
-                            setData({ ...data, about: { ...data.about, techStack: updated } });
-                          }}
-                          className="flex-1 px-2.5 py-1 rounded bg-surface border border-hairline text-charcoal font-mono text-caption font-semibold focus:border-primary focus:outline-none"
-                        />
-                        <input
-                          type="text"
-                          placeholder="Category"
-                          value={tech.category}
-                          onChange={(e) => {
-                            const updated = [...data.about.techStack];
-                            updated[idx].category = e.target.value;
-                            setData({ ...data, about: { ...data.about, techStack: updated } });
-                          }}
-                          className="w-24 px-2 py-1 rounded bg-surface border border-hairline text-steel text-micro font-mono focus:border-primary focus:outline-none"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const updated = data.about.techStack.filter((_, i) => i !== idx);
-                            setData({ ...data, about: { ...data.about, techStack: updated } });
-                          }}
-                          className="p-1 text-steel hover:text-rose-600 transition-colors cursor-pointer"
-                        >
-                          <Trash2 size={14} />
+                          <Trash2 size={15} />
                         </button>
                       </div>
                     ))}
@@ -863,16 +1131,18 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
               </div>
             )}
 
-            {/* ── TAB 4: WRITING & PUBLICATIONS ── */}
+            {/* ═══════════════════════════════════════════
+                WORKSPACE 4: WRITING & STORIES
+                ═══════════════════════════════════════════ */}
             {activeTab === "writing" && (
               <div className="space-y-6">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between p-5 rounded-xl bg-surface border border-hairline">
                   <div>
-                    <h3 className="text-heading-3 font-semibold text-charcoal tracking-tight">
-                      Selected Publications &amp; Stories
+                    <h3 className="text-heading-4 font-semibold text-charcoal tracking-tight">
+                      Selected Publications &amp; Writing Feed
                     </h3>
                     <p className="text-body-sm text-slate mt-0.5">
-                      Manage the minimalist publication feed articles shown on the landing page
+                      Articles displayed in the minimalist publication feed on the landing page.
                     </p>
                   </div>
 
@@ -890,7 +1160,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       };
                       setData({ ...data, stories: [newStory, ...data.stories] });
                     }}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-charcoal text-white rounded-lg text-caption font-mono font-medium hover:bg-ink-deep transition-colors duration-200 shadow-elevation-1 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-charcoal text-white rounded-lg text-caption font-mono font-medium hover:bg-ink-deep transition-colors cursor-pointer"
                   >
                     <Plus size={14} />
                     <span>Add Article</span>
@@ -899,11 +1169,8 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
 
                 <div className="space-y-4">
                   {data.stories.map((story, index) => (
-                    <div
-                      key={story.id}
-                      className="p-6 rounded-xl bg-surface border border-hairline space-y-4 shadow-elevation-0"
-                    >
-                      <div className="flex items-center justify-between border-b border-hairline pb-4">
+                    <div key={story.id} className="p-5 rounded-xl bg-surface border border-hairline space-y-4">
+                      <div className="flex items-center justify-between border-b border-hairline pb-3">
                         <input
                           type="text"
                           value={story.title}
@@ -912,7 +1179,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                             updated[index].title = e.target.value;
                             setData({ ...data, stories: updated });
                           }}
-                          className="font-semibold text-heading-4 text-charcoal bg-transparent border-b border-transparent hover:border-hairline focus:border-primary focus:outline-none px-1 flex-1 mr-4"
+                          className="font-semibold text-heading-5 text-charcoal bg-transparent border-b border-transparent hover:border-hairline focus:border-primary focus:outline-none px-1 flex-1 mr-4"
                         />
 
                         <button
@@ -923,9 +1190,9 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                               setData({ ...data, stories: updated });
                             }
                           }}
-                          className="p-2 text-steel hover:text-rose-600 transition-colors cursor-pointer"
+                          className="p-1.5 text-steel hover:text-rose-600 transition-colors cursor-pointer"
                         >
-                          <Trash2 size={16} />
+                          <Trash2 size={15} />
                         </button>
                       </div>
 
@@ -959,7 +1226,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         </div>
 
                         <div>
-                          <label className="block text-micro font-mono text-steel mb-1">Reading Time</label>
+                          <label className="block text-micro font-mono text-steel mb-1">Read Time</label>
                           <input
                             type="text"
                             value={story.readTime}
@@ -992,16 +1259,18 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
               </div>
             )}
 
-            {/* ── TAB 5: JOURNEY MILESTONES ── */}
+            {/* ═══════════════════════════════════════════
+                WORKSPACE 5: JOURNEY TIMELINE
+                ═══════════════════════════════════════════ */}
             {activeTab === "journey" && (
               <div className="space-y-6">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between p-5 rounded-xl bg-surface border border-hairline">
                   <div>
-                    <h3 className="text-heading-3 font-semibold text-charcoal tracking-tight">
+                    <h3 className="text-heading-4 font-semibold text-charcoal tracking-tight">
                       Journey Milestones &amp; Experience
                     </h3>
                     <p className="text-body-sm text-slate mt-0.5">
-                      Manage the editorial ledger entries on the /journey page
+                      Entries rendered in the editorial ledger on the /journey page.
                     </p>
                   </div>
 
@@ -1015,13 +1284,13 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         organization: "Organization / Project",
                         dateStart: "2026-01",
                         dateEnd: "",
-                        description: "Description of the milestone and contributions made.",
+                        description: "Description of the milestone, responsibilities, and achievements.",
                         highlights: ["Leadership", "Engineering"],
                         category: "community",
                       };
                       setData({ ...data, experiences: [newExp, ...data.experiences] });
                     }}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-charcoal text-white rounded-lg text-caption font-mono font-medium hover:bg-ink-deep transition-colors duration-200 shadow-elevation-1 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-charcoal text-white rounded-lg text-caption font-mono font-medium hover:bg-ink-deep transition-colors cursor-pointer"
                   >
                     <Plus size={14} />
                     <span>Add Milestone</span>
@@ -1030,13 +1299,10 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
 
                 <div className="space-y-4">
                   {data.experiences.map((exp, index) => (
-                    <div
-                      key={exp.id}
-                      className="p-6 rounded-xl bg-surface border border-hairline space-y-4 shadow-elevation-0"
-                    >
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-hairline pb-4">
-                        <div className="flex items-center gap-3 flex-1">
-                          <span className="text-caption font-mono text-steel">#{index + 1}</span>
+                    <div key={exp.id} className="p-5 rounded-xl bg-surface border border-hairline space-y-4">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-hairline pb-3">
+                        <div className="flex items-center gap-2.5 flex-1">
+                          <span className="text-caption font-mono text-steel font-bold">#{index + 1}</span>
                           <input
                             type="text"
                             value={exp.role}
@@ -1046,7 +1312,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                               updated[index].role = e.target.value;
                               setData({ ...data, experiences: updated });
                             }}
-                            className="font-semibold text-heading-4 text-charcoal bg-transparent border-b border-transparent hover:border-hairline focus:border-primary focus:outline-none px-1"
+                            className="font-semibold text-heading-5 text-charcoal bg-transparent border-b border-transparent hover:border-hairline focus:border-primary focus:outline-none px-1"
                           />
                           <span className="text-steel">@</span>
                           <input
@@ -1088,18 +1354,16 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                                 setData({ ...data, experiences: updated });
                               }
                             }}
-                            className="p-2 text-steel hover:text-rose-600 transition-colors cursor-pointer"
+                            className="p-1.5 text-steel hover:text-rose-600 transition-colors cursor-pointer"
                           >
-                            <Trash2 size={16} />
+                            <Trash2 size={15} />
                           </button>
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                          <label className="block text-micro font-mono text-steel mb-1">
-                            Start Date (YYYY-MM)
-                          </label>
+                          <label className="block text-micro font-mono text-steel mb-1">Start Date (YYYY-MM)</label>
                           <input
                             type="text"
                             value={exp.dateStart}
@@ -1113,9 +1377,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         </div>
 
                         <div>
-                          <label className="block text-micro font-mono text-steel mb-1">
-                            End Date (Leave blank for Ongoing)
-                          </label>
+                          <label className="block text-micro font-mono text-steel mb-1">End Date (Blank = Present)</label>
                           <input
                             type="text"
                             placeholder="YYYY-MM (or empty)"
@@ -1130,9 +1392,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         </div>
 
                         <div>
-                          <label className="block text-micro font-mono text-steel mb-1">
-                            Display Title
-                          </label>
+                          <label className="block text-micro font-mono text-steel mb-1">Display Title</label>
                           <input
                             type="text"
                             value={exp.title}
@@ -1147,9 +1407,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       </div>
 
                       <div>
-                        <label className="block text-micro font-mono text-steel mb-1">
-                          Detailed Narrative Description
-                        </label>
+                        <label className="block text-micro font-mono text-steel mb-1">Narrative Description</label>
                         <textarea
                           rows={3}
                           value={exp.description}
@@ -1163,9 +1421,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       </div>
 
                       <div>
-                        <label className="block text-micro font-mono text-steel mb-1">
-                          Highlights &amp; Tags (comma separated)
-                        </label>
+                        <label className="block text-micro font-mono text-steel mb-1">Highlights (comma separated)</label>
                         <input
                           type="text"
                           value={exp.highlights.join(", ")}
@@ -1183,19 +1439,55 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
               </div>
             )}
 
-            {/* ── TAB 6: SITE & SOCIAL ── */}
+            {/* ═══════════════════════════════════════════
+                WORKSPACE 6: SUPABASE & GLOBAL SETTINGS
+                ═══════════════════════════════════════════ */}
             {activeTab === "site" && (
-              <div className="space-y-8">
-                <div className="p-6 md:p-8 rounded-xl bg-surface border border-hairline space-y-6 shadow-elevation-0">
-                  <h3 className="text-heading-4 font-semibold text-charcoal tracking-tight">
+              <div className="space-y-6">
+                {/* Supabase Storage Card */}
+                <div className="p-6 rounded-xl bg-surface border border-hairline space-y-4">
+                  <div className="flex items-center justify-between border-b border-hairline pb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-mono font-bold text-sm">
+                        <Database size={16} />
+                      </div>
+                      <div>
+                        <h3 className="text-heading-5 font-semibold text-charcoal tracking-tight">
+                          Supabase Storage &amp; Database
+                        </h3>
+                        <p className="text-caption text-slate">
+                          Automatic Cloud CDN uploads for screenshots, profile photos, and documents.
+                        </p>
+                      </div>
+                    </div>
+                    <span className="px-2.5 py-1 rounded bg-canvas border border-hairline text-primary font-mono text-micro font-semibold flex items-center gap-1.5">
+                      <Cloud size={12} />
+                      <span>Ready</span>
+                    </span>
+                  </div>
+
+                  <div className="p-4 rounded-lg bg-canvas border border-hairline space-y-2">
+                    <div className="text-body-sm font-semibold text-charcoal">
+                      How to connect your Supabase Project:
+                    </div>
+                    <ol className="text-caption text-slate space-y-1.5 list-decimal list-inside font-mono">
+                      <li>Open your <strong>.env.local</strong> file in this project.</li>
+                      <li>Fill in <strong>NEXT_PUBLIC_SUPABASE_URL</strong> and <strong>NEXT_PUBLIC_SUPABASE_ANON_KEY</strong>.</li>
+                      <li>In Supabase Dashboard, create a Storage bucket named <strong>portfolio-assets</strong> and set it to Public.</li>
+                      <li>All future uploads in this CMS will automatically stream to your Supabase Cloud CDN!</li>
+                    </ol>
+                  </div>
+                </div>
+
+                {/* Global Contact & Social Links */}
+                <div className="p-6 rounded-xl bg-surface border border-hairline space-y-5">
+                  <h3 className="text-heading-5 font-semibold text-charcoal tracking-tight border-b border-hairline pb-3">
                     Global Contact &amp; Social Links
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-caption font-mono text-steel mb-1.5">
-                        Primary Email
-                      </label>
+                      <label className="block text-micro font-mono text-steel mb-1.5">Primary Email</label>
                       <input
                         type="email"
                         value={data.site.email}
@@ -1207,9 +1499,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     </div>
 
                     <div>
-                      <label className="block text-caption font-mono text-steel mb-1.5">
-                        GitHub Profile Link
-                      </label>
+                      <label className="block text-micro font-mono text-steel mb-1.5">GitHub URL</label>
                       <input
                         type="text"
                         value={data.site.github}
@@ -1221,9 +1511,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     </div>
 
                     <div>
-                      <label className="block text-caption font-mono text-steel mb-1.5">
-                        LinkedIn Profile Link
-                      </label>
+                      <label className="block text-micro font-mono text-steel mb-1.5">LinkedIn URL</label>
                       <input
                         type="text"
                         value={data.site.linkedin}
@@ -1235,9 +1523,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     </div>
 
                     <div>
-                      <label className="block text-caption font-mono text-steel mb-1.5">
-                        Instagram Profile Link
-                      </label>
+                      <label className="block text-micro font-mono text-steel mb-1.5">Instagram URL</label>
                       <input
                         type="text"
                         value={data.site.instagram}
@@ -1250,9 +1536,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                   </div>
 
                   <div>
-                    <label className="block text-caption font-mono text-steel mb-1.5">
-                      Footer Slogan / Note
-                    </label>
+                    <label className="block text-micro font-mono text-steel mb-1.5">Footer Note / Slogan</label>
                     <input
                       type="text"
                       value={data.site.footerNote}
@@ -1269,11 +1553,243 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
         </div>
 
         {/* Footer info in main */}
-        <footer className="px-6 md:px-8 py-4 border-t border-hairline text-caption text-steel font-mono flex items-center justify-between">
-          <span>Dareean Portfolio CMS v1.2</span>
-          <span>Last active session: Localhost</span>
+        <footer className="px-6 md:px-8 py-3.5 border-t border-hairline text-caption text-steel font-mono flex items-center justify-between bg-surface-soft">
+          <span>Dareean Portfolio Studio · Supabase Ready</span>
+          <span>Local JSON DB &amp; Cloud Storage</span>
         </footer>
       </main>
+
+      {/* ═══════════════════════════════════════════
+          PROJECT EDITING MODAL / DRAWER (With File Upload)
+          ═══════════════════════════════════════════ */}
+      <AnimatePresence>
+        {editingProject && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-charcoal/50 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 10 }}
+              className="w-full max-w-2xl bg-surface border border-hairline rounded-2xl shadow-elevation-3 overflow-hidden flex flex-col max-h-[90vh]"
+            >
+              {/* Modal Header */}
+              <div className="p-5 border-b border-hairline flex items-center justify-between bg-surface-soft">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-mono font-bold text-sm">
+                    <Edit3 size={15} />
+                  </div>
+                  <div>
+                    <h3 className="text-body-md font-semibold text-charcoal">
+                      Edit Project Details
+                    </h3>
+                    <p className="text-micro font-mono text-steel">
+                      {editingProject.slug}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setEditingProject(null)}
+                  className="p-1.5 text-steel hover:text-charcoal hover:bg-canvas rounded-lg transition-colors cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Modal Body (Scrollable) */}
+              <div className="p-6 overflow-y-auto space-y-4 flex-1">
+                {/* Image Upload Zone & Preview inside modal */}
+                <div className="p-4 rounded-xl bg-canvas border border-hairline flex flex-col sm:flex-row items-center gap-4">
+                  <div className="w-32 h-20 rounded-lg bg-surface-soft overflow-hidden relative border border-hairline flex-shrink-0">
+                    {editingProject.image ? (
+                      <Image
+                        src={editingProject.image}
+                        alt={editingProject.title}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted font-mono text-[10px]">
+                        No img
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex-1 min-w-0 w-full space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-micro font-mono text-steel uppercase">
+                        Showcase Thumbnail
+                      </label>
+                      <button
+                        type="button"
+                        disabled={isUploading}
+                        onClick={() => projectFileInputRef.current?.click()}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-charcoal hover:bg-ink-deep text-white text-caption font-mono font-medium transition-colors cursor-pointer"
+                      >
+                        <Upload size={12} />
+                        <span>{isUploading ? "Uploading..." : "Upload New Image"}</span>
+                      </button>
+                    </div>
+
+                    <input
+                      type="text"
+                      placeholder="Image URL or local path"
+                      value={editingProject.image}
+                      onChange={(e) =>
+                        setEditingProject({ ...editingProject, image: e.target.value })
+                      }
+                      className="w-full px-3 py-1.5 rounded-md bg-surface border border-hairline text-charcoal font-mono text-caption focus:border-primary focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-micro font-mono text-steel uppercase mb-1">
+                    Project Title
+                  </label>
+                  <input
+                    type="text"
+                    value={editingProject.title}
+                    onChange={(e) =>
+                      setEditingProject({ ...editingProject, title: e.target.value })
+                    }
+                    className="w-full px-3.5 py-2 rounded-lg bg-canvas border border-hairline text-charcoal font-semibold text-body-md focus:border-primary focus:outline-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-micro font-mono text-steel uppercase mb-1">
+                      Category
+                    </label>
+                    <input
+                      type="text"
+                      value={editingProject.category}
+                      onChange={(e) =>
+                        setEditingProject({ ...editingProject, category: e.target.value })
+                      }
+                      className="w-full px-3.5 py-2 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-micro font-mono text-steel uppercase mb-1">
+                      Year
+                    </label>
+                    <input
+                      type="number"
+                      value={editingProject.year}
+                      onChange={(e) =>
+                        setEditingProject({
+                          ...editingProject,
+                          year: parseInt(e.target.value) || 2025,
+                        })
+                      }
+                      className="w-full px-3.5 py-2 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-micro font-mono text-steel uppercase mb-1">
+                    Live Demo / Link URL
+                  </label>
+                  <input
+                    type="text"
+                    value={editingProject.link}
+                    onChange={(e) =>
+                      setEditingProject({ ...editingProject, link: e.target.value })
+                    }
+                    className="w-full px-3.5 py-2 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-micro font-mono text-steel uppercase mb-1">
+                    Full Description
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={editingProject.description}
+                    onChange={(e) =>
+                      setEditingProject({ ...editingProject, description: e.target.value })
+                    }
+                    className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none leading-relaxed"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-micro font-mono text-steel uppercase mb-1">
+                    Technologies (comma separated)
+                  </label>
+                  <input
+                    type="text"
+                    value={editingProject.technologies.join(", ")}
+                    onChange={(e) =>
+                      setEditingProject({
+                        ...editingProject,
+                        technologies: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
+                      })
+                    }
+                    className="w-full px-3.5 py-2 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
+                  />
+                </div>
+
+                {/* Featured toggle */}
+                <div className="pt-2">
+                  <label className="flex items-center gap-3 p-3 rounded-lg bg-canvas border border-hairline cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={editingProject.featured}
+                      onChange={(e) =>
+                        setEditingProject({ ...editingProject, featured: e.target.checked })
+                      }
+                      className="w-4 h-4 text-primary rounded"
+                    />
+                    <div>
+                      <div className="text-body-sm font-semibold text-charcoal">
+                        Feature this project on the Homepage
+                      </div>
+                      <div className="text-caption text-slate">
+                        Featured projects are displayed in the main showcase section on the landing page.
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-4 border-t border-hairline bg-surface-soft flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => handleDeleteProject(editingProject.id, editingProject.title)}
+                  className="px-3.5 py-2 rounded-lg text-rose-600 hover:bg-rose-50 text-caption font-mono font-medium transition-colors cursor-pointer"
+                >
+                  Delete Project
+                </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditingProject(null)}
+                    className="px-4 py-2 rounded-lg bg-canvas border border-hairline text-charcoal text-caption font-mono hover:bg-surface transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => saveProjectModal(editingProject)}
+                    className="px-5 py-2 rounded-lg bg-primary hover:bg-primary-pressed text-white text-caption font-mono font-semibold transition-colors cursor-pointer shadow-elevation-1"
+                  >
+                    Done &amp; Update
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
