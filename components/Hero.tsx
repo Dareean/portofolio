@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useIntroSeen, useDeviceType } from "@/lib/hooks";
 import { ArrowRight, Layers, Compass, Users, Code2, Sparkles, LucideIcon } from "lucide-react";
 import { HeroConfig } from "@/lib/cms";
+import GsapTypingHeading from "./GsapTypingHeading";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Layers,
@@ -161,9 +162,13 @@ export default function Hero({ heroData }: HeroProps) {
               transition={getTransition(0.8, 0.39)}
               className="overflow-hidden"
             >
-              <h1 className="hero-statement select-none text-primary italic">
-                {headlineAccent}
-              </h1>
+              <GsapTypingHeading
+                text={headlineAccent}
+                as="h1"
+                className="hero-statement select-none text-primary italic"
+                speed={70}
+                delay={0.6}
+              />
             </motion.div>
           </div>
 

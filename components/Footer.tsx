@@ -13,6 +13,7 @@ const FOOTER_LINKS: Record<string, FooterLink[]> = {
   Navigation: [
     { href: "/", label: "Home" },
     { href: "/work", label: "Work" },
+    { href: "/blog", label: "Blog" },
     { href: "/journey", label: "Journey" },
     { href: "/contact", label: "Contact" },
   ],

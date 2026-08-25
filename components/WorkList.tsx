@@ -9,6 +9,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import { useDeviceType } from "@/lib/hooks";
+import GsapTypingHeading from "./GsapTypingHeading";
 
 interface WorkListProps {
   projects: Project[];
@@ -114,9 +115,11 @@ export default function WorkList({ projects }: WorkListProps) {
               Portfolio
             </span>
           </div>
-          <h2 className="text-heading-2 md:text-heading-1 text-charcoal font-semibold tracking-tight">
-            Selected Work
-          </h2>
+          <GsapTypingHeading
+            text="Selected Work"
+            as="h2"
+            className="text-heading-2 md:text-heading-1 text-charcoal font-semibold tracking-tight"
+          />
         </div>
 
         {/* Project Grid - Styled as Notion Database Gallery view */}

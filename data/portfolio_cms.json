@@ -41,10 +41,10 @@
   "about": {
     "portraitImage": "/assets/foto_closeup.jpg",
     "fullName": "Dareean Ahmad Raffi",
-    "roleTag": "Full-Stack & UI/UX",
-    "locationText": "Palu, Central Sulawesi ",
+    "roleTag": "Mahasiswa Teknik Informatika · Full Stack Developer",
+    "locationText": "Palu, Sulawesi Tengah, Indonesia",
     "philosophyHeading": "From pixel to people — turning complex engineering into human-centered software.",
-    "philosophyBio": "I see code not merely as syntax, but as a bridge between ideas and reality. Based in Central Sulawesi, I combine formal computer science fundamentals with hands-on product craft — building everything from clinical platforms to geospatial disaster tools and empowering regional tech communities.",
+    "philosophyBio": "Saya melihat kode bukan sekadar sintaks, melainkan jembatan antara ide dan realitas. Berbasis di Palu, Sulawesi Tengah, saya menggabungkan fondasi ilmu komputer formal dengan praktik produk nyata — membangun platform klinis, alat geospasial untuk penanggulangan bencana, serta memberdayakan komunitas teknologi regional.",
     "resumeUrl": "/assets/CV-Rafi(English).pdf",
     "statusTag": "Remote Ready",
     "timeZone": "Asia/Makassar",
@@ -98,10 +98,105 @@
       {
         "name": "IoT / ESP32",
         "category": "Hardware"
+      },
+      {
+        "name": "Laravel",
+        "category": "Framework"
+      },
+      {
+        "name": "Livewire",
+        "category": "Framework"
+      },
+      {
+        "name": "Blade",
+        "category": "Template Engine"
+      },
+      {
+        "name": "Volt",
+        "category": "Framework"
+      },
+      {
+        "name": "Vite",
+        "category": "Tool"
+      },
+      {
+        "name": "PHPUnit",
+        "category": "Testing"
+      },
+      {
+        "name": "PHP",
+        "category": "Language"
+      },
+      {
+        "name": "MySQL",
+        "category": "Database"
+      },
+      {
+        "name": "JavaScript",
+        "category": "Language"
+      },
+      {
+        "name": "Bootstrap",
+        "category": "Styling"
       }
     ]
   },
   "projects": [
+    {
+      "id": 1787600001,
+      "title": "I-FEST 2026 Dashboard – Sistem Pelacakan Operasi Event",
+      "slug": "i-fest-2026-dashboard",
+      "category": "Web Platform | UI/UX",
+      "year": 2026,
+      "image": "/assets/dareean_web.png",
+      "link": "https://example.com",
+      "featured": false,
+      "description": "Mengembangkan arsitektur aplikasi berbasis state‑transition dan interaksi kontekstual untuk meminimalkan risiko kesalahan input data oleh kepanitiaan. Merancang dasbor Command Center dengan tampilan Helicopter View berbasis grid status intuitif, serta mengintegrasikan sistem saringan dua arah untuk alur persetujuan logistik dan pemantauan kerumunan real‑time. Hasil: meningkatkan kecepatan pengambilan keputusan taktis sebesar 35% dan mengurangi kesalahan input data sebesar 22%.",
+      "technologies": [
+        "Blade",
+        "Livewire",
+        "Tailwind CSS",
+        "Laravel"
+      ],
+      "metrics": [
+        {
+          "label": "Dampak",
+          "value": "+35% kecepatan keputusan"
+        },
+        {
+          "label": "Pengurangan Error",
+          "value": "-22% kesalahan input"
+        }
+      ]
+    },
+    {
+      "id": 1787600002,
+      "title": "Landing Page I-FEST 2026 – Situs Resmi Festival Informatika",
+      "slug": "i-fest-2026-landing-page",
+      "category": "Web Platform | UI/UX",
+      "year": 2026,
+      "image": "/assets/greengnsulteng_web.png",
+      "link": "https://ifestuntad.my.id",
+      "featured": true,
+      "description": "Membangun antarmuka website resmi I-FEST 2026 dengan desain modern, bersih, dan minimalis. Menambahkan fitur interaktif, memastikan responsivitas lintas perangkat, serta mengimplementasikan standar aksesibilitas untuk pengguna disabilitas. Pengelolaan kode melalui GitHub dan deployment berkelanjutan menghasilkan waktu muat halaman <1 detik dan peningkatan pendaftar sebesar 40% dibandingkan tahun sebelumnya.",
+      "technologies": [
+        "Livewire",
+        "Volt",
+        "Vite",
+        "PHPUnit",
+        "Tailwind CSS"
+      ],
+      "metrics": [
+        {
+          "label": "Pendaftar",
+          "value": "+40% dibandingkan 2025"
+        },
+        {
+          "label": "Waktu Muat",
+          "value": "<1 detik"
+        }
+      ]
+    },
     {
       "id": 1,
       "title": "Medicflow - Medical Record Submission",
@@ -138,7 +233,7 @@
       "year": 2025,
       "image": "/assets/sorot-dummy_showcase.png",
       "link": "https://sorot.example.com",
-      "featured": true,
+      "featured": false,
       "description": "Developed a comprehensive prototype geospatial reporting system enabling citizens to report environmental issues with automatic GPS mapping. The platform features real-time monitoring through QGIS integration and a responsive admin dashboard for efficient issue management.",
       "technologies": [
         "Flutter",
@@ -262,6 +357,51 @@
     }
   ],
   "experiences": [
+    {
+      "id": 1787600002,
+      "title": "Panitia Humas – Palu Developer Day 2026",
+      "role": "Panitia Humas",
+      "organization": "Palu Developer Day",
+      "dateStart": "2025-09",
+      "dateEnd": "2026-02",
+      "description": "Menyusun kalender konten dan strategi penyebaran informasi untuk meningkatkan keterlibatan masyarakat. Kampanye media sosial dan kolaborasi dengan komunitas lokal berhasil meningkatkan jumlah pendaftar secara organik sebesar 30% dan memperluas jangkauan acara ke 5 kota tetangga.",
+      "highlights": [
+        "Komunikasi",
+        "Strategi Konten",
+        "Keterlibatan Komunitas"
+      ],
+      "category": "work"
+    },
+    {
+      "id": 1787600003,
+      "title": "Koordinator Mentor – Programming Tadulako (UNTAD)",
+      "role": "Koordinator Mentor",
+      "organization": "Programming Tadulako – UNTAD",
+      "dateStart": "2026-01",
+      "dateEnd": "2026-06",
+      "description": "Memfasilitasi komunikasi antara mentor dan anggota komunitas, menjadwalkan sesi pembelajaran teknis, serta memastikan ketersediaan instruktur kompeten. Implementasi agenda rapat disiplin meningkatkan kehadiran anggota sebesar 45% dan partisipasi dalam sesi peningkatan keterampilan mingguan naik 38%.",
+      "highlights": [
+        "Manajemen Tim",
+        "Pengembangan Komunitas",
+        "Mentoring"
+      ],
+      "category": "community"
+    },
+    {
+      "id": 1787600004,
+      "title": "Person In Charge – Informatics Festival 2026",
+      "role": "Person In Charge",
+      "organization": "Informatics Festival 2026",
+      "dateStart": "2026-01",
+      "dateEnd": "",
+      "description": "Bertanggung jawab penuh atas perencanaan festival teknologi terbesar di Departemen Riset Inovasi dan Karya, termasuk pengelolaan anggaran, koordinasi antar divisi, dan kerjasama dengan mitra industri. Memimpin tim lintas fungsi menghasilkan pelaksanaan acara tepat waktu dengan kepuasan peserta mencapai 92%.",
+      "highlights": [
+        "Leadership",
+        "Event Management",
+        "Stakeholder Coordination"
+      ],
+      "category": "work"
+    },
     {
       "id": 12,
       "title": "I-Fest 2026",
@@ -475,6 +615,47 @@
         "Responsive Design"
       ],
       "category": "education"
+    }
+  ],
+  "blogs": [
+    {
+      "id": 1,
+      "title": "Perjalanan Menjadi Person In Charge (PIC) I-Fest 2026",
+      "slug": "perjalanan-pic-ifest-2026",
+      "date": "2026-02-15",
+      "category": "Achievement",
+      "excerpt": "Pengalaman berharga memimpin perencanaan festival teknologi terbesar di Departemen Informatika UNTAD, mengelola tim lintas divisi, dan koordinasi mitra industri.",
+      "content": "Menjadi Person In Charge (PIC) untuk Informatics Festival (I-Fest) 2026 merupakan salah satu pencapaian dan tanggung jawab terbesar yang pernah saya jalani.\n\n### Tantangan & Koordinasi Tim\nSebagai PIC, tantangan utama bukan hanya tentang menyusun jadwal acara, melainkan bagaimana menyatukan visi puluhan anggota panitia dari divisi Humas, Acara, Perkap, hingga Logistik.\n\nKami mengimplementasikan dasbor pemantauan berbasis web untuk melacak perkembangan persiapan secara real-time, menghemat koordinasi manual hingga 35%.\n\n### Pembelajaran Utama\n1. **Empati dalam Kepemimpinan**: Memahami kapasitas setiap divisi membantu menciptakan alur kerja yang sehat.\n2. **Manajemen Risiko**: Menyiapkan rencana cadangan (Plan B) untuk setiap skenario teknis.\n\nSemoga I-Fest 2026 menjadi inspirasi bagi seluruh mahasiswa dan komunitas teknologi di Sulawesi Tengah!",
+      "coverImage": "/assets/dareean_web.png",
+      "readTime": "4 min read",
+      "tags": ["Leadership", "I-Fest 2026", "Event Management", "Achievement"],
+      "featured": true
+    },
+    {
+      "id": 2,
+      "title": "Keseharian Seorang Web Developer di Palu: Kopi, Kode, dan Komunitas",
+      "slug": "keseharian-developer-di-palu",
+      "date": "2026-01-20",
+      "category": "Daily Life",
+      "excerpt": "Satu hari dalam kehidupan saya sebagai developer di Palu — menyeimbangkan antara kuliah, proyek freelance Next.js, dan mentoring di Programming Tadulako.",
+      "content": "Banyak yang bertanya bagaimana rasanya membangun karir software engineering dari Kota Palu, Sulawesi Tengah.\n\n### Rutinitas Pagi\nPagi hari dimulai dengan segelas kopi lokal dan me-review PR (Pull Request) atau tiket pengerjaan proyek. Fokus utama saya biasanya pada arsitektur sistem berbasis Next.js dan TypeScript.\n\n### Sesi Mentoring Sore Hari\nDi sore hari, saya rutin berkumpul bersama teman-teman di komunitas Programming Tadulako. Kami saling berbagi materi seputar arsitektur web modern, algoritma, serta mendampingi mahasiswa baru yang baru memulai belajar pemrograman.\n\n### Malam Refleksi\nMalam hari adalah waktu favorit saya untuk bereksperimen dengan pustaka baru seperti Framer Motion, GSAP, atau mengeksplorasi integrasi model AI Groq.",
+      "coverImage": "/assets/greengnsulteng_web.png",
+      "readTime": "3 min read",
+      "tags": ["Daily Life", "Palu", "Developer Routine", "Mentorship"],
+      "featured": true
+    },
+    {
+      "id": 3,
+      "title": "Membangun SOROT: Pengalaman Mengembangkan Sistem Geospasial Lingkungan",
+      "slug": "membangun-sorot-sistem-geospasial",
+      "date": "2025-11-10",
+      "category": "Tech",
+      "excerpt": "Pelajaran berharga dari pengembangan prototipe aplikasi pelaporan lingkungan berbasis telemetri GPS real-time dan integrasi QGIS.",
+      "content": "Proyek SOROT lahir dari keinginan untuk membantu penanganan masalah lingkungan secara presisi melalui peta geospasial.\n\n### Arsitektur Sistem\nAplikasi mobile dibangun menggunakan Flutter, terhubung dengan backend Firebase dan pemetaan spasial QGIS. Pengguna dapat melaporkan lokasi kejadian dengan akurasi GPS di bawah 5 meter.\n\n### Pencapaian & Dampak\nPrototipe ini berhasil didemonstrasikan di hadapan pemangku kepentingan daerah dan menjadi salah satu milestone penting dalam eksplorasi saya di bidang IoT dan data spasial.",
+      "coverImage": "/assets/sorot-dummy_showcase.png",
+      "readTime": "5 min read",
+      "tags": ["Geospatial", "Flutter", "QGIS", "Projects"],
+      "featured": false
     }
   ],
   "site": {

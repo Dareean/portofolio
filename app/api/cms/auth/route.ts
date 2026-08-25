@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const token = generateSessionToken();
+    const token = generateSessionToken(username);
     const response = NextResponse.json(
       { success: true, message: "Authentication successful" },
       { status: 200 }

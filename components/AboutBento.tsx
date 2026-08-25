@@ -7,6 +7,7 @@ import Image from "next/image";
 import { ArrowRight, MapPin, Clock, Users, Code2, Download } from "lucide-react";
 import { useDeviceType } from "@/lib/hooks";
 import { AboutConfig } from "@/lib/cms";
+import GsapTypingHeading from "./GsapTypingHeading";
 
 // Vector logos for tech stack
 const DEFAULT_TECH_LOGOS: Record<string, React.ReactNode> = {
@@ -165,9 +166,11 @@ export default function AboutBento({ aboutData }: AboutBentoProps) {
               Profile &amp; Craft
             </span>
           </div>
-          <h2 className="text-heading-2 md:text-display-lg text-charcoal font-semibold tracking-tight">
-            Behind the Code
-          </h2>
+          <GsapTypingHeading
+            text="Behind the Code"
+            as="h2"
+            className="text-heading-2 md:text-display-lg text-charcoal font-semibold tracking-tight"
+          />
           <p className="text-body-md text-slate mt-2 max-w-xl">
             A snapshot of my identity, engineering philosophy, location, community roots, and active technical stack.
           </p>
@@ -248,7 +251,7 @@ export default function AboutBento({ aboutData }: AboutBentoProps) {
                   link.click();
                   document.body.removeChild(link);
                 }}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-ink text-on-dark text-button-md font-medium rounded-lg hover:bg-ink-deep transition-all duration-200"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[#4F46E5] text-white text-button-md font-medium rounded-lg hover:bg-[#4338CA] transition-all duration-200 shadow-xs"
               >
                 <Download size={15} />
                 <span>Resume (PDF)</span>

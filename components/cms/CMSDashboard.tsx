@@ -8,9 +8,13 @@ import {
   PortfolioCMSData,
   CMSProject,
   CMSStory,
+  CMSBlogPost,
   CMSExperience,
 } from "@/lib/cms";
+import { AIAssistantButton } from "@/components/cms/AIAssistantButton";
 import {
+  BookOpen,
+  Newspaper,
   Save,
   RefreshCw,
   Plus,
@@ -43,9 +47,111 @@ import {
   Menu,
   Search,
   Code2,
+  Sparkles,
+  Copy,
+  Download,
+  Languages,
+  Bot,
+  Send,
+  FileDown,
+  CheckCheck,
+  Wand2,
+  FileCode,
+  Lightbulb,
+  FileUp,
+  GitMerge,
+  ArrowDownToLine,
+  CheckSquare,
+  Square,
+  Printer,
+  FileCheck,
 } from "lucide-react";
 
-type CMSTab = "projects" | "hero" | "about" | "writing" | "journey" | "site";
+type CMSTab = "projects" | "hero" | "about" | "writing" | "blogs" | "journey" | "ai" | "site";
+
+// Helper to convert Markdown to styled HTML for PDF printing & visual preview
+function convertMarkdownToHTML(md: string): string {
+  const lines = md.split("\n");
+  const processed: string[] = [];
+  let inTable = false;
+  let tableRows: string[][] = [];
+
+  const formatInline = (text: string) => {
+    return text
+      .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-semibold text-slate-900">$1</strong>')
+      .replace(/\*([^*]+)\*/g, '<em class="italic text-slate-800">$1</em>')
+      .replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-slate-100 text-[11px] font-mono text-indigo-600 border border-slate-200">$1</code>')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" class="text-indigo-600 hover:underline font-medium">$1</a>');
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line.startsWith("|") && line.endsWith("|")) {
+      if (line.includes("---")) continue;
+      const cells = line.split("|").slice(1, -1).map((c) => c.trim());
+      if (!inTable) {
+        inTable = true;
+        tableRows = [cells];
+      } else {
+        tableRows.push(cells);
+      }
+    } else {
+      if (inTable) {
+        let tHtml = '<div class="overflow-x-auto my-3"><table class="w-full text-xs text-left border-collapse border border-slate-200 shadow-xs rounded-lg overflow-hidden">';
+        tableRows.forEach((row, rIdx) => {
+          tHtml += rIdx === 0 ? '<tr class="bg-slate-100 font-semibold text-slate-900">' : '<tr class="border-t border-slate-200 hover:bg-slate-50/70">';
+          row.forEach((cell) => {
+            const tag = rIdx === 0 ? "th" : "td";
+            tHtml += `<${tag} class="p-2.5 border-r border-slate-200 leading-relaxed align-top">${formatInline(cell)}</${tag}>`;
+          });
+          tHtml += "</tr>";
+        });
+        tHtml += "</table></div>";
+        processed.push(tHtml);
+        inTable = false;
+        tableRows = [];
+      }
+      processed.push(line);
+    }
+  }
+
+  if (inTable) {
+    let tHtml = '<div class="overflow-x-auto my-3"><table class="w-full text-xs text-left border-collapse border border-slate-200 shadow-xs rounded-lg overflow-hidden">';
+    tableRows.forEach((row, rIdx) => {
+      tHtml += rIdx === 0 ? '<tr class="bg-slate-100 font-semibold text-slate-900">' : '<tr class="border-t border-slate-200 hover:bg-slate-50/70">';
+      row.forEach((cell) => {
+        const tag = rIdx === 0 ? "th" : "td";
+        tHtml += `<${tag} class="p-2.5 border-r border-slate-200 leading-relaxed align-top">${formatInline(cell)}</${tag}>`;
+      });
+      tHtml += "</tr>";
+    });
+    tHtml += "</table></div>";
+    processed.push(tHtml);
+  }
+
+  return processed
+    .map((l) => {
+      if (l.startsWith("<div class=\"overflow-x-auto")) return l;
+      if (l.startsWith("# ")) {
+        return `<h1 class="text-xl md:text-2xl font-bold uppercase tracking-tight text-slate-900 mt-3 mb-1 pb-1.5 border-b-2 border-slate-900">${formatInline(l.slice(2))}</h1>`;
+      }
+      if (l.startsWith("## ")) {
+        return `<h2 class="text-sm md:text-base font-bold uppercase tracking-wider text-indigo-700 mt-5 mb-2 pb-1 border-b border-slate-200 flex items-center gap-2">${formatInline(l.slice(3))}</h2>`;
+      }
+      if (l.startsWith("### ")) {
+        return `<h3 class="text-xs md:text-sm font-semibold text-slate-900 mt-3 mb-1">${formatInline(l.slice(4))}</h3>`;
+      }
+      if (l.startsWith("• ") || l.startsWith("- ") || l.startsWith("* ")) {
+        return `<li class="text-xs text-slate-700 ml-4 mb-1 leading-relaxed list-disc">${formatInline(l.slice(2))}</li>`;
+      }
+      if (l.startsWith("---")) {
+        return `<hr class="my-3.5 border-slate-200" />`;
+      }
+      if (!l.trim()) return '<div class="h-1.5"></div>';
+      return `<p class="text-xs text-slate-700 leading-relaxed mb-1.5">${formatInline(l)}</p>`;
+    })
+    .join("\n");
+}
 
 export default function CMSDashboard({ initialData }: { initialData: PortfolioCMSData }) {
   const [data, setData] = useState<PortfolioCMSData>(initialData);
@@ -57,6 +163,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
 
   // Modal state
   const [editingProject, setEditingProject] = useState<CMSProject | null>(null);
+  const [editingBlog, setEditingBlog] = useState<CMSBlogPost | null>(null);
 
   // Uploading states
   const [isUploading, setIsUploading] = useState(false);
@@ -65,10 +172,41 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
   const projectFileInputRef = useRef<HTMLInputElement>(null);
   const portraitFileInputRef = useRef<HTMLInputElement>(null);
   const resumeFileInputRef = useRef<HTMLInputElement>(null);
+  const pdfFileInputRef = useRef<HTMLInputElement>(null);
+  const blogCoverFileInputRef = useRef<HTMLInputElement>(null);
 
   // New tech input state
   const [newTechName, setNewTechName] = useState("");
   const [newTechCategory, setNewTechCategory] = useState("Framework");
+
+  // ═══════════════════════════════════════════
+  // AI STUDIO & PDF SYNC STATES
+  // ═══════════════════════════════════════════
+  const [aiAction, setAiAction] = useState<"generate_cv" | "parse_pdf_sync" | "tailor_job" | "analyze_portfolio">("generate_cv");
+  const [aiLanguage, setAiLanguage] = useState<"en" | "id">("en");
+  const [aiCustomTemplate, setAiCustomTemplate] = useState("");
+  const [aiJobDesc, setAiJobDesc] = useState("");
+  const [aiOutput, setAiOutput] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiModelInfo, setAiModelInfo] = useState("Groq GPT-OSS 20B");
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
+  const [outputViewMode, setOutputViewMode] = useState<"document" | "raw">("document");
+
+  // PDF Parser Diff States
+  const [isAnalyzingPDF, setIsAnalyzingPDF] = useState(false);
+  const [pdfDiffResult, setPdfDiffResult] = useState<{
+    analysisSummary: string;
+    newProjects: CMSProject[];
+    newExperiences: CMSExperience[];
+    newSkills: { name: string; category: string }[];
+    profileUpdates?: { roleTag?: string; philosophyBio?: string; locationText?: string };
+  } | null>(null);
+  const [selectedProjects, setSelectedProjects] = useState<number[]>([]);
+  const [selectedExperiences, setSelectedExperiences] = useState<number[]>([]);
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [selectedProfileUpdates, setSelectedProfileUpdates] = useState(true);
+  const [selectedCvFile, setSelectedCvFile] = useState<File | null>(null);
 
   const showToast = (message: string, type: "success" | "error" = "success") => {
     setToast({ message, type });
@@ -195,6 +333,288 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
     setData({ ...data, about: { ...data.about, techStack: updated } });
   };
 
+  // ═══════════════════════════════════════════
+  // AI STUDIO HANDLERS
+  // ═══════════════════════════════════════════
+  const handleGenerateAI = async () => {
+    setAiLoading(true);
+    try {
+      const res = await fetch("/api/cms/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: aiAction,
+          language: aiLanguage,
+          customTemplate: aiCustomTemplate,
+          jobDescription: aiJobDesc,
+          portfolioData: data,
+        }),
+      });
+
+      const json = await res.json();
+      if (res.ok && json.success) {
+        setAiOutput(json.result);
+        if (json.modelUsed) setAiModelInfo(json.modelUsed);
+        setOutputViewMode("document");
+        showToast("AI generation completed!");
+      } else {
+        showToast(json.error || "AI generation failed", "error");
+      }
+    } catch (err) {
+      showToast("Network error during AI execution", "error");
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const handleTranslateOutput = async (targetLang: "en" | "id") => {
+    if (!aiOutput.trim()) {
+      showToast("Please generate or enter content to translate", "error");
+      return;
+    }
+
+    setIsTranslating(true);
+    try {
+      const res = await fetch("/api/cms/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "translate",
+          language: targetLang,
+          contentToTranslate: aiOutput,
+        }),
+      });
+
+      const json = await res.json();
+      if (res.ok && json.success) {
+        setAiOutput(json.result);
+        setAiLanguage(targetLang);
+        showToast(`Translated to ${targetLang === "id" ? "Bahasa Indonesia" : "English"}!`);
+      } else {
+        showToast(json.error || "Translation failed", "error");
+      }
+    } catch (err) {
+      showToast("Network error during translation", "error");
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
+  const handleCopyOutput = () => {
+    if (!aiOutput) return;
+    navigator.clipboard.writeText(aiOutput);
+    setIsCopied(true);
+    showToast("Copied to clipboard!");
+    setTimeout(() => setIsCopied(false), 2500);
+  };
+
+  const handleDownloadMD = () => {
+    if (!aiOutput) return;
+    const blob = new Blob([aiOutput], { type: "text/markdown;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Dareean_CV_${aiLanguage.toUpperCase()}_${new Date().toISOString().slice(0, 10)}.md`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast("Downloaded CV (.md) file!");
+  };
+
+  // PDF Export / Print Handler
+  const handleDownloadPDF = () => {
+    if (!aiOutput) return;
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) {
+      showToast("Pop-up blocked. Please allow pop-ups to export PDF.", "error");
+      return;
+    }
+
+    const htmlContent = convertMarkdownToHTML(aiOutput);
+    const documentTitle = `Dareean_CV_${aiLanguage.toUpperCase()}_${new Date().toISOString().slice(0, 10)}`;
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html lang="${aiLanguage}">
+        <head>
+          <meta charset="utf-8" />
+          <title>${documentTitle}</title>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+            @page {
+              size: A4;
+              margin: 15mm 15mm 15mm 15mm;
+            }
+            body {
+              font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              color: #0F172A;
+              background-color: #FFFFFF;
+              margin: 0;
+              padding: 0;
+              font-size: 11px;
+              line-height: 1.5;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            h1 { font-size: 18px; font-weight: 700; margin: 0 0 4px 0; text-transform: uppercase; color: #0F172A; border-bottom: 1.5px solid #0F172A; padding-bottom: 4px; }
+            h2 { font-size: 13px; font-weight: 700; margin: 14px 0 6px 0; text-transform: uppercase; color: #4338CA; border-bottom: 1px solid #E2E8F0; padding-bottom: 3px; break-after: avoid; }
+            h3 { font-size: 11px; font-weight: 600; margin: 8px 0 2px 0; color: #0F172A; }
+            p { margin: 0 0 6px 0; color: #334155; }
+            ul { margin: 4px 0 8px 18px; padding: 0; }
+            li { margin-bottom: 3px; color: #334155; }
+            strong { font-weight: 600; color: #0F172A; }
+            hr { border: none; border-top: 1px solid #E2E8F0; margin: 10px 0; }
+            table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 10.5px; page-break-inside: avoid; }
+            th { background-color: #F1F5F9 !important; font-weight: 600; text-align: left; padding: 6px 8px; border: 1px solid #CBD5E1; color: #0F172A; }
+            td { padding: 6px 8px; border: 1px solid #CBD5E1; color: #334155; vertical-align: top; }
+            a { color: #4338CA; text-decoration: none; }
+            @media print {
+              body { margin: 0; }
+              .no-print { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="cv-container">
+            ${htmlContent}
+          </div>
+          <script>
+            window.onload = function() {
+              window.print();
+            };
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    showToast("Opening PDF Print & Save Dialog...");
+  };
+
+  // ═══════════════════════════════════════════
+  // PDF CV PARSER & CMS SYNC HANDLERS
+  // ═══════════════════════════════════════════
+  const handleAnalyzePDF = async (file?: File, useExistingDoc: boolean = false) => {
+    setIsAnalyzingPDF(true);
+    setPdfDiffResult(null);
+    try {
+      const formData = new FormData();
+      if (file) {
+        formData.append("file", file);
+      }
+      if (useExistingDoc) {
+        formData.append("useExistingDoc", "true");
+      }
+
+      const res = await fetch("/api/cms/ai/parse-pdf", {
+        method: "POST",
+        body: formData,
+      });
+
+      const json = await res.json();
+      if (res.ok && json.success) {
+        const diff = json.diff;
+        setPdfDiffResult(diff);
+        // Pre-select all detected new items
+        setSelectedProjects(diff.newProjects ? diff.newProjects.map((p: CMSProject) => p.id) : []);
+        setSelectedExperiences(diff.newExperiences ? diff.newExperiences.map((e: CMSExperience) => e.id) : []);
+        setSelectedSkills(diff.newSkills ? diff.newSkills.map((s: { name: string }) => s.name) : []);
+        setSelectedProfileUpdates(true);
+        showToast("PDF analyzed! Review the differences below.");
+      } else {
+        showToast(json.error || "Failed to analyze document", "error");
+      }
+    } catch (err) {
+      showToast("Network error while analyzing PDF", "error");
+    } finally {
+      setIsAnalyzingPDF(false);
+    }
+  };
+
+  const handleApplySyncToCMS = async () => {
+    if (!pdfDiffResult) return;
+
+    let updatedProjects = [...data.projects];
+    let updatedExperiences = [...data.experiences];
+    let updatedSkills = [...data.about.techStack];
+    let updatedAbout = { ...data.about };
+
+    // Merge selected projects
+    if (pdfDiffResult.newProjects) {
+      const toAdd = pdfDiffResult.newProjects.filter((p) => selectedProjects.includes(p.id));
+      const titlesToAdd = toAdd.map((p) => p.title.toLowerCase());
+      updatedProjects = [
+        ...toAdd,
+        ...updatedProjects.filter((p) => !titlesToAdd.includes(p.title.toLowerCase())),
+      ];
+    }
+
+    // Merge selected experiences
+    if (pdfDiffResult.newExperiences) {
+      const toAddExp = pdfDiffResult.newExperiences.filter((e) => selectedExperiences.includes(e.id));
+      const expKeysToAdd = toAddExp.map((e) => `${e.role}-${e.organization}`.toLowerCase());
+      updatedExperiences = [
+        ...toAddExp,
+        ...updatedExperiences.filter((e) => !expKeysToAdd.includes(`${e.role}-${e.organization}`.toLowerCase())),
+      ];
+    }
+
+    // Merge selected skills
+    if (pdfDiffResult.newSkills) {
+      const toAddSkills = pdfDiffResult.newSkills.filter((s) => selectedSkills.includes(s.name));
+      const existingSkillNames = updatedSkills.map((s) => s.name.toLowerCase());
+      toAddSkills.forEach((s) => {
+        if (!existingSkillNames.includes(s.name.toLowerCase())) {
+          updatedSkills.push(s);
+        }
+      });
+    }
+
+    // Merge profile updates if selected
+    if (selectedProfileUpdates && pdfDiffResult.profileUpdates) {
+      if (pdfDiffResult.profileUpdates.roleTag) {
+        updatedAbout.roleTag = pdfDiffResult.profileUpdates.roleTag;
+      }
+      if (pdfDiffResult.profileUpdates.philosophyBio) {
+        updatedAbout.philosophyBio = pdfDiffResult.profileUpdates.philosophyBio;
+      }
+      if (pdfDiffResult.profileUpdates.locationText) {
+        updatedAbout.locationText = pdfDiffResult.profileUpdates.locationText;
+      }
+    }
+
+    const newData: PortfolioCMSData = {
+      ...data,
+      projects: updatedProjects,
+      experiences: updatedExperiences,
+      about: {
+        ...updatedAbout,
+        techStack: updatedSkills,
+      },
+    };
+
+    setData(newData);
+
+    // Auto-save to server
+    try {
+      setIsSaving(true);
+      const res = await fetch("/api/cms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newData),
+      });
+      const json = await res.json();
+      if (json.success) {
+        showToast("🎉 Successfully applied and saved CV updates to CMS!", "success");
+      } else {
+        showToast("Updates applied locally. Click 'Save Changes' to commit.", "success");
+      }
+    } catch {
+      showToast("Updates applied locally. Click 'Save Changes' to commit.", "success");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const navGroups = [
     {
       groupTitle: "MAIN WORKSPACES",
@@ -229,10 +649,27 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
           count: data.stories.length,
         },
         {
+          id: "blogs",
+          label: "Blog Posts (Cerita/Pencapaian)",
+          icon: BookOpen,
+          count: (data.blogs || []).length,
+        },
+        {
           id: "journey",
           label: "Journey Ledger",
           icon: Compass,
           count: data.experiences.length,
+        },
+      ],
+    },
+    {
+      groupTitle: "AI & INTELLIGENCE",
+      items: [
+        {
+          id: "ai",
+          label: "AI Studio & CV Sync",
+          icon: Sparkles,
+          count: null,
         },
       ],
     },
@@ -296,6 +733,21 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
 
       <input
         type="file"
+        ref={blogCoverFileInputRef}
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file && editingBlog) {
+            handleFileUpload(file, "blogs", (url) => {
+              setEditingBlog({ ...editingBlog, coverImage: url });
+            });
+          }
+        }}
+      />
+
+      <input
+        type="file"
         ref={portraitFileInputRef}
         accept="image/*"
         className="hidden"
@@ -312,7 +764,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
       <input
         type="file"
         ref={resumeFileInputRef}
-        accept=".pdf"
+        accept=".pdf,.docx"
         className="hidden"
         onChange={(e) => {
           const file = e.target.files?.[0];
@@ -320,6 +772,20 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
             handleFileUpload(file, "documents", (url) => {
               setData({ ...data, about: { ...data.about, resumeUrl: url } });
             });
+          }
+        }}
+      />
+
+      <input
+        type="file"
+        ref={pdfFileInputRef}
+        accept=".pdf,.docx"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            setSelectedCvFile(file);
+            setPdfDiffResult(null);
           }
         }}
       />
@@ -440,57 +906,62 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
         className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden bg-[#F8FAFC]"
       >
         {/* Top Header Bar */}
-        <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between bg-white border-b border-[#E2E8F0] px-6 md:px-8 shadow-xs">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-1.5 rounded-lg border border-[#E2E8F0] bg-white text-[#64748B] hover:text-[#0F172A] cursor-pointer"
-            >
-              <Menu size={16} />
-            </button>
+        <header className="sticky top-0 z-30 w-full bg-white border-b border-[#E2E8F0] shadow-xs">
+          <div className="max-w-7xl mx-auto px-6 md:px-8 lg:px-10 h-16 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="lg:hidden p-1.5 rounded-lg border border-[#E2E8F0] bg-white text-[#64748B] hover:text-[#0F172A] cursor-pointer"
+              >
+                <Menu size={16} />
+              </button>
 
-            <div className="flex items-center gap-2 text-xs">
-              <span className="text-[#64748B] font-medium">Dashboard</span>
-              <span className="text-[#CBD5E1]">/</span>
-              <span className="font-semibold text-[#0F172A]">{currentNav.label}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="relative hidden sm:block">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748B]" />
-              <input
-                type="text"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-9 pl-8 pr-3.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] placeholder:text-[#94A3B8] focus:border-[#4F46E5] focus:bg-white focus:outline-none w-44 md:w-56 transition-all"
-              />
+              <div className="flex items-center gap-2 text-xs">
+                <span className="text-[#64748B] font-medium">Dashboard</span>
+                <span className="text-[#CBD5E1]">/</span>
+                <div className="flex items-center gap-1.5 font-semibold text-[#0F172A]">
+                  <currentNav.icon size={14} className="text-[#4F46E5]" />
+                  <span>{currentNav.label}</span>
+                </div>
+              </div>
             </div>
 
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={isSaving}
-              className="inline-flex h-9 items-center gap-2 px-4 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
-            >
-              {isSaving ? (
-                <>
-                  <RefreshCw size={13} className="animate-spin" />
-                  <span>Saving...</span>
-                </>
-              ) : (
-                <>
-                  <Save size={13} />
-                  <span>Save Changes</span>
-                </>
-              )}
-            </button>
+            <div className="flex items-center gap-3">
+              <div className="relative hidden sm:block">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748B]" />
+                <input
+                  type="text"
+                  placeholder="Search entries..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="h-9 pl-8 pr-3.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] placeholder:text-[#94A3B8] focus:border-[#4F46E5] focus:bg-white focus:outline-none w-48 md:w-60 transition-all"
+                />
+              </div>
+
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={isSaving}
+                className="inline-flex h-9 items-center gap-2 px-4 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
+              >
+                {isSaving ? (
+                  <>
+                    <RefreshCw size={13} className="animate-spin" />
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save size={13} />
+                    <span>Save Changes</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </header>
 
-        {/* Content Container with Consistent Margins & Whitespace */}
+        {/* Content Container */}
         <main className="flex-1 w-full max-w-7xl mx-auto p-6 md:p-8 lg:p-10 space-y-8">
           {/* Top 4 KPI Stat Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
@@ -729,9 +1200,19 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
-                    Subtitle Narrative
-                  </label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-medium text-[#0F172A]">
+                      Subtitle Narrative
+                    </label>
+                    <AIAssistantButton
+                      fieldType="bio"
+                      currentValue={data.hero.subtitle}
+                      context={{ title: data.about.roleTag }}
+                      onApply={(val) => setData({ ...data, hero: { ...data.hero, subtitle: val } })}
+                      compact
+                      label="AI Subtitle"
+                    />
+                  </div>
                   <textarea
                     rows={3}
                     value={data.hero.subtitle}
@@ -939,9 +1420,19 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
-                    Bio Narrative
-                  </label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-medium text-[#0F172A]">
+                      Bio Narrative
+                    </label>
+                    <AIAssistantButton
+                      fieldType="bio"
+                      currentValue={data.about.philosophyBio}
+                      context={{ title: data.about.fullName, role: data.about.roleTag }}
+                      onApply={(val) => setData({ ...data, about: { ...data.about, philosophyBio: val } })}
+                      compact
+                      label="AI Bio"
+                    />
+                  </div>
                   <textarea
                     rows={3}
                     value={data.about.philosophyBio}
@@ -1171,7 +1662,21 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     </div>
 
                     <div>
-                      <label className="block text-xs font-medium text-[#0F172A] mb-1">Excerpt</label>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-xs font-medium text-[#0F172A]">Excerpt / Caption</label>
+                        <AIAssistantButton
+                          fieldType="article_caption"
+                          currentValue={story.excerpt}
+                          context={{ title: story.title, category: story.category }}
+                          onApply={(val) => {
+                            const updated = [...data.stories];
+                            updated[index].excerpt = val;
+                            setData({ ...data, stories: updated });
+                          }}
+                          compact
+                          label="AI Caption"
+                        />
+                      </div>
                       <textarea
                         rows={2}
                         value={story.excerpt}
@@ -1190,8 +1695,187 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
           )}
 
           {/* ═══════════════════════════════════════════
-              TAB 5: JOURNEY
+              TAB: BLOG POSTS (KESEHARIAN & ACHIEVEMENTS)
               ═══════════════════════════════════════════ */}
+          {activeTab === "blogs" && (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
+                <div>
+                  <h3 className="text-base font-semibold text-[#0F172A] tracking-tight flex items-center gap-2">
+                    <BookOpen size={18} className="text-[#4F46E5]" />
+                    <span>Blog Posts &amp; Cerita Keseharian</span>
+                  </h3>
+                  <p className="text-xs text-[#64748B] mt-0.5">
+                    Kelola cerita harian, jurnal kegiatan, dan pencapaian yang tampil di halaman /blog publik.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newBlog: CMSBlogPost = {
+                      id: Date.now(),
+                      title: "Judul Cerita / Pencapaian Baru",
+                      slug: `post-${Date.now()}`,
+                      date: new Date().toISOString().split("T")[0],
+                      category: "Daily Life",
+                      excerpt: "Ringkasan cerita keseharian atau pencapaian Anda...",
+                      content: "Tuliskan isi cerita lengkap Anda di sini...",
+                      coverImage: "/assets/dareean_web.png",
+                      readTime: "3 min read",
+                      tags: ["Daily Life", "Achievement"],
+                      featured: false,
+                    };
+                    setEditingBlog(newBlog);
+                  }}
+                  className="inline-flex h-9 items-center justify-center gap-1.5 px-4 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition cursor-pointer shadow-xs flex-shrink-0"
+                >
+                  <Plus size={14} />
+                  <span>Tambah Blog Baru</span>
+                </button>
+              </div>
+
+              {/* Grid of Blog Posts */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {(data.blogs || [])
+                  .filter((b) =>
+                    searchQuery
+                      ? b.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        b.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        b.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()))
+                      : true
+                  )
+                  .map((blog) => (
+                    <div
+                      key={blog.id}
+                      className={`rounded-xl border overflow-hidden flex flex-col justify-between bg-white shadow-xs transition-all ${
+                        blog.featured
+                          ? "border-[#4F46E5] ring-2 ring-[#4F46E5]/15"
+                          : "border-[#E2E8F0] hover:border-[#94A3B8]"
+                      }`}
+                    >
+                      {/* Image Thumbnail */}
+                      <div className="relative aspect-[16/10] bg-[#F1F5F9] border-b border-[#E2E8F0] overflow-hidden">
+                        {blog.coverImage ? (
+                          <Image
+                            src={blog.coverImage}
+                            alt={blog.title}
+                            fill
+                            className="object-cover object-top"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-xs font-mono text-[#94A3B8]">
+                            Tanpa Sampul
+                          </div>
+                        )}
+
+                        <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10">
+                          <span
+                            className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold border shadow-xs ${
+                              blog.category === "Achievement"
+                                ? "bg-amber-50 text-amber-700 border-amber-200"
+                                : blog.category === "Daily Life"
+                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                : blog.category === "Tech"
+                                ? "bg-blue-50 text-blue-700 border-blue-200"
+                                : "bg-purple-50 text-purple-700 border-purple-200"
+                            }`}
+                          >
+                            {blog.category}
+                          </span>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updated = (data.blogs || []).map((b) =>
+                                b.id === blog.id ? { ...b, featured: !b.featured } : b
+                              );
+                              setData({ ...data, blogs: updated });
+                            }}
+                            className={`p-1.5 rounded-md transition cursor-pointer ${
+                              blog.featured
+                                ? "bg-[#4F46E5] text-white shadow-xs"
+                                : "bg-white/95 text-[#64748B] border border-[#E2E8F0]"
+                            }`}
+                            title={blog.featured ? "Featured on Home/Blog" : "Click to feature"}
+                          >
+                            <Star size={13} className={blog.featured ? "fill-white" : ""} />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Content Info */}
+                      <div className="p-4 space-y-2 flex-1 flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center gap-2 text-[11px] font-mono text-[#64748B] mb-1">
+                            <Calendar size={12} />
+                            <span>{blog.date}</span>
+                            <span>·</span>
+                            <Clock size={12} />
+                            <span>{blog.readTime}</span>
+                          </div>
+                          <h4 className="font-semibold text-sm text-[#0F172A] line-clamp-2 leading-snug">
+                            {blog.title}
+                          </h4>
+                          <p className="text-xs text-[#64748B] line-clamp-2 mt-1 leading-relaxed">
+                            {blog.excerpt}
+                          </p>
+                        </div>
+
+                        {/* Tags */}
+                        <div className="pt-2 flex flex-wrap gap-1">
+                          {blog.tags.slice(0, 3).map((tag, tIdx) => (
+                            <span
+                              key={tIdx}
+                              className="px-2 py-0.5 rounded bg-[#F1F5F9] text-[10px] font-mono text-[#64748B]"
+                            >
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="p-3 bg-[#F8FAFC] border-t border-[#E2E8F0] flex items-center justify-between">
+                        <Link
+                          href={`/blog/${blog.slug}`}
+                          target="_blank"
+                          className="inline-flex items-center gap-1 text-[11px] font-mono text-[#4F46E5] hover:underline"
+                        >
+                          <Eye size={12} />
+                          <span>Preview</span>
+                        </Link>
+
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => setEditingBlog({ ...blog })}
+                            className="p-1.5 rounded-lg border border-[#E2E8F0] bg-white text-[#64748B] hover:text-[#4F46E5] transition cursor-pointer"
+                            title="Edit Post"
+                          >
+                            <Edit3 size={13} />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updated = (data.blogs || []).filter((b) => b.id !== blog.id);
+                              setData({ ...data, blogs: updated });
+                              showToast("Blog post deleted!");
+                            }}
+                            className="p-1.5 rounded-lg border border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100 transition cursor-pointer"
+                            title="Delete Post"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
+
           {activeTab === "journey" && (
             <div className="space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
@@ -1337,7 +2021,21 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     </div>
 
                     <div>
-                      <label className="block text-xs font-medium text-[#0F172A] mb-1">Description</label>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-xs font-medium text-[#0F172A]">Description</label>
+                        <AIAssistantButton
+                          fieldType="experience_description"
+                          currentValue={exp.description}
+                          context={{ role: exp.role, organization: exp.organization, category: exp.category }}
+                          onApply={(val) => {
+                            const updated = [...data.experiences];
+                            updated[index].description = val;
+                            setData({ ...data, experiences: updated });
+                          }}
+                          compact
+                          label="AI Description"
+                        />
+                      </div>
                       <textarea
                         rows={2}
                         value={exp.description}
@@ -1352,6 +2050,717 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* ═══════════════════════════════════════════
+              TAB: AI STUDIO & CV BUILDER (GROQ)
+              ═══════════════════════════════════════════ */}
+          {activeTab === "ai" && (
+            <div className="space-y-6">
+              {/* Top Banner Card */}
+              <div className="p-6 md:p-8 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E2E8F0] pb-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-[#EEF2FF] text-[#4F46E5] flex items-center justify-center shadow-xs">
+                      <Sparkles size={20} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-base font-semibold text-[#0F172A] tracking-tight">
+                          Groq AI Analyzer &amp; CV Sync Studio
+                        </h3>
+                        <span className="px-2 py-0.5 rounded-full bg-[#EEF2FF] border border-[#E0E7FF] text-[10px] font-mono text-[#4F46E5] font-semibold">
+                          LPU Powered
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#64748B] mt-0.5">
+                        Parse PDF/Docx resumes, auto-sync missing projects to CMS, and generate ATS CVs using Groq.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Language Selector */}
+                  <div className="flex items-center gap-2 bg-[#F8FAFC] p-1.5 rounded-lg border border-[#E2E8F0]">
+                    <span className="text-[11px] font-mono font-medium text-[#64748B] px-2 flex items-center gap-1.5">
+                      <Languages size={13} className="text-[#4F46E5]" />
+                      Language:
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setAiLanguage("en")}
+                      className={`px-3 py-1 rounded-md text-xs font-mono font-semibold transition-all cursor-pointer ${
+                        aiLanguage === "en"
+                          ? "bg-white text-[#4F46E5] shadow-xs border border-[#E2E8F0]"
+                          : "text-[#64748B] hover:text-[#0F172A]"
+                      }`}
+                    >
+                      EN (English)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAiLanguage("id")}
+                      className={`px-3 py-1 rounded-md text-xs font-mono font-semibold transition-all cursor-pointer ${
+                        aiLanguage === "id"
+                          ? "bg-white text-[#4F46E5] shadow-xs border border-[#E2E8F0]"
+                          : "text-[#64748B] hover:text-[#0F172A]"
+                      }`}
+                    >
+                      ID (Indonesia)
+                    </button>
+                  </div>
+                </div>
+
+                {/* 4 Mode Selector Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setAiAction("parse_pdf_sync")}
+                    className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                      aiAction === "parse_pdf_sync"
+                        ? "bg-[#EEF2FF]/60 border-[#4F46E5] ring-1 ring-[#4F46E5]/20 shadow-xs"
+                        : "bg-white border-[#E2E8F0] hover:border-[#94A3B8]"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="text-xs font-semibold text-[#0F172A] flex items-center gap-1.5">
+                        <FileUp size={15} className={aiAction === "parse_pdf_sync" ? "text-[#4F46E5]" : "text-[#64748B]"} />
+                        <span>1. PDF CV Sync to CMS</span>
+                      </div>
+                      {aiAction === "parse_pdf_sync" && (
+                        <CheckCircle2 size={14} className="text-[#4F46E5]" />
+                      )}
+                    </div>
+                    <p className="text-[11px] text-[#64748B] leading-relaxed">
+                      Upload PDF/Docx CV to find missing projects &amp; auto-update CMS.
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setAiAction("generate_cv")}
+                    className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                      aiAction === "generate_cv"
+                        ? "bg-[#EEF2FF]/60 border-[#4F46E5] ring-1 ring-[#4F46E5]/20 shadow-xs"
+                        : "bg-white border-[#E2E8F0] hover:border-[#94A3B8]"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="text-xs font-semibold text-[#0F172A] flex items-center gap-1.5">
+                        <FileCode size={15} className={aiAction === "generate_cv" ? "text-[#4F46E5]" : "text-[#64748B]"} />
+                        <span>2. Generate ATS CV</span>
+                      </div>
+                      {aiAction === "generate_cv" && (
+                        <CheckCircle2 size={14} className="text-[#4F46E5]" />
+                      )}
+                    </div>
+                    <p className="text-[11px] text-[#64748B] leading-relaxed">
+                      Build an executive ATS resume from your current portfolio database.
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setAiAction("tailor_job")}
+                    className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                      aiAction === "tailor_job"
+                        ? "bg-[#EEF2FF]/60 border-[#4F46E5] ring-1 ring-[#4F46E5]/20 shadow-xs"
+                        : "bg-white border-[#E2E8F0] hover:border-[#94A3B8]"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="text-xs font-semibold text-[#0F172A] flex items-center gap-1.5">
+                        <Wand2 size={15} className={aiAction === "tailor_job" ? "text-[#4F46E5]" : "text-[#64748B]"} />
+                        <span>3. Tailor to Job Vacancy</span>
+                      </div>
+                      {aiAction === "tailor_job" && (
+                        <CheckCircle2 size={14} className="text-[#4F46E5]" />
+                      )}
+                    </div>
+                    <p className="text-[11px] text-[#64748B] leading-relaxed">
+                      Paste a target vacancy to calculate match score and custom CV.
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setAiAction("analyze_portfolio")}
+                    className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                      aiAction === "analyze_portfolio"
+                        ? "bg-[#EEF2FF]/60 border-[#4F46E5] ring-1 ring-[#4F46E5]/20 shadow-xs"
+                        : "bg-white border-[#E2E8F0] hover:border-[#94A3B8]"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="text-xs font-semibold text-[#0F172A] flex items-center gap-1.5">
+                        <Lightbulb size={15} className={aiAction === "analyze_portfolio" ? "text-[#4F46E5]" : "text-[#64748B]"} />
+                        <span>4. Portfolio Audit</span>
+                      </div>
+                      {aiAction === "analyze_portfolio" && (
+                        <CheckCircle2 size={14} className="text-[#4F46E5]" />
+                      )}
+                    </div>
+                    <p className="text-[11px] text-[#64748B] leading-relaxed">
+                      Audit bio, headlines, and project STAR bullet points.
+                    </p>
+                  </button>
+                </div>
+              </div>
+
+              {/* ═══════════════════════════════════════════
+                  MODE 1: PDF CV PARSER & CMS SYNC
+                  ═══════════════════════════════════════════ */}
+              {aiAction === "parse_pdf_sync" && (
+                <div className="space-y-6">
+                  {/* Upload & Trigger Card */}
+                  <div className="p-6 md:p-8 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-5">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E2E8F0] pb-3">
+                      <h3 className="text-xs font-mono font-semibold uppercase text-[#64748B] tracking-wider">
+                        Upload PDF/Docx CV to Detect Differences
+                      </h3>
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#EEF2FF] text-[#4F46E5] text-[11px] font-mono font-medium border border-[#E0E7FF]">
+                        <Languages size={12} />
+                        <span>Regulasi: Auto-Konversi ke Bahasa Indonesia Baku</span>
+                      </span>
+                    </div>
+
+                    {/* Upload Dropzone vs File Preview */}
+                    {!selectedCvFile ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        {/* Option 1: Upload Dropzone */}
+                        <div
+                          onClick={() => pdfFileInputRef.current?.click()}
+                          className="p-6 rounded-xl border-2 border-dashed border-[#CBD5E1] hover:border-[#4F46E5] bg-[#F8FAFC] hover:bg-[#EEF2FF]/30 transition-all flex flex-col items-center justify-center text-center cursor-pointer space-y-2.5"
+                        >
+                          <div className="w-12 h-12 rounded-xl bg-white border border-[#E2E8F0] text-[#4F46E5] flex items-center justify-center shadow-xs">
+                            <FileUp size={22} />
+                          </div>
+                          <div>
+                            <div className="font-semibold text-xs text-[#0F172A]">
+                              Click to Upload PDF or DOCX CV
+                            </div>
+                            <div className="text-[11px] text-[#64748B] mt-0.5">
+                              Supports .pdf and .docx resume files
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Option 2: Quick Analyze Existing File */}
+                        <div className="p-6 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] flex flex-col justify-between space-y-4">
+                          <div>
+                            <div className="flex items-center gap-2 text-xs font-semibold text-[#0F172A]">
+                              <FileCode size={15} className="text-[#4F46E5]" />
+                              <span>Use public/documents/resume.docx</span>
+                            </div>
+                            <p className="text-[11px] text-[#64748B] mt-1.5 leading-relaxed">
+                              Extract content from your existing repository resume document to check if any projects, experiences, or skills are missing from the CMS.
+                            </p>
+                          </div>
+
+                          <button
+                            type="button"
+                            disabled={isAnalyzingPDF}
+                            onClick={() => handleAnalyzePDF(undefined, true)}
+                            className="w-full inline-flex h-9 items-center justify-center gap-2 px-4 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
+                          >
+                            {isAnalyzingPDF ? (
+                              <>
+                                <RefreshCw size={13} className="animate-spin" />
+                                <span>Analyzing with Groq AI...</span>
+                              </>
+                            ) : (
+                              <>
+                                <GitMerge size={14} />
+                                <span>Analyze resume.docx vs CMS</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      /* Single Focused Preview Card when File Uploaded */
+                      <div className="p-6 rounded-xl border border-[#4F46E5]/40 bg-[#EEF2FF]/40 space-y-4 shadow-2xs">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex items-center gap-3.5 min-w-0">
+                            <div className="w-12 h-12 rounded-xl bg-white border border-[#E0E7FF] text-[#4F46E5] flex items-center justify-center shrink-0 shadow-2xs font-bold">
+                              <FileCheck size={24} />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="font-semibold text-sm text-[#0F172A] truncate">
+                                {selectedCvFile.name}
+                              </div>
+                              <div className="text-xs font-mono text-[#64748B] flex items-center gap-2 mt-1">
+                                <span>{(selectedCvFile.size / 1024).toFixed(1)} KB</span>
+                                <span>•</span>
+                                <span className="uppercase text-[#4F46E5] font-semibold">
+                                  {selectedCvFile.name.split('.').pop()} File Ready
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedCvFile(null);
+                              if (pdfFileInputRef.current) pdfFileInputRef.current.value = "";
+                            }}
+                            className="p-2 rounded-lg text-[#64748B] hover:text-rose-600 hover:bg-white transition cursor-pointer"
+                            title="Remove uploaded file"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+
+                        <div className="pt-4 border-t border-[#E0E7FF] flex flex-col sm:flex-row items-center justify-between gap-3">
+                          <button
+                            type="button"
+                            onClick={() => pdfFileInputRef.current?.click()}
+                            className="h-9 px-4 rounded-lg border border-[#E2E8F0] bg-white hover:bg-[#F8FAFC] text-xs font-mono text-[#64748B] hover:text-[#0F172A] transition cursor-pointer"
+                          >
+                            Ganti File CV
+                          </button>
+
+                          <button
+                            type="button"
+                            disabled={isAnalyzingPDF}
+                            onClick={() => handleAnalyzePDF(selectedCvFile)}
+                            className="w-full sm:w-auto h-10 px-6 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-semibold transition-all disabled:opacity-50 cursor-pointer shadow-xs inline-flex items-center justify-center gap-2"
+                          >
+                            {isAnalyzingPDF ? (
+                              <>
+                                <RefreshCw size={14} className="animate-spin" />
+                                <span>Analyzing with Groq AI...</span>
+                              </>
+                            ) : (
+                              <>
+                                <Sparkles size={14} />
+                                <span>Analyze Uploaded CV with Groq AI</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Diff & Sync Review Panel */}
+                  {pdfDiffResult && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="p-6 md:p-8 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-6"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E2E8F0] pb-4">
+                        <div>
+                          <h4 className="text-sm font-semibold text-[#0F172A] flex items-center gap-2">
+                            <GitMerge size={16} className="text-[#4F46E5]" />
+                            <span>AI Comparison Summary &amp; Updates Found</span>
+                          </h4>
+                          <p className="text-[11px] font-mono text-[#64748B] mt-0.5">
+                            Select the items you want to apply to your CMS database.
+                          </p>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={handleApplySyncToCMS}
+                          disabled={isSaving}
+                          className="inline-flex h-9 items-center justify-center gap-2 px-5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-semibold transition-all shadow-xs cursor-pointer disabled:opacity-50 flex-shrink-0"
+                        >
+                          {isSaving ? (
+                            <>
+                              <RefreshCw size={13} className="animate-spin" />
+                              <span>Applying Updates...</span>
+                            </>
+                          ) : (
+                            <>
+                              <ArrowDownToLine size={14} />
+                              <span>Apply Selected Updates to CMS</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      {/* Analysis Summary */}
+                      {pdfDiffResult.analysisSummary && (
+                        <div className="p-4 rounded-xl bg-[#EEF2FF]/50 border border-[#E0E7FF] text-xs text-[#0F172A] leading-relaxed">
+                          <div className="font-semibold font-mono text-[11px] text-[#4F46E5] uppercase tracking-wider mb-1">
+                            Executive Analysis:
+                          </div>
+                          <p className="whitespace-pre-line text-[#334155]">{pdfDiffResult.analysisSummary}</p>
+                        </div>
+                      )}
+
+                      {/* New Projects Section */}
+                      {pdfDiffResult.newProjects && pdfDiffResult.newProjects.length > 0 && (
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <div className="text-xs font-semibold text-[#0F172A] flex items-center gap-2">
+                              <Layers size={14} className="text-[#4F46E5]" />
+                              <span>New / Updated Projects Found ({pdfDiffResult.newProjects.length})</span>
+                            </div>
+                            <span className="text-[11px] font-mono text-[#64748B]">
+                              Check to import into Projects workspace
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {pdfDiffResult.newProjects.map((p) => {
+                              const isChecked = selectedProjects.includes(p.id);
+                              return (
+                                <div
+                                  key={p.id}
+                                  onClick={() =>
+                                    setSelectedProjects(
+                                      isChecked
+                                        ? selectedProjects.filter((id) => id !== p.id)
+                                        : [...selectedProjects, p.id]
+                                    )
+                                  }
+                                  className={`p-4 rounded-xl border transition-all cursor-pointer flex items-start gap-3 ${
+                                    isChecked
+                                      ? "bg-white border-[#4F46E5] ring-1 ring-[#4F46E5]/20 shadow-xs"
+                                      : "bg-[#F8FAFC] border-[#E2E8F0] opacity-75"
+                                  }`}
+                                >
+                                  <div className="mt-0.5 text-[#4F46E5]">
+                                    {isChecked ? <CheckSquare size={16} /> : <Square size={16} className="text-[#94A3B8]" />}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between gap-2">
+                                      <h5 className="font-semibold text-xs text-[#0F172A] truncate">
+                                        {p.title}
+                                      </h5>
+                                      <span className="px-2 py-0.5 rounded bg-[#F1F5F9] text-[10px] font-mono text-[#64748B]">
+                                        {p.year}
+                                      </span>
+                                    </div>
+                                    <p className="text-[11px] text-[#64748B] line-clamp-2 mt-1">
+                                      {p.description}
+                                    </p>
+                                    <div className="flex flex-wrap gap-1 mt-2">
+                                      {p.technologies.slice(0, 3).map((t, idx) => (
+                                        <span
+                                          key={idx}
+                                          className="px-1.5 py-0.5 rounded bg-white border border-[#E2E8F0] text-[9px] font-mono text-[#64748B]"
+                                        >
+                                          {t}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* New Experiences Section */}
+                      {pdfDiffResult.newExperiences && pdfDiffResult.newExperiences.length > 0 && (
+                        <div className="space-y-3">
+                          <div className="text-xs font-semibold text-[#0F172A] flex items-center gap-2">
+                            <Compass size={14} className="text-[#4F46E5]" />
+                            <span>Milestones &amp; Work Experiences Found ({pdfDiffResult.newExperiences.length})</span>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {pdfDiffResult.newExperiences.map((exp) => {
+                              const isChecked = selectedExperiences.includes(exp.id);
+                              return (
+                                <div
+                                  key={exp.id}
+                                  onClick={() =>
+                                    setSelectedExperiences(
+                                      isChecked
+                                        ? selectedExperiences.filter((id) => id !== exp.id)
+                                        : [...selectedExperiences, exp.id]
+                                    )
+                                  }
+                                  className={`p-4 rounded-xl border transition-all cursor-pointer flex items-start gap-3 ${
+                                    isChecked
+                                      ? "bg-white border-[#4F46E5] ring-1 ring-[#4F46E5]/20 shadow-xs"
+                                      : "bg-[#F8FAFC] border-[#E2E8F0] opacity-75"
+                                  }`}
+                                >
+                                  <div className="mt-0.5 text-[#4F46E5]">
+                                    {isChecked ? <CheckSquare size={16} /> : <Square size={16} className="text-[#94A3B8]" />}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="font-semibold text-xs text-[#0F172A]">
+                                      {exp.role} <span className="text-[#64748B]">@ {exp.organization}</span>
+                                    </div>
+                                    <div className="text-[10px] font-mono text-[#4F46E5] mt-0.5">
+                                      {exp.dateStart} – {exp.dateEnd || "Present"} ({exp.category})
+                                    </div>
+                                    <p className="text-[11px] text-[#64748B] line-clamp-2 mt-1">
+                                      {exp.description}
+                                    </p>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* New Tech Skills Section */}
+                      {pdfDiffResult.newSkills && pdfDiffResult.newSkills.length > 0 && (
+                        <div className="space-y-3">
+                          <div className="text-xs font-semibold text-[#0F172A] flex items-center gap-2">
+                            <Tag size={14} className="text-[#4F46E5]" />
+                            <span>Missing Tech Stack Skills to Add ({pdfDiffResult.newSkills.length})</span>
+                          </div>
+
+                          <div className="flex flex-wrap gap-2 p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
+                            {pdfDiffResult.newSkills.map((s) => {
+                              const isChecked = selectedSkills.includes(s.name);
+                              return (
+                                <button
+                                  type="button"
+                                  key={s.name}
+                                  onClick={() =>
+                                    setSelectedSkills(
+                                      isChecked
+                                        ? selectedSkills.filter((name) => name !== s.name)
+                                        : [...selectedSkills, s.name]
+                                    )
+                                  }
+                                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono transition-all cursor-pointer ${
+                                    isChecked
+                                      ? "bg-white text-[#4F46E5] border border-[#4F46E5] shadow-xs font-semibold"
+                                      : "bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0]"
+                                  }`}
+                                >
+                                  <span>{s.name}</span>
+                                  <span className="text-[10px] text-[#94A3B8]">({s.category})</span>
+                                  {isChecked && <Check size={12} className="text-[#4F46E5]" />}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+                </div>
+              )}
+
+              {/* ═══════════════════════════════════════════
+                  MODE 2, 3, 4: PROMPT CONFIG & OUTPUT
+                  ═══════════════════════════════════════════ */}
+              {aiAction !== "parse_pdf_sync" && (
+                <div className="space-y-6">
+                  {/* Input Configuration Box */}
+                  <div className="p-6 md:p-8 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-5">
+                    <h3 className="text-xs font-mono font-semibold uppercase text-[#64748B] tracking-wider border-b border-[#E2E8F0] pb-3">
+                      Prompt Configuration &amp; Template
+                    </h3>
+
+                    {/* Job Description input if tailor_job active */}
+                    {aiAction === "tailor_job" && (
+                      <div className="space-y-1.5">
+                        <label className="block text-xs font-medium text-[#0F172A]">
+                          Paste Target Job Vacancy / Description
+                        </label>
+                        <textarea
+                          rows={4}
+                          placeholder="Paste job requirements, responsibilities, or company profile here..."
+                          value={aiJobDesc}
+                          onChange={(e) => setAiJobDesc(e.target.value)}
+                          className="w-full p-3.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:bg-white focus:outline-none leading-relaxed"
+                        />
+                      </div>
+                    )}
+
+                    {/* Custom Template / Instructions input */}
+                    <div className="space-y-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <label className="block text-xs font-medium text-[#0F172A]">
+                          Custom Template Structure &amp; Guidelines (Optional)
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setAiCustomTemplate(
+                                `Strictly follow the official template structure from public/documents/resume.docx:\n1. HEADER: DAREEAN AHMAD RAFFI MARDIN | Undergraduate Informatics Engineering | Palu, Indonesia | dmardin@gmail.com | +62-853-4072-5481 | github.com/Dareean\n2. PROFESSIONAL SUMMARY: 3-4 crisp high-impact sentences on React/Next.js, UI/UX, and event leadership (I-Fest).\n3. TECHNICAL PROJECTS: Format: Title – Subtitle | Role | Year -> Org/Company | Duration -> STAR Achievement bullets -> Technologies Used (Blade/Livewire, React/Next.js/TypeScript, Tailwind).\n4. LEADERSHIP & ORGANIZATIONAL EXPERIENCE: Informatics Festival 2026 (Person In Charge), Palu Developer Day, HammerCode, Programming Tadulako.\n5. PROFESSIONAL WORK EXPERIENCE: PT Telkom Indonesia (B2B Business Services & Internal Monitoring Dashboard), PT Educa Sisfomedia (Web Programmer).\n6. EDUCATION: Teknik Informatika | Bachelor (GPA: 3.8/4.0), Tadulako University (2024 – Present).\n7. SKILLS: Categorize into Core, Styling & UI, Tools & Cloud, and Soft Skills.`
+                              )
+                            }
+                            className="inline-flex items-center gap-1 text-[11px] font-mono text-[#4F46E5] hover:underline cursor-pointer font-medium"
+                          >
+                            <FileCode size={12} />
+                            <span>Load public/documents/resume.docx Template</span>
+                          </button>
+
+                          <span className="text-[#CBD5E1]">·</span>
+
+                          <a
+                            href="/documents/resume.docx"
+                            download
+                            className="inline-flex items-center gap-1 text-[11px] font-mono text-[#64748B] hover:text-[#0F172A] hover:underline"
+                            title="Download original template file"
+                          >
+                            <Download size={12} />
+                            <span>Original (.docx)</span>
+                          </a>
+                        </div>
+                      </div>
+                      <textarea
+                        rows={3}
+                        placeholder="E.g. Follow Harvard resume format: 1 page summary, technical skills in 4 columns, emphasize leadership and metrics..."
+                        value={aiCustomTemplate}
+                        onChange={(e) => setAiCustomTemplate(e.target.value)}
+                        className="w-full p-3.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:bg-white focus:outline-none leading-relaxed"
+                      />
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+                      <div className="text-[11px] font-mono text-[#64748B] flex items-center gap-2">
+                        <Bot size={14} className="text-[#4F46E5]" />
+                        <span>Model: {aiModelInfo}</span>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={handleGenerateAI}
+                        disabled={aiLoading}
+                        className="w-full sm:w-auto inline-flex h-10 items-center justify-center gap-2 px-6 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-semibold transition-all disabled:opacity-50 cursor-pointer shadow-xs"
+                      >
+                        {aiLoading ? (
+                          <>
+                            <RefreshCw size={14} className="animate-spin" />
+                            <span>Generating with Groq...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles size={14} />
+                            <span>Run AI Generation</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* AI Output Workspace */}
+                  {aiOutput && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="p-6 md:p-8 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-5"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E2E8F0] pb-4">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-sm font-semibold text-[#0F172A]">
+                              Generated Curriculum Vitae
+                            </h4>
+                            <span className="px-2 py-0.5 rounded-full bg-[#EEF2FF] border border-[#E0E7FF] text-[10px] font-mono text-[#4F46E5] font-semibold">
+                              {aiLanguage === "id" ? "Bahasa Indonesia" : "English (EN)"}
+                            </span>
+                          </div>
+                          <p className="text-[11px] font-mono text-[#64748B] mt-0.5">
+                            Executive ATS-ready document layout with instant PDF download.
+                          </p>
+                        </div>
+
+                        {/* Action Bar */}
+                        <div className="flex flex-wrap items-center gap-2">
+                          {/* View Mode Toggle */}
+                          <div className="flex items-center bg-[#F1F5F9] p-1 rounded-lg border border-[#E2E8F0] mr-1">
+                            <button
+                              type="button"
+                              onClick={() => setOutputViewMode("document")}
+                              className={`px-2.5 py-1 rounded-md text-xs font-mono transition-all cursor-pointer ${
+                                outputViewMode === "document"
+                                  ? "bg-white text-[#4F46E5] font-semibold shadow-xs"
+                                  : "text-[#64748B] hover:text-[#0F172A]"
+                              }`}
+                            >
+                              📄 PDF Preview
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setOutputViewMode("raw")}
+                              className={`px-2.5 py-1 rounded-md text-xs font-mono transition-all cursor-pointer ${
+                                outputViewMode === "raw"
+                                  ? "bg-white text-[#4F46E5] font-semibold shadow-xs"
+                                  : "text-[#64748B] hover:text-[#0F172A]"
+                              }`}
+                            >
+                              📝 Raw Code
+                            </button>
+                          </div>
+
+                          {/* Translate button */}
+                          <button
+                            type="button"
+                            disabled={isTranslating}
+                            onClick={() => handleTranslateOutput(aiLanguage === "en" ? "id" : "en")}
+                            className="inline-flex h-8 items-center gap-1.5 px-3 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] hover:border-[#4F46E5] text-xs font-mono text-[#0F172A] transition-colors cursor-pointer"
+                            title={`Translate to ${aiLanguage === "en" ? "Indonesian" : "English"}`}
+                          >
+                            <Languages size={13} className="text-[#4F46E5]" />
+                            <span>
+                              {isTranslating
+                                ? "Translating..."
+                                : aiLanguage === "en"
+                                ? "Translate to ID"
+                                : "Translate to EN"}
+                            </span>
+                          </button>
+
+                          {/* Copy button */}
+                          <button
+                            type="button"
+                            onClick={handleCopyOutput}
+                            className="inline-flex h-8 items-center gap-1.5 px-3 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] hover:border-[#4F46E5] text-xs font-mono text-[#0F172A] transition-colors cursor-pointer"
+                          >
+                            {isCopied ? (
+                              <>
+                                <CheckCheck size={13} className="text-[#4F46E5]" />
+                                <span>Copied!</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy size={13} className="text-[#4F46E5]" />
+                                <span>Copy Text</span>
+                              </>
+                            )}
+                          </button>
+
+                          {/* Download PDF Primary Button */}
+                          <button
+                            type="button"
+                            onClick={handleDownloadPDF}
+                            className="inline-flex h-8 items-center gap-1.5 px-4 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-semibold transition-colors cursor-pointer shadow-xs"
+                          >
+                            <Printer size={13} />
+                            <span>Download PDF</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Visual Document View (A4 Paper Aesthetic) */}
+                      {outputViewMode === "document" ? (
+                        <div className="p-6 md:p-10 rounded-xl bg-white border border-[#CBD5E1] shadow-md max-w-4xl mx-auto my-2">
+                          <div
+                            className="prose prose-slate max-w-none text-xs leading-relaxed"
+                            dangerouslySetInnerHTML={{ __html: convertMarkdownToHTML(aiOutput) }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="p-5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] overflow-x-auto">
+                          <pre className="font-mono text-xs text-[#0F172A] whitespace-pre-wrap leading-relaxed">
+                            {aiOutput}
+                          </pre>
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
@@ -1536,9 +2945,22 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
-                    Project Title
-                  </label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-medium text-[#0F172A]">
+                      Project Title
+                    </label>
+                    <AIAssistantButton
+                      fieldType="project_title"
+                      currentValue={editingProject.title}
+                      context={{
+                        description: editingProject.description,
+                        technologies: editingProject.technologies,
+                        category: editingProject.category,
+                      }}
+                      onApply={(val) => setEditingProject({ ...editingProject, title: val })}
+                      compact
+                    />
+                  </div>
                   <input
                     type="text"
                     value={editingProject.title}
@@ -1592,14 +3014,27 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     onChange={(e) =>
                       setEditingProject({ ...editingProject, link: e.target.value })
                     }
-                    className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] outline-none"
+                    className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
-                    Description &amp; Highlights
-                  </label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-medium text-[#0F172A]">
+                      Description &amp; Highlights
+                    </label>
+                    <AIAssistantButton
+                      fieldType="project_description"
+                      currentValue={editingProject.description}
+                      context={{
+                        title: editingProject.title,
+                        category: editingProject.category,
+                        technologies: editingProject.technologies,
+                      }}
+                      onApply={(val) => setEditingProject({ ...editingProject, description: val })}
+                      label="AI Assist"
+                    />
+                  </div>
                   <textarea
                     rows={4}
                     value={editingProject.description}
@@ -1675,6 +3110,269 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     className="h-9 px-5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-semibold transition cursor-pointer shadow-xs"
                   >
                     Done &amp; Update
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* ═══════════════════════════════════════════
+            BLOG POST EDIT MODAL
+            ═══════════════════════════════════════════ */}
+        {editingBlog && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0F172A]/50 backdrop-blur-xs">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="w-full max-w-2xl bg-white rounded-2xl border border-[#E2E8F0] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+            >
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC]">
+                <div className="flex items-center gap-2">
+                  <BookOpen size={16} className="text-[#4F46E5]" />
+                  <h3 className="text-sm font-semibold text-[#0F172A]">
+                    {editingBlog.id ? "Edit Blog Post" : "Tambah Blog Post Baru"}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setEditingBlog(null)}
+                  className="p-1 text-[#64748B] hover:text-[#0F172A] transition cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Body */}
+              <div className="p-6 overflow-y-auto space-y-5 flex-1">
+                {/* Upload Cover */}
+                <div className="p-4 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] flex flex-col sm:flex-row items-center gap-4">
+                  <div className="w-28 h-20 rounded-lg bg-white overflow-hidden relative border border-[#E2E8F0] flex-shrink-0">
+                    {editingBlog.coverImage ? (
+                      <Image
+                        src={editingBlog.coverImage}
+                        alt={editingBlog.title}
+                        fill
+                        className="object-cover object-top"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-[10px] font-mono text-[#94A3B8]">
+                        Tanpa gambar
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex-1 min-w-0 w-full space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-xs font-medium text-[#0F172A]">
+                        Gambar Sampul (Cover Image)
+                      </label>
+                      <button
+                        type="button"
+                        disabled={isUploading}
+                        onClick={() => blogCoverFileInputRef.current?.click()}
+                        className="h-8 px-3 rounded-lg bg-[#4F46E5] text-white text-xs font-mono font-medium hover:bg-[#4338CA] transition cursor-pointer shadow-xs"
+                      >
+                        {isUploading ? "Uploading..." : "Upload Cover"}
+                      </button>
+                    </div>
+
+                    <input
+                      type="text"
+                      placeholder="Cover Image URL"
+                      value={editingBlog.coverImage || ""}
+                      onChange={(e) =>
+                        setEditingBlog({ ...editingBlog, coverImage: e.target.value })
+                      }
+                      className="w-full h-9 px-3 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
+                    Judul Artikel / Cerita
+                  </label>
+                  <input
+                    type="text"
+                    value={editingBlog.title}
+                    onChange={(e) => {
+                      const title = e.target.value;
+                      const slug = title
+                        .toLowerCase()
+                        .replace(/[^a-z0-9]+/g, "-")
+                        .replace(/(^-|-$)/g, "");
+                      setEditingBlog({ ...editingBlog, title, slug: slug || editingBlog.slug });
+                    }}
+                    className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
+                      Kategori
+                    </label>
+                    <select
+                      value={editingBlog.category}
+                      onChange={(e) =>
+                        setEditingBlog({
+                          ...editingBlog,
+                          category: e.target.value as any,
+                        })
+                      }
+                      className="w-full h-10 px-3 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                    >
+                      <option value="Daily Life">Daily Life (Keseharian)</option>
+                      <option value="Achievement">Achievement (Pencapaian)</option>
+                      <option value="Thoughts">Thoughts (Refleksi)</option>
+                      <option value="Tech">Tech &amp; Projects</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
+                      Tanggal Publikasi
+                    </label>
+                    <input
+                      type="date"
+                      value={editingBlog.date}
+                      onChange={(e) =>
+                        setEditingBlog({ ...editingBlog, date: e.target.value })
+                      }
+                      className="w-full h-10 px-3 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
+                      Estimasi Waktu Baca
+                    </label>
+                    <input
+                      type="text"
+                      value={editingBlog.readTime}
+                      onChange={(e) =>
+                        setEditingBlog({ ...editingBlog, readTime: e.target.value })
+                      }
+                      placeholder="e.g. 4 min read"
+                      className="w-full h-10 px-3 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
+                    Ringkasan Singkat (Excerpt)
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={editingBlog.excerpt}
+                    onChange={(e) =>
+                      setEditingBlog({ ...editingBlog, excerpt: e.target.value })
+                    }
+                    className="w-full p-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] outline-none leading-relaxed"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
+                    Isi Cerita / Artikel Lengkap (Markdown Supported)
+                  </label>
+                  <textarea
+                    rows={8}
+                    value={editingBlog.content}
+                    onChange={(e) =>
+                      setEditingBlog({ ...editingBlog, content: e.target.value })
+                    }
+                    className="w-full p-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs font-sans text-[#0F172A] focus:border-[#4F46E5] outline-none leading-relaxed font-mono text-[11px]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
+                    Tags (pisahkan dengan koma)
+                  </label>
+                  <input
+                    type="text"
+                    value={editingBlog.tags.join(", ")}
+                    onChange={(e) =>
+                      setEditingBlog({
+                        ...editingBlog,
+                        tags: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
+                      })
+                    }
+                    placeholder="Daily Life, Achievement, Palu"
+                    className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                  />
+                </div>
+
+                {/* Featured toggle */}
+                <div className="pt-1">
+                  <label className="flex items-center gap-3 p-3.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={editingBlog.featured}
+                      onChange={(e) =>
+                        setEditingBlog({ ...editingBlog, featured: e.target.checked })
+                      }
+                      className="w-4 h-4 text-[#4F46E5] rounded border-[#E2E8F0] focus:ring-[#4F46E5]"
+                    />
+                    <div>
+                      <div className="text-xs font-semibold text-[#0F172A]">
+                        Tampilkan sebagai Artikel Unggulan (Featured)
+                      </div>
+                      <div className="text-[11px] text-[#64748B]">
+                        Ditampilkan di bagian paling atas halaman Blog dan Beranda.
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="px-6 py-4 border-t border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC]">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const updated = (data.blogs || []).filter((b) => b.id !== editingBlog.id);
+                    setData({ ...data, blogs: updated });
+                    setEditingBlog(null);
+                    showToast("Blog post deleted!");
+                  }}
+                  className="text-xs font-mono text-rose-600 hover:underline cursor-pointer"
+                >
+                  Delete Post
+                </button>
+
+                <div className="flex items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setEditingBlog(null)}
+                    className="h-9 px-4 rounded-lg border border-[#E2E8F0] text-xs font-mono text-[#64748B] hover:text-[#0F172A] bg-white transition cursor-pointer"
+                  >
+                    Batal
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const blogs = data.blogs || [];
+                      const index = blogs.findIndex((b) => b.id === editingBlog.id);
+                      let updated: CMSBlogPost[];
+                      if (index >= 0) {
+                        updated = [...blogs];
+                        updated[index] = editingBlog;
+                      } else {
+                        updated = [editingBlog, ...blogs];
+                      }
+                      setData({ ...data, blogs: updated });
+                      setEditingBlog(null);
+                      showToast("Blog post saved!");
+                    }}
+                    className="h-9 px-5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-semibold transition cursor-pointer shadow-xs"
+                  >
+                    Simpan &amp; Publish
                   </button>
                 </div>
               </div>

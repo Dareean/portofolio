@@ -5,46 +5,40 @@ import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Clock } from "lucide-react";
 import { useDeviceType } from "@/lib/hooks";
-import { CMSStory } from "@/lib/cms";
+import { CMSStory, CMSBlogPost } from "@/lib/cms";
+import GsapTypingHeading from "./GsapTypingHeading";
 
 interface WritingFeedProps {
   storiesData?: CMSStory[];
+  blogsData?: CMSBlogPost[];
 }
 
-export default function WritingFeed({ storiesData }: WritingFeedProps) {
+export default function WritingFeed({ storiesData, blogsData }: WritingFeedProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-80px" });
   const deviceInfo = useDeviceType();
 
-  const stories = storiesData || [
-    {
-      id: 3,
-      title: "Building SOROT: Lessons from Geospatial App Development",
-      excerpt: "Overcoming challenges in real-time GPS telemetry, QGIS mapping integration, and offline-first mobile architecture.",
-      date: "Nov 2024",
-      category: "Engineering",
-      readTime: "5 min read",
-      link: "/journey",
-    },
-    {
-      id: 5,
-      title: "Design System Deep Dive: Scalability in Production",
-      excerpt: "Strategies for tokenizing design variables, atomic components, and maintaining visual consistency across large platforms.",
-      date: "Aug 2024",
-      category: "Design Systems",
-      readTime: "4 min read",
-      link: "/journey",
-    },
-    {
-      id: 2,
-      title: "Crafting a Minimalist Workspace & Engineering Workflow",
-      excerpt: "Principles behind an intentional desk setup, hardware ergonomics, and focus-enhancing ambient tooling.",
-      date: "Dec 2024",
-      category: "Productivity",
-      readTime: "3 min read",
-      link: "/journey",
-    },
-  ];
+  const stories = blogsData && blogsData.length > 0
+    ? blogsData.slice(0, 4).map((b) => ({
+        id: b.id,
+        title: b.title,
+        excerpt: b.excerpt,
+        date: b.date,
+        category: b.category,
+        readTime: b.readTime,
+        link: `/blog/${b.slug}`,
+      }))
+    : storiesData || [
+        {
+          id: 3,
+          title: "Building SOROT: Lessons from Geospatial App Development",
+          excerpt: "Overcoming challenges in real-time GPS telemetry, QGIS mapping integration, and offline-first mobile architecture.",
+          date: "Nov 2024",
+          category: "Engineering",
+          readTime: "5 min read",
+          link: "/blog",
+        },
+      ];
 
   return (
     <section
@@ -62,19 +56,21 @@ export default function WritingFeed({ storiesData }: WritingFeedProps) {
                 Writing &amp; Perspective
               </span>
             </div>
-            <h2 className="text-heading-2 md:text-display-lg text-charcoal font-semibold tracking-tight">
-              Selected Publications
-            </h2>
+            <GsapTypingHeading
+              text="Selected Publications"
+              as="h2"
+              className="text-heading-2 md:text-display-lg text-charcoal font-semibold tracking-tight"
+            />
             <p className="text-body-md text-slate mt-2 max-w-xl">
               Reflections on software architecture, geospatial tools, and design engineering.
             </p>
           </div>
 
           <Link
-            href="/journey"
+            href="/blog"
             className="group inline-flex items-center gap-2 text-button-md font-medium text-steel hover:text-charcoal transition-colors duration-200 font-mono"
           >
-            <span>View All Stories</span>
+            <span>Lihat Semua Blog</span>
             <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform duration-200" />
           </Link>
         </div>

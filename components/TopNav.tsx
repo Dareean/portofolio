@@ -12,6 +12,7 @@ import { Menu, X } from "lucide-react";
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/work", label: "Work" },
+  { href: "/blog", label: "Blog" },
   { href: "/journey", label: "Journey" },
   { href: "/contact", label: "Contact" },
 ];
@@ -24,11 +25,6 @@ export default function TopNav() {
   const isHomePage = pathname === "/";
   const { theme, toggleTheme } = useTheme();
   const isIntroSeen = useIntroSeen();
-
-  // Do not render public navigation on CMS dashboard
-  if (pathname?.startsWith("/cms")) {
-    return null;
-  }
 
   // Show nav after delay
   useEffect(() => {
@@ -56,6 +52,11 @@ export default function TopNav() {
     }
     return () => { document.body.style.overflow = ""; };
   }, [isMobileMenuOpen]);
+
+  // Do not render public navigation on CMS dashboard
+  if (pathname?.startsWith("/cms")) {
+    return null;
+  }
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";

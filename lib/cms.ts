@@ -95,12 +95,27 @@ export interface SiteConfig {
   footerNote: string;
 }
 
+export interface CMSBlogPost {
+  id: number;
+  title: string;
+  slug: string;
+  date: string;
+  category: "Daily Life" | "Achievement" | "Thoughts" | "Tech";
+  excerpt: string;
+  content: string;
+  coverImage?: string;
+  readTime: string;
+  tags: string[];
+  featured?: boolean;
+}
+
 export interface PortfolioCMSData {
   hero: HeroConfig;
   narrative: NarrativeConfig;
   about: AboutConfig;
   projects: CMSProject[];
   stories: CMSStory[];
+  blogs: CMSBlogPost[];
   experiences: CMSExperience[];
   site: SiteConfig;
 }
@@ -190,6 +205,7 @@ export function getCMSData(): PortfolioCMSData {
     },
     projects: [],
     stories: [],
+    blogs: [],
     experiences: [],
     site: {
       email: "dareean.business@gmail.com",

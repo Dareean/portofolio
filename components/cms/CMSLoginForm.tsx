@@ -12,7 +12,6 @@ import {
   AlertCircle,
   RefreshCw,
   ChevronLeft,
-  KeyRound,
   Shield,
 } from "lucide-react";
 
@@ -58,16 +57,10 @@ export default function CMSLoginForm({ onSuccess }: CMSLoginFormProps) {
     }
   };
 
-  const handleQuickFill = () => {
-    setUsername("dareean");
-    setPassword("dareean2026");
-    setError(null);
-  };
-
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] flex flex-col justify-between items-center p-6 font-sans">
       {/* Top Navigation */}
-      <div className="w-full max-w-md pt-6 flex items-center justify-between">
+      <div className="w-full max-w-md pt-6 flex items-center justify-start">
         <Link
           href="/"
           className="inline-flex items-center gap-1.5 text-xs font-mono text-[#64748B] hover:text-[#0F172A] transition-colors group"
@@ -75,16 +68,6 @@ export default function CMSLoginForm({ onSuccess }: CMSLoginFormProps) {
           <ChevronLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
           <span>Back to Portfolio</span>
         </Link>
-
-        <button
-          type="button"
-          onClick={handleQuickFill}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-[#E2E8F0] bg-white hover:border-[#4F46E5] text-[#64748B] hover:text-[#0F172A] text-xs font-mono transition-colors cursor-pointer shadow-xs"
-          title="Auto-fill credentials"
-        >
-          <KeyRound size={12} className="text-[#4F46E5]" />
-          <span>Quick Fill</span>
-        </button>
       </div>
 
       {/* Main Login Box */}
@@ -130,7 +113,7 @@ export default function CMSLoginForm({ onSuccess }: CMSLoginFormProps) {
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label className="block text-[11px] font-mono text-[#64748B] uppercase tracking-wider mb-1.5 font-medium">
-              Username
+              Username / Gmail
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#64748B]">
@@ -141,7 +124,7 @@ export default function CMSLoginForm({ onSuccess }: CMSLoginFormProps) {
                 autoComplete="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="dareean"
+                placeholder="dmardin@gmail.com"
                 className="w-full pl-9 pr-3.5 py-2.5 rounded-lg bg-white border border-[#E2E8F0] text-[#0F172A] font-mono text-xs focus:border-[#4F46E5] focus:outline-none transition-colors"
               />
             </div>
@@ -196,8 +179,7 @@ export default function CMSLoginForm({ onSuccess }: CMSLoginFormProps) {
         </form>
 
         {/* Footer info */}
-        <div className="mt-6 pt-4 border-t border-[#E2E8F0] flex items-center justify-between text-[11px] font-mono text-[#64748B]">
-          <span>Default: dareean / dareean2026</span>
+        <div className="mt-6 pt-4 border-t border-[#E2E8F0] flex items-center justify-end text-[11px] font-mono text-[#64748B]">
           <span className="flex items-center gap-1">
             <Shield size={12} className="text-[#4F46E5]" />
             Session Auth

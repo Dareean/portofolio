@@ -4,6 +4,7 @@ import WorkList from "@/components/WorkList";
 import AboutBento from "@/components/AboutBento";
 import WritingFeed from "@/components/WritingFeed";
 import Footer from "@/components/Footer";
+import GsapRevealSection from "@/components/GsapRevealSection";
 import { getCMSData } from "@/lib/cms";
 import { Project } from "@/lib/data";
 
@@ -35,27 +36,33 @@ export default function Home() {
       <Hero heroData={cmsData.hero} />
 
       {/* Scroll Text Reveal Narrative — dynamic narrative ethos */}
-      <ScrollRevealStatement narrativeData={cmsData.narrative} />
+      <GsapRevealSection yOffset={24} duration={0.7}>
+        <ScrollRevealStatement narrativeData={cmsData.narrative} />
+      </GsapRevealSection>
 
       {/* Section Divider */}
       <div className="section-divider mx-auto max-w-5xl" />
 
       {/* Selected Work — dynamic featured projects */}
-      <div id="work" className="py-section-sm md:py-section">
+      <GsapRevealSection id="work" yOffset={30} duration={0.8} className="py-section-sm md:py-section">
         <WorkList projects={featuredProjects} />
-      </div>
+      </GsapRevealSection>
 
       {/* Section Divider */}
       <div className="section-divider mx-auto max-w-5xl" />
 
       {/* About & Tech Bento Grid — dynamic portrait, bio, community & tech stack */}
-      <AboutBento aboutData={cmsData.about} />
+      <GsapRevealSection yOffset={30} duration={0.8}>
+        <AboutBento aboutData={cmsData.about} />
+      </GsapRevealSection>
 
       {/* Section Divider */}
       <div className="section-divider mx-auto max-w-5xl" />
 
-      {/* Writing & Publications Feed — dynamic articles */}
-      <WritingFeed storiesData={cmsData.stories} />
+      {/* Writing & Publications Feed — dynamic blog posts */}
+      <GsapRevealSection yOffset={30} duration={0.8}>
+        <WritingFeed storiesData={cmsData.stories} blogsData={cmsData.blogs} />
+      </GsapRevealSection>
 
       {/* Section Divider */}
       <div className="section-divider mx-auto max-w-5xl" />
