@@ -20,7 +20,7 @@ export default function Home() {
       title: p.title,
       slug: p.slug,
       category: p.category,
-      year: p.year,
+      year: String(p.year),
       image: p.image,
       link: p.link,
       featured: p.featured,

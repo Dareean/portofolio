@@ -30,40 +30,36 @@ import {
   Edit3,
   X,
   Eye,
-  Sparkles,
-  ChevronRight,
-  FolderOpen,
   Calendar,
   Clock,
   Tag,
   Briefcase,
   Trophy,
-  Users as UsersIcon,
-  GraduationCap,
-  HeartHandshake,
   ArrowRight,
   CheckCircle2,
   Upload,
   Database,
   Cloud,
-  HardDrive,
-  FileUp,
+  Menu,
+  Search,
+  Code2,
 } from "lucide-react";
 
-type CMSTab = "hero" | "projects" | "about" | "writing" | "journey" | "site";
+type CMSTab = "projects" | "hero" | "about" | "writing" | "journey" | "site";
 
 export default function CMSDashboard({ initialData }: { initialData: PortfolioCMSData }) {
   const [data, setData] = useState<PortfolioCMSData>(initialData);
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<CMSTab>("projects");
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
-  // Modal / Drawer state for deep project editing
+  // Modal state
   const [editingProject, setEditingProject] = useState<CMSProject | null>(null);
 
   // Uploading states
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadTarget, setUploadTarget] = useState<string | null>(null);
 
   // Hidden file inputs
   const projectFileInputRef = useRef<HTMLInputElement>(null);
@@ -81,7 +77,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
     }, 3500);
   };
 
-  // Upload file helper (uploads to Supabase Storage / local fallback)
+  // Upload file helper
   const handleFileUpload = async (
     file: File,
     folder: string = "projects",
@@ -101,16 +97,14 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
       const json = await res.json();
       if (res.ok && json.success) {
         onSuccess(json.url);
-        const storageLabel = json.storage === "supabase" ? "Supabase Cloud Storage" : "Local Storage (/uploads)";
-        showToast(`Uploaded successfully to ${storageLabel}!`);
+        showToast("Uploaded successfully!");
       } else {
         showToast(json.error || "Upload failed", "error");
       }
     } catch (err) {
-      showToast("Network error during file upload", "error");
+      showToast("Network error during upload", "error");
     } finally {
       setIsUploading(false);
-      setUploadTarget(null);
     }
   };
 
@@ -126,7 +120,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
       });
       const json = await res.json();
       if (json.success) {
-        showToast("All changes published to portfolio_cms.json!");
+        showToast("All changes saved to portfolio_cms.json!");
       } else {
         showToast(json.error || "Failed to save changes", "error");
       }
@@ -143,7 +137,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
       p.id === id ? { ...p, featured: !p.featured } : p
     );
     setData({ ...data, projects: updated });
-    showToast(`Project visibility updated!`);
+    showToast("Project visibility updated!");
   };
 
   // Save edited project from modal
@@ -153,7 +147,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
     );
     setData({ ...data, projects: updated });
     setEditingProject(null);
-    showToast("Project details updated!");
+    showToast("Project updated!");
   };
 
   // Add new project
@@ -167,22 +161,22 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
       image: "/assets/greengnsulteng_web.png",
       link: "https://example.com",
       featured: false,
-      description: "Comprehensive case study of the system architecture, stack, and problem solved.",
+      description: "Case study of system architecture, technology stack, and engineering impact.",
       technologies: ["React", "TypeScript", "Tailwind CSS"],
       metrics: [{ label: "Impact", value: "+30%" }],
     };
     setData({ ...data, projects: [newProj, ...data.projects] });
     setEditingProject(newProj);
-    showToast("New project created! You can now upload images and edit details.");
+    showToast("New project added.");
   };
 
   // Delete a project
   const handleDeleteProject = (id: number, title: string) => {
-    if (confirm(`Are you sure you want to delete "${title}"?`)) {
+    if (confirm(`Delete "${title}"?`)) {
       const updated = data.projects.filter((p) => p.id !== id);
       setData({ ...data, projects: updated });
       if (editingProject?.id === id) setEditingProject(null);
-      showToast("Project removed.");
+      showToast("Project deleted.");
     }
   };
 
@@ -192,7 +186,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
     const updated = [...data.about.techStack, { name: newTechName.trim(), category: newTechCategory }];
     setData({ ...data, about: { ...data.about, techStack: updated } });
     setNewTechName("");
-    showToast(`Added ${newTechName} to tech stack!`);
+    showToast(`Added ${newTechName}!`);
   };
 
   // Remove tech stack chip
@@ -201,82 +195,90 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
     setData({ ...data, about: { ...data.about, techStack: updated } });
   };
 
-  const navItems = [
+  const navGroups = [
     {
-      id: "projects",
-      num: "01",
-      label: "Projects & Work",
-      icon: Layers,
-      count: data.projects.length,
-      desc: "Visual Catalog & Uploads",
+      groupTitle: "WORKSPACES",
+      items: [
+        {
+          id: "projects",
+          label: "Projects & Work",
+          icon: Layers,
+          count: data.projects.length,
+        },
+        {
+          id: "hero",
+          label: "Hero & Narrative",
+          icon: Sliders,
+          count: null,
+        },
+        {
+          id: "about",
+          label: "About & Bento",
+          icon: User,
+          count: null,
+        },
+      ],
     },
     {
-      id: "hero",
-      num: "02",
-      label: "Hero & Headlines",
-      icon: Sliders,
-      count: null,
-      desc: "Live Kinetic Preview",
+      groupTitle: "EDITORIAL",
+      items: [
+        {
+          id: "writing",
+          label: "Writing & Stories",
+          icon: FileText,
+          count: data.stories.length,
+        },
+        {
+          id: "journey",
+          label: "Journey Ledger",
+          icon: Compass,
+          count: data.experiences.length,
+        },
+      ],
     },
     {
-      id: "about",
-      num: "03",
-      label: "About & Bento",
-      icon: User,
-      count: null,
-      desc: "Portrait, Bio & Tech Stack",
-    },
-    {
-      id: "writing",
-      num: "04",
-      label: "Writing & Stories",
-      icon: FileText,
-      count: data.stories.length,
-      desc: "Publication Feeds",
-    },
-    {
-      id: "journey",
-      num: "05",
-      label: "Journey Timeline",
-      icon: Compass,
-      count: data.experiences.length,
-      desc: "Milestones & Roles",
-    },
-    {
-      id: "site",
-      num: "06",
-      label: "Supabase & Settings",
-      icon: Globe,
-      count: null,
-      desc: "Storage & Cloud Sync",
+      groupTitle: "SETTINGS",
+      items: [
+        {
+          id: "site",
+          label: "Cloud & Social",
+          icon: Globe,
+          count: null,
+        },
+      ],
     },
   ];
 
-  const currentNav = navItems.find((n) => n.id === activeTab) || navItems[0];
+  const allNavItems = navGroups.flatMap((g) => g.items);
+  const currentNav = allNavItems.find((n) => n.id === activeTab) || allNavItems[0];
   const featuredCount = data.projects.filter((p) => p.featured).length;
 
   return (
-    <div className="min-h-screen bg-canvas text-charcoal flex flex-col md:flex-row font-sans selection:bg-primary/20 selection:text-ink">
+    <div className="flex h-screen overflow-hidden bg-[#F8FAFC] text-[#0F172A] font-sans antialiased">
       {/* Toast Notification */}
       <AnimatePresence>
         {toast && (
           <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.98 }}
-            className={`fixed top-6 right-6 z-50 px-4 py-3 rounded-xl shadow-elevation-3 border flex items-center gap-3 text-caption font-mono ${
+            initial={{ opacity: 0, y: -16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            className={`fixed top-4 right-4 z-50 px-4 py-2.5 rounded-lg border text-xs font-mono font-medium shadow-md flex items-center gap-2.5 ${
               toast.type === "success"
-                ? "bg-charcoal text-white border-charcoal shadow-elevation-2"
-                : "bg-rose-600 text-white border-rose-700"
+                ? "bg-white text-[#0F172A] border-[#4F46E5]"
+                : "bg-rose-50 text-rose-700 border-rose-200"
             }`}
           >
-            {toast.type === "success" ? <CheckCircle2 size={16} className="text-emerald-400" /> : <AlertCircle size={16} />}
-            <span className="font-medium">{toast.message}</span>
+            {toast.type === "success" ? (
+              <Check size={14} className="text-[#4F46E5]" />
+            ) : (
+              <AlertCircle size={14} className="text-rose-500" />
+            )}
+            <span>{toast.message}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Hidden File Inputs for Direct Media Uploads */}
+      {/* Hidden File Inputs */}
       <input
         type="file"
         ref={projectFileInputRef}
@@ -323,105 +325,97 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
       />
 
       {/* ═══════════════════════════════════════════
-          LEFT SIDEBAR (Refined Studio Workspace)
+          SIDEBAR
           ═══════════════════════════════════════════ */}
-      <aside className="w-full md:w-64 lg:w-72 bg-surface border-r border-hairline flex flex-col justify-between md:h-screen md:sticky md:top-0 z-30 flex-shrink-0">
-        <div>
-          {/* Workspace Identity */}
-          <div className="p-5 border-b border-hairline">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-charcoal text-white flex items-center justify-center font-mono font-bold text-base shadow-elevation-1">
-                D
+      <aside
+        className={`fixed left-0 top-0 z-40 flex h-screen flex-col bg-white border-r border-[#E2E8F0] duration-200 ease-linear lg:static lg:translate-x-0 ${
+          sidebarOpen ? "w-64 translate-x-0" : "-translate-x-full w-0 lg:w-64"
+        }`}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-[#E2E8F0]">
+          <Link href="/cms" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-[#4F46E5] text-white flex items-center justify-center font-mono font-bold text-sm shadow-xs">
+              D
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-[#0F172A] tracking-tight">
+                Dareean Studio
               </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between">
-                  <h1 className="text-body-sm-medium font-semibold text-charcoal tracking-tight truncate">
-                    Portfolio Studio
-                  </h1>
-                  <span className="px-1.5 py-0.5 rounded bg-primary/10 text-primary font-mono text-[10px] font-semibold">
-                    Supabase Ready
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <span className="text-[11px] font-mono text-steel truncate">
-                    {data.about.fullName || "Dareean"}
-                  </span>
-                </div>
+              <div className="text-[10px] text-[#64748B] font-mono">
+                CMS Control Plane
               </div>
             </div>
-          </div>
+          </Link>
 
-          {/* Quick Snapshot Metrics */}
-          <div className="p-3 border-b border-hairline bg-surface-soft grid grid-cols-2 gap-2 text-center">
-            <div className="p-2 rounded-lg bg-canvas border border-hairline">
-              <div className="text-[10px] font-mono uppercase text-muted font-semibold">Featured</div>
-              <div className="text-body-sm font-bold text-primary font-mono mt-0.5">
-                {featuredCount} / {data.projects.length}
-              </div>
-            </div>
-            <div className="p-2 rounded-lg bg-canvas border border-hairline">
-              <div className="text-[10px] font-mono uppercase text-muted font-semibold">Milestones</div>
-              <div className="text-body-sm font-bold text-charcoal font-mono mt-0.5">
-                {data.experiences.length}
-              </div>
-            </div>
-          </div>
-
-          {/* Navigation Workspaces */}
-          <nav className="p-3 space-y-1">
-            <div className="px-3 py-1.5 text-micro-uppercase text-muted font-semibold font-mono">
-              Workspaces
-            </div>
-
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id as CMSTab)}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-body-sm font-mono transition-all duration-150 cursor-pointer ${
-                    isActive
-                      ? "bg-charcoal text-white font-medium shadow-elevation-1"
-                      : "text-steel hover:text-charcoal hover:bg-canvas"
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span className={`text-micro font-mono ${isActive ? "text-white/60" : "text-muted"}`}>
-                      /{item.num}
-                    </span>
-                    <Icon size={15} />
-                    <span className="truncate">{item.label}</span>
-                  </div>
-
-                  {item.count !== null && (
-                    <span
-                      className={`text-micro px-1.5 py-0.5 rounded font-mono ${
-                        isActive ? "bg-white/20 text-white" : "bg-canvas border border-hairline text-steel"
-                      }`}
-                    >
-                      {item.count}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="block lg:hidden text-[#64748B] hover:text-[#0F172A]"
+          >
+            <X size={18} />
+          </button>
         </div>
 
-        {/* Sidebar Footer Actions */}
-        <div className="p-3 border-t border-hairline space-y-1.5 bg-surface-soft">
+        {/* Navigation */}
+        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
+          {navGroups.map((group, gIdx) => (
+            <div key={gIdx}>
+              <div className="mb-2 px-3 text-[10px] font-mono font-semibold uppercase text-[#64748B] tracking-wider">
+                {group.groupTitle}
+              </div>
+
+              <ul className="space-y-1">
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.id;
+                  return (
+                    <li key={item.id}>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab(item.id as CMSTab)}
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-mono transition-colors cursor-pointer ${
+                          isActive
+                            ? "bg-[#EEF2FF] text-[#4F46E5] font-semibold border border-[#E0E7FF]"
+                            : "text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9]"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <Icon size={14} className={isActive ? "text-[#4F46E5]" : "text-[#64748B]"} />
+                          <span>{item.label}</span>
+                        </div>
+
+                        {item.count !== null && (
+                          <span
+                            className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${
+                              isActive
+                                ? "bg-[#4F46E5] text-white"
+                                : "bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0]"
+                            }`}
+                          >
+                            {item.count}
+                          </span>
+                        )}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div className="p-3 border-t border-[#E2E8F0] space-y-1.5 bg-white">
           <Link
             href="/"
             target="_blank"
-            className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-canvas border border-hairline text-charcoal text-caption font-mono hover:border-steel transition-colors group"
+            className="flex items-center justify-between px-3 py-2 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#64748B] hover:text-[#0F172A] font-mono transition-colors"
           >
             <div className="flex items-center gap-2">
-              <ExternalLink size={13} className="text-steel group-hover:text-charcoal" />
-              <span>Preview Live Website</span>
+              <ExternalLink size={13} className="text-[#4F46E5]" />
+              <span>Preview Website</span>
             </div>
-            <ArrowUpRight size={13} className="text-steel group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            <ArrowUpRight size={13} />
           </Link>
 
           <button
@@ -430,7 +424,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
               await fetch("/api/cms/auth", { method: "DELETE" });
               window.location.reload();
             }}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-rose-600 hover:bg-rose-50 text-caption font-mono transition-colors cursor-pointer"
+            className="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs text-[#64748B] hover:text-rose-600 font-mono transition-colors cursor-pointer"
           >
             <LogOut size={13} />
             <span>Sign Out</span>
@@ -439,1149 +433,1045 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
       </aside>
 
       {/* ═══════════════════════════════════════════
-          RIGHT MAIN WORKSPACE
+          MAIN WORKSPACE
           ═══════════════════════════════════════════ */}
-      <main className="flex-1 min-w-0 bg-canvas min-h-screen flex flex-col justify-between">
-        <div>
-          {/* Top Sticky Action Bar */}
-          <div className="sticky top-0 z-20 border-b border-hairline bg-surface/95 backdrop-blur-md px-6 md:px-8 py-3.5 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-micro font-mono text-primary font-bold uppercase tracking-wider">
-                /{currentNav.num}
-              </span>
-              <span className="w-1 h-1 rounded-full bg-hairline-strong" />
-              <div>
-                <h2 className="text-body-md font-semibold text-charcoal tracking-tight">
-                  {currentNav.label}
-                </h2>
-                <p className="text-micro text-steel font-mono hidden sm:block">
-                  {currentNav.desc}
-                </p>
-              </div>
-            </div>
+      <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden bg-[#F8FAFC]">
+        {/* Header Bar */}
+        <header className="sticky top-0 z-30 flex w-full bg-white/90 backdrop-blur-md border-b border-[#E2E8F0] px-6 py-3 justify-between items-center">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="lg:hidden p-1.5 rounded border border-[#E2E8F0] bg-white text-[#64748B]"
+            >
+              <Menu size={16} />
+            </button>
 
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={isSaving}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary hover:bg-primary-pressed text-white text-caption font-mono font-medium transition-colors duration-150 disabled:opacity-50 shadow-elevation-1 cursor-pointer"
-              >
-                {isSaving ? (
-                  <>
-                    <RefreshCw size={13} className="animate-spin" />
-                    <span>Saving...</span>
-                  </>
-                ) : (
-                  <>
-                    <Save size={13} />
-                    <span>Save All Changes</span>
-                  </>
-                )}
-              </button>
+            <div className="flex items-center gap-2 text-xs font-mono">
+              <span className="text-[#64748B]">Dashboard</span>
+              <span className="text-[#CBD5E1]">/</span>
+              <span className="font-semibold text-[#0F172A]">{currentNav.label}</span>
             </div>
           </div>
 
-          {/* Content Body */}
-          <div className="p-6 md:p-8 max-w-6xl space-y-6">
-            {/* ═══════════════════════════════════════════
-                WORKSPACE 1: PROJECTS & WORK (Visual Catalog)
-                ═══════════════════════════════════════════ */}
-            {activeTab === "projects" && (
-              <div className="space-y-6">
-                {/* Header with Stats & Add Button */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl bg-surface border border-hairline">
-                  <div>
-                    <h3 className="text-heading-4 font-semibold text-charcoal tracking-tight">
-                      Projects &amp; Selected Work
-                    </h3>
-                    <p className="text-body-sm text-slate mt-0.5">
-                      Toggle the star icon to feature projects on the homepage. Click <strong>Edit</strong> to upload screenshots and manage stack.
-                    </p>
-                  </div>
+          <div className="flex items-center gap-3">
+            <div className="relative hidden md:block">
+              <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748B]" />
+              <input
+                type="text"
+                placeholder="Filter entries..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-8 pr-3 py-1.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] focus:bg-white focus:outline-none w-52"
+              />
+            </div>
 
-                  <button
-                    type="button"
-                    onClick={handleAddNewProject}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-charcoal text-white rounded-lg text-caption font-mono font-medium hover:bg-ink-deep transition-colors cursor-pointer shadow-elevation-1 flex-shrink-0"
-                  >
-                    <Plus size={15} />
-                    <span>Add New Project</span>
-                  </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={isSaving}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
+            >
+              {isSaving ? (
+                <>
+                  <RefreshCw size={13} className="animate-spin" />
+                  <span>Saving...</span>
+                </>
+              ) : (
+                <>
+                  <Save size={13} />
+                  <span>Save Changes</span>
+                </>
+              )}
+            </button>
+          </div>
+        </header>
+
+        {/* Content Body */}
+        <main className="p-6 md:p-8 max-w-6xl space-y-6">
+          {/* KPI Stat Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
+              <div className="text-[11px] font-mono text-[#64748B] uppercase tracking-wider font-medium">
+                Total Projects
+              </div>
+              <div className="text-xl font-bold font-mono text-[#0F172A] mt-1">
+                {data.projects.length}
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
+              <div className="text-[11px] font-mono text-[#64748B] uppercase tracking-wider font-medium">
+                Featured on Home
+              </div>
+              <div className="text-xl font-bold font-mono text-[#4F46E5] mt-1">
+                {featuredCount}
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
+              <div className="text-[11px] font-mono text-[#64748B] uppercase tracking-wider font-medium">
+                Milestones
+              </div>
+              <div className="text-xl font-bold font-mono text-[#0F172A] mt-1">
+                {data.experiences.length}
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
+              <div className="text-[11px] font-mono text-[#64748B] uppercase tracking-wider font-medium">
+                Tech Stack
+              </div>
+              <div className="text-xl font-bold font-mono text-[#0F172A] mt-1">
+                {data.about.techStack.length}
+              </div>
+            </div>
+          </div>
+
+          {/* ═══════════════════════════════════════════
+              TAB 1: PROJECTS
+              ═══════════════════════════════════════════ */}
+          {activeTab === "projects" && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
+                <div>
+                  <h3 className="text-sm font-semibold text-[#0F172A]">
+                    Projects &amp; Selected Works
+                  </h3>
+                  <p className="text-xs text-[#64748B] mt-0.5">
+                    Click the star to feature a project on the landing page.
+                  </p>
                 </div>
 
-                {/* Visual Project Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {data.projects.map((project, index) => (
+                <button
+                  type="button"
+                  onClick={handleAddNewProject}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition-colors cursor-pointer shadow-xs"
+                >
+                  <Plus size={14} />
+                  <span>Add Project</span>
+                </button>
+              </div>
+
+              {/* Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {data.projects
+                  .filter((p) =>
+                    searchQuery
+                      ? p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        p.category.toLowerCase().includes(searchQuery.toLowerCase())
+                      : true
+                  )
+                  .map((project) => (
                     <div
                       key={project.id}
-                      className={`group rounded-xl border transition-all duration-200 flex flex-col justify-between overflow-hidden bg-surface ${
-                        project.featured
-                          ? "border-primary/40 shadow-elevation-1 ring-1 ring-primary/20"
-                          : "border-hairline hover:border-hairline-strong"
+                      className={`rounded-xl border overflow-hidden flex flex-col justify-between bg-white shadow-xs transition-colors ${
+                        project.featured ? "border-[#4F46E5] ring-1 ring-[#4F46E5]/20" : "border-[#E2E8F0] hover:border-[#94A3B8]"
                       }`}
                     >
-                      {/* Image Thumbnail Preview */}
-                      <div className="relative h-40 bg-surface-soft border-b border-hairline overflow-hidden">
+                      {/* Image Thumbnail */}
+                      <div className="relative h-40 bg-[#F1F5F9] border-b border-[#E2E8F0] overflow-hidden">
                         {project.image ? (
                           <Image
                             src={project.image}
                             alt={project.title}
                             fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                            className="object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-muted font-mono text-xs">
-                            No image preview
+                          <div className="w-full h-full flex items-center justify-center text-xs font-mono text-[#94A3B8]">
+                            No image
                           </div>
                         )}
 
-                        {/* Top Badges */}
                         <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between z-10">
-                          <span className="px-2 py-0.5 rounded bg-surface/90 backdrop-blur-md border border-hairline text-charcoal font-mono text-[11px] font-semibold">
+                          <span className="px-2 py-0.5 rounded bg-white/90 text-[#0F172A] font-mono text-[10px] font-semibold border border-[#E2E8F0] shadow-xs">
                             {project.category} · {project.year}
                           </span>
 
-                          {/* Quick Star Toggle Button */}
                           <button
                             type="button"
                             onClick={() => toggleProjectFeatured(project.id)}
-                            className={`p-1.5 rounded-md backdrop-blur-md transition-all cursor-pointer ${
+                            className={`p-1.5 rounded transition-colors cursor-pointer ${
                               project.featured
-                                ? "bg-primary text-white shadow-elevation-1"
-                                : "bg-surface/90 text-steel hover:text-charcoal hover:bg-surface"
+                                ? "bg-[#4F46E5] text-white shadow-xs"
+                                : "bg-white/90 text-[#64748B] hover:text-[#0F172A] border border-[#E2E8F0]"
                             }`}
-                            title={project.featured ? "Featured on Home (Click to unfeature)" : "Click to feature on Home"}
+                            title={project.featured ? "Featured on Home" : "Click to feature"}
                           >
-                            <Star size={14} className={project.featured ? "fill-white" : ""} />
+                            <Star size={13} className={project.featured ? "fill-white" : ""} />
                           </button>
                         </div>
                       </div>
 
-                      {/* Card Body */}
-                      <div className="p-4 flex-1 flex flex-col justify-between">
+                      {/* Info */}
+                      <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                         <div>
-                          <div className="flex items-start justify-between gap-2 mb-1">
-                            <h4 className="font-semibold text-charcoal text-body-md leading-tight line-clamp-1">
-                              {project.title}
-                            </h4>
-                          </div>
-
-                          <p className="text-slate text-body-sm line-clamp-2 leading-relaxed mb-3">
+                          <h4 className="font-semibold text-sm text-[#0F172A] line-clamp-1">
+                            {project.title}
+                          </h4>
+                          <p className="text-xs text-[#64748B] line-clamp-2 mt-1 leading-relaxed">
                             {project.description}
                           </p>
 
-                          {/* Tech stack chips */}
-                          <div className="flex flex-wrap gap-1 mb-4">
-                            {project.technologies.slice(0, 3).map((tech, i) => (
+                          <div className="flex flex-wrap gap-1 mt-3">
+                            {project.technologies.slice(0, 3).map((tech, idx) => (
                               <span
-                                key={i}
-                                className="px-1.5 py-0.5 rounded bg-canvas border border-hairline text-steel text-[10px] font-mono"
+                                key={idx}
+                                className="px-2 py-0.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-[10px] font-mono text-[#64748B]"
                               >
                                 {tech}
                               </span>
                             ))}
-                            {project.technologies.length > 3 && (
-                              <span className="px-1.5 py-0.5 rounded bg-canvas border border-hairline text-steel text-[10px] font-mono">
-                                +{project.technologies.length - 3}
-                              </span>
-                            )}
                           </div>
                         </div>
 
-                        {/* Card Footer Actions */}
-                        <div className="pt-3 border-t border-hairline flex items-center justify-between">
+                        {/* Actions */}
+                        <div className="pt-3 border-t border-[#E2E8F0] flex items-center justify-between">
                           <button
                             type="button"
                             onClick={() => setEditingProject(project)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-canvas border border-hairline text-charcoal hover:border-steel text-caption font-mono font-medium transition-colors cursor-pointer"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#F8FAFC] hover:border-[#4F46E5] border border-[#E2E8F0] text-[#0F172A] text-xs font-mono transition-colors cursor-pointer"
                           >
-                            <Edit3 size={13} />
-                            <span>Edit Details &amp; Upload</span>
+                            <Edit3 size={12} className="text-[#4F46E5]" />
+                            <span>Edit Details</span>
                           </button>
 
                           <button
                             type="button"
                             onClick={() => handleDeleteProject(project.id, project.title)}
-                            className="p-1.5 text-steel hover:text-rose-600 hover:bg-rose-50 rounded transition-colors cursor-pointer"
+                            className="p-1 text-[#64748B] hover:text-rose-600 transition cursor-pointer"
                             title="Delete project"
                           >
-                            <Trash2 size={15} />
+                            <Trash2 size={14} />
                           </button>
                         </div>
                       </div>
                     </div>
                   ))}
-                </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* ═══════════════════════════════════════════
-                WORKSPACE 2: HERO & NARRATIVE (Live Kinetic Preview)
-                ═══════════════════════════════════════════ */}
-            {activeTab === "hero" && (
-              <div className="space-y-6">
-                {/* Live Simulation Box */}
-                <div className="p-6 md:p-8 rounded-xl bg-charcoal text-white space-y-4 shadow-elevation-2">
-                  <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                    <span className="text-micro font-mono text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                      Live Landing Page Simulation
-                    </span>
-                    <span className="text-micro font-mono text-white/50">#hero</span>
-                  </div>
-
-                  <div className="py-4">
-                    <div className="text-heading-2 md:text-display-sm font-bold tracking-tight leading-none uppercase">
-                      <span>{data.hero.headlineLine1 || "FROM PIXEL"} </span>
-                      <span className="text-white/40">{data.hero.headlineLine2 || "TO"} </span>
-                      <span className="text-primary-deep bg-white px-2 py-0.5 rounded ml-1">
-                        {data.hero.headlineAccent || "PEOPLE."}
-                      </span>
-                    </div>
-
-                    <p className="text-body-md text-white/70 max-w-2xl mt-4 leading-relaxed">
-                      {data.hero.subtitle || "Bridging technical execution with human impact."}
-                    </p>
-                  </div>
+          {/* ═══════════════════════════════════════════
+              TAB 2: HERO & NARRATIVE
+              ═══════════════════════════════════════════ */}
+          {activeTab === "hero" && (
+            <div className="space-y-6">
+              {/* Live Preview Box */}
+              <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-3">
+                <div className="text-[11px] font-mono text-[#64748B] uppercase tracking-wider font-medium">
+                  Live Typography Preview
                 </div>
+                <div className="text-2xl md:text-3xl font-bold tracking-tight uppercase text-[#0F172A]">
+                  <span>{data.hero.headlineLine1 || "FROM PIXEL"} </span>
+                  <span className="text-[#94A3B8]">{data.hero.headlineLine2 || "TO"} </span>
+                  <span className="text-[#4F46E5] ml-1">
+                    {data.hero.headlineAccent || "PEOPLE."}
+                  </span>
+                </div>
+                <p className="text-xs text-[#64748B] max-w-2xl leading-relaxed">
+                  {data.hero.subtitle || "Bridging technical execution with human impact."}
+                </p>
+              </div>
 
-                {/* Direct Editing Form */}
-                <div className="p-6 rounded-xl bg-surface border border-hairline space-y-5">
-                  <h3 className="text-heading-5 font-semibold text-charcoal tracking-tight border-b border-hairline pb-3">
-                    Edit Headline Typography
-                  </h3>
+              {/* Form Box */}
+              <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+                <h3 className="text-xs font-mono font-semibold uppercase text-[#64748B] tracking-wider border-b border-[#E2E8F0] pb-3">
+                  Headline Text
+                </h3>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
-                        Line 1
-                      </label>
-                      <input
-                        type="text"
-                        value={data.hero.headlineLine1}
-                        onChange={(e) =>
-                          setData({
-                            ...data,
-                            hero: { ...data.hero, headlineLine1: e.target.value },
-                          })
-                        }
-                        className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
-                        Line 2
-                      </label>
-                      <input
-                        type="text"
-                        value={data.hero.headlineLine2}
-                        onChange={(e) =>
-                          setData({
-                            ...data,
-                            hero: { ...data.hero, headlineLine2: e.target.value },
-                          })
-                        }
-                        className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-micro font-mono text-primary font-semibold uppercase tracking-wider mb-1.5">
-                        Accent Word
-                      </label>
-                      <input
-                        type="text"
-                        value={data.hero.headlineAccent}
-                        onChange={(e) =>
-                          setData({
-                            ...data,
-                            hero: { ...data.hero, headlineAccent: e.target.value },
-                          })
-                        }
-                        className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-primary/40 text-primary font-mono text-body-sm font-semibold focus:border-primary focus:outline-none"
-                      />
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                      Line 1
+                    </label>
+                    <input
+                      type="text"
+                      value={data.hero.headlineLine1}
+                      onChange={(e) =>
+                        setData({ ...data, hero: { ...data.hero, headlineLine1: e.target.value } })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                    />
                   </div>
 
                   <div>
-                    <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
-                      Subtitle Paragraph
+                    <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                      Line 2
                     </label>
-                    <textarea
-                      rows={3}
-                      value={data.hero.subtitle}
+                    <input
+                      type="text"
+                      value={data.hero.headlineLine2}
                       onChange={(e) =>
-                        setData({
-                          ...data,
-                          hero: { ...data.hero, subtitle: e.target.value },
-                        })
+                        setData({ ...data, hero: { ...data.hero, headlineLine2: e.target.value } })
                       }
-                      className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none leading-relaxed"
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-mono text-[#4F46E5] uppercase font-semibold mb-1">
+                      Accent Word
+                    </label>
+                    <input
+                      type="text"
+                      value={data.hero.headlineAccent}
+                      onChange={(e) =>
+                        setData({ ...data, hero: { ...data.hero, headlineAccent: e.target.value } })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-[#EEF2FF] border border-[#4F46E5]/40 text-xs font-mono font-semibold text-[#4F46E5] focus:border-[#4F46E5] focus:outline-none"
                     />
                   </div>
                 </div>
 
-                {/* 3 Core Focus Pillars */}
-                <div className="p-6 rounded-xl bg-surface border border-hairline space-y-4">
-                  <h3 className="text-heading-5 font-semibold text-charcoal tracking-tight border-b border-hairline pb-3">
-                    3 Core Focus Pillars (Row underneath Hero)
-                  </h3>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {data.hero.pillars.map((pillar, index) => (
-                      <div key={pillar.id || index} className="p-4 rounded-lg bg-canvas border border-hairline space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-caption font-mono font-bold text-primary">
-                            /{pillar.num}
-                          </span>
-                          <input
-                            type="text"
-                            placeholder="Tags (e.g. React · Next.js)"
-                            value={pillar.tags}
-                            onChange={(e) => {
-                              const updated = [...data.hero.pillars];
-                              updated[index].tags = e.target.value;
-                              setData({ ...data, hero: { ...data.hero, pillars: updated } });
-                            }}
-                            className="px-2 py-0.5 rounded bg-surface border border-hairline text-steel text-micro font-mono text-right"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-micro font-mono text-steel mb-1">Title</label>
-                          <input
-                            type="text"
-                            value={pillar.title}
-                            onChange={(e) => {
-                              const updated = [...data.hero.pillars];
-                              updated[index].title = e.target.value;
-                              setData({ ...data, hero: { ...data.hero, pillars: updated } });
-                            }}
-                            className="w-full px-3 py-1.5 rounded bg-surface border border-hairline text-charcoal font-semibold text-body-sm focus:border-primary focus:outline-none"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-micro font-mono text-steel mb-1">Description</label>
-                          <textarea
-                            rows={3}
-                            value={pillar.desc}
-                            onChange={(e) => {
-                              const updated = [...data.hero.pillars];
-                              updated[index].desc = e.target.value;
-                              setData({ ...data, hero: { ...data.hero, pillars: updated } });
-                            }}
-                            className="w-full px-3 py-1.5 rounded bg-surface border border-hairline text-charcoal text-caption focus:border-primary focus:outline-none leading-relaxed"
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Scroll Reveal Narrative */}
-                <div className="p-6 rounded-xl bg-surface border border-hairline space-y-4">
-                  <h3 className="text-heading-5 font-semibold text-charcoal tracking-tight border-b border-hairline pb-3">
-                    Scroll Reveal Narrative Statement
-                  </h3>
-
-                  <div>
-                    <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
-                      Statement (Words illuminate sequentially on scroll)
-                    </label>
-                    <textarea
-                      rows={4}
-                      value={data.narrative.statement}
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          narrative: { ...data.narrative, statement: e.target.value },
-                        })
-                      }
-                      className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none leading-relaxed"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                    Subtitle Narrative
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={data.hero.subtitle}
+                    onChange={(e) =>
+                      setData({ ...data, hero: { ...data.hero, subtitle: e.target.value } })
+                    }
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none leading-relaxed"
+                  />
                 </div>
               </div>
-            )}
 
-            {/* ═══════════════════════════════════════════
-                WORKSPACE 3: ABOUT & BENTO (Visual Studio)
-                ═══════════════════════════════════════════ */}
-            {activeTab === "about" && (
-              <div className="space-y-6">
-                {/* Visual Identity Deck (Live portrait + Profile inputs side-by-side) */}
-                <div className="p-6 rounded-xl bg-surface border border-hairline space-y-5">
-                  <h3 className="text-heading-5 font-semibold text-charcoal tracking-tight border-b border-hairline pb-3">
-                    Profile Identity &amp; Portrait
-                  </h3>
+              {/* 3 Core Focus Pillars */}
+              <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+                <h3 className="text-xs font-mono font-semibold uppercase text-[#64748B] tracking-wider border-b border-[#E2E8F0] pb-3">
+                  3 Core Focus Pillars
+                </h3>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-                    {/* Live Portrait Preview + Upload Button */}
-                    <div className="p-4 rounded-lg bg-canvas border border-hairline flex flex-col items-center text-center">
-                      <div className="w-28 h-28 rounded-xl overflow-hidden border border-hairline bg-surface mb-3 relative group">
-                        <Image
-                          src={data.about.portraitImage || "/assets/foto_closeup.jpg"}
-                          alt={data.about.fullName}
-                          fill
-                          className="object-cover object-top"
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {data.hero.pillars.map((pillar, index) => (
+                    <div key={pillar.id || index} className="p-4 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-mono font-bold text-[#4F46E5]">
+                          /{pillar.num}
+                        </span>
+                        <input
+                          type="text"
+                          placeholder="Tags"
+                          value={pillar.tags}
+                          onChange={(e) => {
+                            const updated = [...data.hero.pillars];
+                            updated[index].tags = e.target.value;
+                            setData({ ...data, hero: { ...data.hero, pillars: updated } });
+                          }}
+                          className="px-2 py-0.5 rounded bg-white border border-[#E2E8F0] text-[10px] font-mono text-[#64748B] text-right"
                         />
                       </div>
 
+                      <div>
+                        <label className="block text-[10px] font-mono text-[#64748B] mb-1">Title</label>
+                        <input
+                          type="text"
+                          value={pillar.title}
+                          onChange={(e) => {
+                            const updated = [...data.hero.pillars];
+                            updated[index].title = e.target.value;
+                            setData({ ...data, hero: { ...data.hero, pillars: updated } });
+                          }}
+                          className="w-full px-2.5 py-1.5 rounded bg-white border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] font-mono text-[#64748B] mb-1">Description</label>
+                        <textarea
+                          rows={3}
+                          value={pillar.desc}
+                          onChange={(e) => {
+                            const updated = [...data.hero.pillars];
+                            updated[index].desc = e.target.value;
+                            setData({ ...data, hero: { ...data.hero, pillars: updated } });
+                          }}
+                          className="w-full px-2.5 py-1.5 rounded bg-white border border-[#E2E8F0] text-xs text-[#64748B] focus:border-[#4F46E5] focus:outline-none leading-relaxed"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Narrative Statement */}
+              <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-3">
+                <h3 className="text-xs font-mono font-semibold uppercase text-[#64748B] tracking-wider border-b border-[#E2E8F0] pb-3">
+                  Scroll Reveal Narrative Statement
+                </h3>
+                <textarea
+                  rows={4}
+                  value={data.narrative.statement}
+                  onChange={(e) =>
+                    setData({ ...data, narrative: { ...data.narrative, statement: e.target.value } })
+                  }
+                  className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none leading-relaxed"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* ═══════════════════════════════════════════
+              TAB 3: ABOUT & BENTO
+              ═══════════════════════════════════════════ */}
+          {activeTab === "about" && (
+            <div className="space-y-6">
+              {/* Profile Card */}
+              <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+                <h3 className="text-xs font-mono font-semibold uppercase text-[#64748B] tracking-wider border-b border-[#E2E8F0] pb-3">
+                  Profile Identity
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+                  <div className="p-4 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] flex flex-col items-center text-center">
+                    <div className="w-24 h-24 rounded-full overflow-hidden relative border-2 border-[#4F46E5] mb-3 shadow-xs">
+                      <Image
+                        src={data.about.portraitImage || "/assets/foto_closeup.jpg"}
+                        alt={data.about.fullName}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+
+                    <button
+                      type="button"
+                      disabled={isUploading}
+                      onClick={() => portraitFileInputRef.current?.click()}
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-[#4F46E5] text-white text-xs font-mono font-medium hover:bg-[#4338CA] transition cursor-pointer mb-2 shadow-xs"
+                    >
+                      <Upload size={12} />
+                      <span>{isUploading ? "Uploading..." : "Upload Photo"}</span>
+                    </button>
+
+                    <div className="font-semibold text-xs text-[#0F172A]">
+                      {data.about.fullName}
+                    </div>
+                    <div className="text-[11px] font-mono text-[#4F46E5] mt-0.5">
+                      {data.about.roleTag}
+                    </div>
+                  </div>
+
+                  <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        value={data.about.fullName}
+                        onChange={(e) =>
+                          setData({ ...data, about: { ...data.about, fullName: e.target.value } })
+                        }
+                        className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                        Role Tag
+                      </label>
+                      <input
+                        type="text"
+                        value={data.about.roleTag}
+                        onChange={(e) =>
+                          setData({ ...data, about: { ...data.about, roleTag: e.target.value } })
+                        }
+                        className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                        Portrait Image URL
+                      </label>
+                      <input
+                        type="text"
+                        value={data.about.portraitImage}
+                        onChange={(e) =>
+                          setData({ ...data, about: { ...data.about, portraitImage: e.target.value } })
+                        }
+                        className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                        Location
+                      </label>
+                      <input
+                        type="text"
+                        value={data.about.locationText}
+                        onChange={(e) =>
+                          setData({ ...data, about: { ...data.about, locationText: e.target.value } })
+                        }
+                        className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bio Statement */}
+              <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+                <h3 className="text-xs font-mono font-semibold uppercase text-[#64748B] tracking-wider border-b border-[#E2E8F0] pb-3">
+                  Philosophy &amp; Biography
+                </h3>
+
+                <div>
+                  <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                    Headline
+                  </label>
+                  <input
+                    type="text"
+                    value={data.about.philosophyHeading}
+                    onChange={(e) =>
+                      setData({ ...data, about: { ...data.about, philosophyHeading: e.target.value } })
+                    }
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                    Bio Narrative
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={data.about.philosophyBio}
+                    onChange={(e) =>
+                      setData({ ...data, about: { ...data.about, philosophyBio: e.target.value } })
+                    }
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none leading-relaxed"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-[11px] font-mono text-[#64748B] uppercase">
+                        Resume PDF URL
+                      </label>
                       <button
                         type="button"
                         disabled={isUploading}
-                        onClick={() => portraitFileInputRef.current?.click()}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface border border-hairline hover:border-steel text-charcoal text-micro font-mono font-medium transition-colors cursor-pointer mb-2"
+                        onClick={() => resumeFileInputRef.current?.click()}
+                        className="text-[10px] font-mono text-[#4F46E5] font-semibold hover:underline cursor-pointer"
                       >
-                        <Upload size={12} />
-                        <span>{isUploading ? "Uploading..." : "Upload New Photo"}</span>
+                        Upload PDF
                       </button>
-
-                      <div className="text-body-sm-medium font-semibold text-charcoal">
-                        {data.about.fullName}
-                      </div>
-                      <div className="text-micro font-mono text-primary font-semibold mt-0.5">
-                        {data.about.roleTag}
-                      </div>
                     </div>
-
-                    {/* Inputs */}
-                    <div className="md:col-span-2 space-y-4">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
-                            Full Name
-                          </label>
-                          <input
-                            type="text"
-                            value={data.about.fullName}
-                            onChange={(e) =>
-                              setData({ ...data, about: { ...data.about, fullName: e.target.value } })
-                            }
-                            className="w-full px-3 py-2 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
-                            Role Tag
-                          </label>
-                          <input
-                            type="text"
-                            value={data.about.roleTag}
-                            onChange={(e) =>
-                              setData({ ...data, about: { ...data.about, roleTag: e.target.value } })
-                            }
-                            className="w-full px-3 py-2 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
-                            Portrait Image URL / Path
-                          </label>
-                          <input
-                            type="text"
-                            value={data.about.portraitImage}
-                            onChange={(e) =>
-                              setData({ ...data, about: { ...data.about, portraitImage: e.target.value } })
-                            }
-                            className="w-full px-3 py-2 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
-                            Location &amp; Coordinates
-                          </label>
-                          <input
-                            type="text"
-                            value={data.about.locationText}
-                            onChange={(e) =>
-                              setData({ ...data, about: { ...data.about, locationText: e.target.value } })
-                            }
-                            className="w-full px-3 py-2 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
-                          />
-                        </div>
-                      </div>
-                    </div>
+                    <input
+                      type="text"
+                      value={data.about.resumeUrl}
+                      onChange={(e) =>
+                        setData({ ...data, about: { ...data.about, resumeUrl: e.target.value } })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                    />
                   </div>
-                </div>
-
-                {/* Philosophy & Bio */}
-                <div className="p-6 rounded-xl bg-surface border border-hairline space-y-4">
-                  <h3 className="text-heading-5 font-semibold text-charcoal tracking-tight border-b border-hairline pb-3">
-                    Philosophy &amp; Bio Statement
-                  </h3>
 
                   <div>
-                    <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
-                      Philosophy Headline
+                    <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                      Status Badge
                     </label>
                     <input
                       type="text"
-                      value={data.about.philosophyHeading}
+                      value={data.about.statusTag}
                       onChange={(e) =>
-                        setData({
-                          ...data,
-                          about: { ...data.about, philosophyHeading: e.target.value },
-                        })
+                        setData({ ...data, about: { ...data.about, statusTag: e.target.value } })
                       }
-                      className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm font-semibold focus:border-primary focus:outline-none"
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
                     />
-                  </div>
-
-                  <div>
-                    <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
-                      Bio Narrative
-                    </label>
-                    <textarea
-                      rows={3}
-                      value={data.about.philosophyBio}
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          about: { ...data.about, philosophyBio: e.target.value },
-                        })
-                      }
-                      className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none leading-relaxed"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                    <div>
-                      <div className="flex items-center justify-between mb-1.5">
-                        <label className="block text-micro font-mono text-steel uppercase tracking-wider">
-                          Resume PDF File URL
-                        </label>
-                        <button
-                          type="button"
-                          disabled={isUploading}
-                          onClick={() => resumeFileInputRef.current?.click()}
-                          className="inline-flex items-center gap-1 text-micro font-mono text-primary font-semibold hover:underline cursor-pointer"
-                        >
-                          <Upload size={11} />
-                          <span>Upload PDF</span>
-                        </button>
-                      </div>
-                      <input
-                        type="text"
-                        value={data.about.resumeUrl}
-                        onChange={(e) =>
-                          setData({ ...data, about: { ...data.about, resumeUrl: e.target.value } })
-                        }
-                        className="w-full px-3.5 py-2 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-micro font-mono text-steel uppercase tracking-wider mb-1.5">
-                        Status Badge (e.g. Remote Ready)
-                      </label>
-                      <input
-                        type="text"
-                        value={data.about.statusTag}
-                        onChange={(e) =>
-                          setData({ ...data, about: { ...data.about, statusTag: e.target.value } })
-                        }
-                        className="w-full px-3.5 py-2 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
-                      />
-                    </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Interactive Tech Stack Manager (Chips Tagging UI) */}
-                <div className="p-6 rounded-xl bg-surface border border-hairline space-y-4">
-                  <div className="flex items-center justify-between border-b border-hairline pb-3">
-                    <div>
-                      <h3 className="text-heading-5 font-semibold text-charcoal tracking-tight">
-                        Active Tech Stack ({data.about.techStack.length} chips)
-                      </h3>
-                      <p className="text-caption text-slate mt-0.5">
-                        Click the &times; on any chip to remove it, or add new technologies below.
-                      </p>
-                    </div>
-                  </div>
+              {/* Tech Stack Chips */}
+              <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+                <h3 className="text-xs font-mono font-semibold uppercase text-[#64748B] tracking-wider border-b border-[#E2E8F0] pb-3">
+                  Tech Stack Skills ({data.about.techStack.length} chips)
+                </h3>
 
-                  {/* Active Chips */}
-                  <div className="flex flex-wrap gap-2 p-3 rounded-lg bg-canvas border border-hairline min-h-[50px]">
-                    {data.about.techStack.map((tech, index) => (
-                      <div
-                        key={index}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-hairline text-charcoal font-mono text-caption shadow-elevation-0 hover:border-steel transition-colors"
+                <div className="flex flex-wrap gap-2 p-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0]">
+                  {data.about.techStack.map((tech, index) => (
+                    <div
+                      key={index}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] shadow-xs"
+                    >
+                      <span className="font-semibold">{tech.name}</span>
+                      <span className="text-[#64748B] text-[10px]">({tech.category})</span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveTechStack(index)}
+                        className="ml-1 text-[#94A3B8] hover:text-rose-600 cursor-pointer"
                       >
-                        <span className="font-semibold">{tech.name}</span>
-                        <span className="text-muted text-xs font-normal">({tech.category})</span>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveTechStack(index)}
-                          className="ml-1 text-steel hover:text-rose-600 transition-colors cursor-pointer"
-                          title="Remove tech"
-                        >
-                          <X size={13} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Quick Add Tech Bar */}
-                  <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                    <input
-                      type="text"
-                      placeholder="Tech name (e.g. Supabase, Docker, Golang)"
-                      value={newTechName}
-                      onChange={(e) => setNewTechName(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          handleAddTechStack();
-                        }
-                      }}
-                      className="flex-1 px-3.5 py-2 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm font-mono focus:border-primary focus:outline-none"
-                    />
-
-                    <select
-                      value={newTechCategory}
-                      onChange={(e) => setNewTechCategory(e.target.value)}
-                      className="px-3 py-2 rounded-lg bg-canvas border border-hairline text-charcoal text-caption font-mono focus:border-primary focus:outline-none"
-                    >
-                      <option value="Framework">Framework</option>
-                      <option value="Language">Language</option>
-                      <option value="Database">Database</option>
-                      <option value="Library">Library</option>
-                      <option value="Styling">Styling</option>
-                      <option value="Spatial">Spatial</option>
-                      <option value="Design">Design</option>
-                      <option value="Hardware">Hardware</option>
-                      <option value="Tool">Tool</option>
-                    </select>
-
-                    <button
-                      type="button"
-                      onClick={handleAddTechStack}
-                      className="px-4 py-2 bg-charcoal hover:bg-ink-deep text-white text-caption font-mono font-medium rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5 flex-shrink-0"
-                    >
-                      <Plus size={14} />
-                      <span>Add Chip</span>
-                    </button>
-                  </div>
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
                 </div>
 
-                {/* Community Roles */}
-                <div className="p-6 rounded-xl bg-surface border border-hairline space-y-4">
-                  <div className="flex items-center justify-between border-b border-hairline pb-3">
-                    <h3 className="text-heading-5 font-semibold text-charcoal tracking-tight">
-                      Community Leadership Roles
-                    </h3>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const updated = [...data.about.communityRoles, { org: "Organization Name", role: "Role Title" }];
-                        setData({ ...data, about: { ...data.about, communityRoles: updated } });
-                      }}
-                      className="inline-flex items-center gap-1 text-caption font-mono text-primary font-semibold hover:underline cursor-pointer"
-                    >
-                      <Plus size={13} />
-                      <span>Add Role</span>
-                    </button>
-                  </div>
+                <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
+                  <input
+                    type="text"
+                    placeholder="Skill name (e.g. Next.js, Golang)"
+                    value={newTechName}
+                    onChange={(e) => setNewTechName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddTechStack();
+                      }
+                    }}
+                    className="flex-1 px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] focus:outline-none"
+                  />
 
-                  <div className="space-y-2.5">
-                    {data.about.communityRoles.map((role, idx) => (
-                      <div key={idx} className="flex items-center gap-3 p-2.5 rounded-lg bg-canvas border border-hairline">
-                        <input
-                          type="text"
-                          placeholder="Organization Name"
-                          value={role.org}
-                          onChange={(e) => {
-                            const updated = [...data.about.communityRoles];
-                            updated[idx].org = e.target.value;
-                            setData({ ...data, about: { ...data.about, communityRoles: updated } });
-                          }}
-                          className="flex-1 px-3 py-1.5 rounded bg-surface border border-hairline text-charcoal text-body-sm font-medium focus:border-primary focus:outline-none"
-                        />
-                        <input
-                          type="text"
-                          placeholder="Role Title"
-                          value={role.role}
-                          onChange={(e) => {
-                            const updated = [...data.about.communityRoles];
-                            updated[idx].role = e.target.value;
-                            setData({ ...data, about: { ...data.about, communityRoles: updated } });
-                          }}
-                          className="flex-1 px-3 py-1.5 rounded bg-surface border border-hairline text-charcoal font-mono text-caption focus:border-primary focus:outline-none"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const updated = data.about.communityRoles.filter((_, i) => i !== idx);
-                            setData({ ...data, about: { ...data.about, communityRoles: updated } });
-                          }}
-                          className="p-1.5 text-steel hover:text-rose-600 transition-colors cursor-pointer"
-                        >
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* ═══════════════════════════════════════════
-                WORKSPACE 4: WRITING & STORIES
-                ═══════════════════════════════════════════ */}
-            {activeTab === "writing" && (
-              <div className="space-y-6">
-                <div className="flex items-center justify-between p-5 rounded-xl bg-surface border border-hairline">
-                  <div>
-                    <h3 className="text-heading-4 font-semibold text-charcoal tracking-tight">
-                      Selected Publications &amp; Writing Feed
-                    </h3>
-                    <p className="text-body-sm text-slate mt-0.5">
-                      Articles displayed in the minimalist publication feed on the landing page.
-                    </p>
-                  </div>
+                  <select
+                    value={newTechCategory}
+                    onChange={(e) => setNewTechCategory(e.target.value)}
+                    className="px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] focus:outline-none"
+                  >
+                    <option value="Framework">Framework</option>
+                    <option value="Language">Language</option>
+                    <option value="Database">Database</option>
+                    <option value="Library">Library</option>
+                    <option value="Styling">Styling</option>
+                    <option value="Spatial">Spatial</option>
+                    <option value="Design">Design</option>
+                    <option value="Hardware">Hardware</option>
+                    <option value="Tool">Tool</option>
+                  </select>
 
                   <button
                     type="button"
-                    onClick={() => {
-                      const newStory: CMSStory = {
-                        id: Date.now(),
-                        title: "New Publication Article",
-                        excerpt: "A brief summary of the key technical reflections and architecture decisions.",
-                        date: "Aug 2025",
-                        category: "Engineering",
-                        readTime: "4 min read",
-                        link: "/journey",
-                      };
-                      setData({ ...data, stories: [newStory, ...data.stories] });
-                    }}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-charcoal text-white rounded-lg text-caption font-mono font-medium hover:bg-ink-deep transition-colors cursor-pointer"
+                    onClick={handleAddTechStack}
+                    className="px-4 py-2 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition cursor-pointer shadow-xs"
                   >
-                    <Plus size={14} />
-                    <span>Add Article</span>
+                    Add Chip
                   </button>
                 </div>
+              </div>
+            </div>
+          )}
 
-                <div className="space-y-4">
-                  {data.stories.map((story, index) => (
-                    <div key={story.id} className="p-5 rounded-xl bg-surface border border-hairline space-y-4">
-                      <div className="flex items-center justify-between border-b border-hairline pb-3">
+          {/* ═══════════════════════════════════════════
+              TAB 4: WRITING
+              ═══════════════════════════════════════════ */}
+          {activeTab === "writing" && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
+                <div>
+                  <h3 className="text-sm font-semibold text-[#0F172A]">
+                    Selected Publications &amp; Feed
+                  </h3>
+                  <p className="text-xs text-[#64748B] mt-0.5">
+                    Articles displayed in the editorial feed.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newStory: CMSStory = {
+                      id: Date.now(),
+                      title: "New Publication Article",
+                      excerpt: "Summary of technical reflections and architecture decisions.",
+                      date: "Aug 2026",
+                      category: "Engineering",
+                      readTime: "4 min read",
+                      link: "/journey",
+                    };
+                    setData({ ...data, stories: [newStory, ...data.stories] });
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition cursor-pointer shadow-xs"
+                >
+                  <Plus size={14} />
+                  <span>Add Article</span>
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {data.stories.map((story, index) => (
+                  <div key={story.id} className="p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-3">
+                    <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2.5">
+                      <input
+                        type="text"
+                        value={story.title}
+                        onChange={(e) => {
+                          const updated = [...data.stories];
+                          updated[index].title = e.target.value;
+                          setData({ ...data, stories: updated });
+                        }}
+                        className="font-semibold text-xs text-[#0F172A] bg-transparent border-b border-transparent hover:border-[#E2E8F0] focus:border-[#4F46E5] outline-none px-1 flex-1 mr-4"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (confirm(`Delete article "${story.title}"?`)) {
+                            const updated = data.stories.filter((s) => s.id !== story.id);
+                            setData({ ...data, stories: updated });
+                          }
+                        }}
+                        className="p-1 text-[#64748B] hover:text-rose-600 transition cursor-pointer"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-[10px] font-mono text-[#64748B] mb-1">Date</label>
                         <input
                           type="text"
-                          value={story.title}
+                          value={story.date}
                           onChange={(e) => {
                             const updated = [...data.stories];
-                            updated[index].title = e.target.value;
+                            updated[index].date = e.target.value;
                             setData({ ...data, stories: updated });
                           }}
-                          className="font-semibold text-heading-5 text-charcoal bg-transparent border-b border-transparent hover:border-hairline focus:border-primary focus:outline-none px-1 flex-1 mr-4"
+                          className="w-full px-2.5 py-1.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
                         />
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] font-mono text-[#64748B] mb-1">Category</label>
+                        <input
+                          type="text"
+                          value={story.category}
+                          onChange={(e) => {
+                            const updated = [...data.stories];
+                            updated[index].category = e.target.value;
+                            setData({ ...data, stories: updated });
+                          }}
+                          className="w-full px-2.5 py-1.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] font-mono text-[#64748B] mb-1">Read Time</label>
+                        <input
+                          type="text"
+                          value={story.readTime}
+                          onChange={(e) => {
+                            const updated = [...data.stories];
+                            updated[index].readTime = e.target.value;
+                            setData({ ...data, stories: updated });
+                          }}
+                          className="w-full px-2.5 py-1.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-mono text-[#64748B] mb-1">Excerpt</label>
+                      <textarea
+                        rows={2}
+                        value={story.excerpt}
+                        onChange={(e) => {
+                          const updated = [...data.stories];
+                          updated[index].excerpt = e.target.value;
+                          setData({ ...data, stories: updated });
+                        }}
+                        className="w-full px-2.5 py-1.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#64748B] focus:border-[#4F46E5] outline-none leading-relaxed"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ═══════════════════════════════════════════
+              TAB 5: JOURNEY
+              ═══════════════════════════════════════════ */}
+          {activeTab === "journey" && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
+                <div>
+                  <h3 className="text-sm font-semibold text-[#0F172A]">
+                    Journey Milestones &amp; Experience
+                  </h3>
+                  <p className="text-xs text-[#64748B] mt-0.5">
+                    Entries displayed in the /journey timeline.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newExp: CMSExperience = {
+                      id: Date.now(),
+                      title: "New Milestone",
+                      role: "Role Title",
+                      organization: "Organization / Project",
+                      dateStart: "2026-01",
+                      dateEnd: "",
+                      description: "Description of the milestone, responsibilities, and achievements.",
+                      highlights: ["Leadership", "Engineering"],
+                      category: "community",
+                    };
+                    setData({ ...data, experiences: [newExp, ...data.experiences] });
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition cursor-pointer shadow-xs"
+                >
+                  <Plus size={14} />
+                  <span>Add Milestone</span>
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {data.experiences.map((exp, index) => (
+                  <div key={exp.id} className="p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-3">
+                    <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2.5">
+                      <div className="flex items-center gap-2 flex-1">
+                        <span className="text-xs font-mono text-[#4F46E5] font-bold">#{index + 1}</span>
+                        <input
+                          type="text"
+                          value={exp.role}
+                          placeholder="Role"
+                          onChange={(e) => {
+                            const updated = [...data.experiences];
+                            updated[index].role = e.target.value;
+                            setData({ ...data, experiences: updated });
+                          }}
+                          className="font-semibold text-xs text-[#0F172A] bg-transparent border-b border-transparent hover:border-[#E2E8F0] focus:border-[#4F46E5] outline-none px-1"
+                        />
+                        <span className="text-[#64748B]">@</span>
+                        <input
+                          type="text"
+                          value={exp.organization}
+                          placeholder="Organization"
+                          onChange={(e) => {
+                            const updated = [...data.experiences];
+                            updated[index].organization = e.target.value;
+                            setData({ ...data, experiences: updated });
+                          }}
+                          className="text-xs text-[#64748B] bg-transparent border-b border-transparent hover:border-[#E2E8F0] focus:border-[#4F46E5] outline-none px-1"
+                        />
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <select
+                          value={exp.category}
+                          onChange={(e) => {
+                            const updated = [...data.experiences];
+                            updated[index].category = e.target.value as any;
+                            setData({ ...data, experiences: updated });
+                          }}
+                          className="px-2 py-1 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                        >
+                          <option value="community">Community</option>
+                          <option value="work">Work</option>
+                          <option value="award">Award</option>
+                          <option value="committee">Committee</option>
+                          <option value="volunteer">Volunteer</option>
+                          <option value="education">Education</option>
+                        </select>
 
                         <button
                           type="button"
                           onClick={() => {
-                            if (confirm(`Delete article "${story.title}"?`)) {
-                              const updated = data.stories.filter((s) => s.id !== story.id);
-                              setData({ ...data, stories: updated });
+                            if (confirm(`Delete "${exp.role} @ ${exp.organization}"?`)) {
+                              const updated = data.experiences.filter((e) => e.id !== exp.id);
+                              setData({ ...data, experiences: updated });
                             }
                           }}
-                          className="p-1.5 text-steel hover:text-rose-600 transition-colors cursor-pointer"
+                          className="p-1 text-[#64748B] hover:text-rose-600 transition cursor-pointer"
                         >
-                          <Trash2 size={15} />
+                          <Trash2 size={14} />
                         </button>
                       </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <label className="block text-micro font-mono text-steel mb-1">Date</label>
-                          <input
-                            type="text"
-                            value={story.date}
-                            onChange={(e) => {
-                              const updated = [...data.stories];
-                              updated[index].date = e.target.value;
-                              setData({ ...data, stories: updated });
-                            }}
-                            className="w-full px-3 py-2 rounded bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-micro font-mono text-steel mb-1">Category</label>
-                          <input
-                            type="text"
-                            value={story.category}
-                            onChange={(e) => {
-                              const updated = [...data.stories];
-                              updated[index].category = e.target.value;
-                              setData({ ...data, stories: updated });
-                            }}
-                            className="w-full px-3 py-2 rounded bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-micro font-mono text-steel mb-1">Read Time</label>
-                          <input
-                            type="text"
-                            value={story.readTime}
-                            onChange={(e) => {
-                              const updated = [...data.stories];
-                              updated[index].readTime = e.target.value;
-                              setData({ ...data, stories: updated });
-                            }}
-                            className="w-full px-3 py-2 rounded bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-micro font-mono text-steel mb-1">Excerpt Teaser</label>
-                        <textarea
-                          rows={2}
-                          value={story.excerpt}
-                          onChange={(e) => {
-                            const updated = [...data.stories];
-                            updated[index].excerpt = e.target.value;
-                            setData({ ...data, stories: updated });
-                          }}
-                          className="w-full px-3 py-2 rounded bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none leading-relaxed"
-                        />
-                      </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
 
-            {/* ═══════════════════════════════════════════
-                WORKSPACE 5: JOURNEY TIMELINE
-                ═══════════════════════════════════════════ */}
-            {activeTab === "journey" && (
-              <div className="space-y-6">
-                <div className="flex items-center justify-between p-5 rounded-xl bg-surface border border-hairline">
-                  <div>
-                    <h3 className="text-heading-4 font-semibold text-charcoal tracking-tight">
-                      Journey Milestones &amp; Experience
-                    </h3>
-                    <p className="text-body-sm text-slate mt-0.5">
-                      Entries rendered in the editorial ledger on the /journey page.
-                    </p>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const newExp: CMSExperience = {
-                        id: Date.now(),
-                        title: "New Milestone",
-                        role: "Role Title",
-                        organization: "Organization / Project",
-                        dateStart: "2026-01",
-                        dateEnd: "",
-                        description: "Description of the milestone, responsibilities, and achievements.",
-                        highlights: ["Leadership", "Engineering"],
-                        category: "community",
-                      };
-                      setData({ ...data, experiences: [newExp, ...data.experiences] });
-                    }}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-charcoal text-white rounded-lg text-caption font-mono font-medium hover:bg-ink-deep transition-colors cursor-pointer"
-                  >
-                    <Plus size={14} />
-                    <span>Add Milestone</span>
-                  </button>
-                </div>
-
-                <div className="space-y-4">
-                  {data.experiences.map((exp, index) => (
-                    <div key={exp.id} className="p-5 rounded-xl bg-surface border border-hairline space-y-4">
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-hairline pb-3">
-                        <div className="flex items-center gap-2.5 flex-1">
-                          <span className="text-caption font-mono text-steel font-bold">#{index + 1}</span>
-                          <input
-                            type="text"
-                            value={exp.role}
-                            placeholder="Role"
-                            onChange={(e) => {
-                              const updated = [...data.experiences];
-                              updated[index].role = e.target.value;
-                              setData({ ...data, experiences: updated });
-                            }}
-                            className="font-semibold text-heading-5 text-charcoal bg-transparent border-b border-transparent hover:border-hairline focus:border-primary focus:outline-none px-1"
-                          />
-                          <span className="text-steel">@</span>
-                          <input
-                            type="text"
-                            value={exp.organization}
-                            placeholder="Organization"
-                            onChange={(e) => {
-                              const updated = [...data.experiences];
-                              updated[index].organization = e.target.value;
-                              setData({ ...data, experiences: updated });
-                            }}
-                            className="text-body-sm text-steel bg-transparent border-b border-transparent hover:border-hairline focus:border-primary focus:outline-none px-1"
-                          />
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                          <select
-                            value={exp.category}
-                            onChange={(e) => {
-                              const updated = [...data.experiences];
-                              updated[index].category = e.target.value as any;
-                              setData({ ...data, experiences: updated });
-                            }}
-                            className="px-3 py-1.5 rounded bg-canvas border border-hairline text-caption font-mono text-charcoal focus:border-primary focus:outline-none"
-                          >
-                            <option value="community">Community</option>
-                            <option value="work">Work</option>
-                            <option value="award">Award</option>
-                            <option value="committee">Committee</option>
-                            <option value="volunteer">Volunteer</option>
-                            <option value="education">Education</option>
-                          </select>
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (confirm(`Delete milestone "${exp.role} @ ${exp.organization}"?`)) {
-                                const updated = data.experiences.filter((e) => e.id !== exp.id);
-                                setData({ ...data, experiences: updated });
-                              }
-                            }}
-                            className="p-1.5 text-steel hover:text-rose-600 transition-colors cursor-pointer"
-                          >
-                            <Trash2 size={15} />
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <label className="block text-micro font-mono text-steel mb-1">Start Date (YYYY-MM)</label>
-                          <input
-                            type="text"
-                            value={exp.dateStart}
-                            onChange={(e) => {
-                              const updated = [...data.experiences];
-                              updated[index].dateStart = e.target.value;
-                              setData({ ...data, experiences: updated });
-                            }}
-                            className="w-full px-3 py-2 rounded bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-micro font-mono text-steel mb-1">End Date (Blank = Present)</label>
-                          <input
-                            type="text"
-                            placeholder="YYYY-MM (or empty)"
-                            value={exp.dateEnd || ""}
-                            onChange={(e) => {
-                              const updated = [...data.experiences];
-                              updated[index].dateEnd = e.target.value;
-                              setData({ ...data, experiences: updated });
-                            }}
-                            className="w-full px-3 py-2 rounded bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-micro font-mono text-steel mb-1">Display Title</label>
-                          <input
-                            type="text"
-                            value={exp.title}
-                            onChange={(e) => {
-                              const updated = [...data.experiences];
-                              updated[index].title = e.target.value;
-                              setData({ ...data, experiences: updated });
-                            }}
-                            className="w-full px-3 py-2 rounded bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none"
-                          />
-                        </div>
-                      </div>
-
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                       <div>
-                        <label className="block text-micro font-mono text-steel mb-1">Narrative Description</label>
-                        <textarea
-                          rows={3}
-                          value={exp.description}
-                          onChange={(e) => {
-                            const updated = [...data.experiences];
-                            updated[index].description = e.target.value;
-                            setData({ ...data, experiences: updated });
-                          }}
-                          className="w-full px-3 py-2 rounded bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none leading-relaxed"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-micro font-mono text-steel mb-1">Highlights (comma separated)</label>
+                        <label className="block text-[10px] font-mono text-[#64748B] mb-1">Start Date</label>
                         <input
                           type="text"
-                          value={exp.highlights.join(", ")}
+                          value={exp.dateStart}
                           onChange={(e) => {
                             const updated = [...data.experiences];
-                            updated[index].highlights = e.target.value.split(",").map((s) => s.trim()).filter(Boolean);
+                            updated[index].dateStart = e.target.value;
                             setData({ ...data, experiences: updated });
                           }}
-                          className="w-full px-3 py-2 rounded bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
+                          className="w-full px-2.5 py-1.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] font-mono text-[#64748B] mb-1">End Date</label>
+                        <input
+                          type="text"
+                          placeholder="Present (or YYYY-MM)"
+                          value={exp.dateEnd || ""}
+                          onChange={(e) => {
+                            const updated = [...data.experiences];
+                            updated[index].dateEnd = e.target.value;
+                            setData({ ...data, experiences: updated });
+                          }}
+                          className="w-full px-2.5 py-1.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] font-mono text-[#64748B] mb-1">Display Title</label>
+                        <input
+                          type="text"
+                          value={exp.title}
+                          onChange={(e) => {
+                            const updated = [...data.experiences];
+                            updated[index].title = e.target.value;
+                            setData({ ...data, experiences: updated });
+                          }}
+                          className="w-full px-2.5 py-1.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] outline-none"
                         />
                       </div>
                     </div>
-                  ))}
-                </div>
+
+                    <div>
+                      <label className="block text-[10px] font-mono text-[#64748B] mb-1">Description</label>
+                      <textarea
+                        rows={2}
+                        value={exp.description}
+                        onChange={(e) => {
+                          const updated = [...data.experiences];
+                          updated[index].description = e.target.value;
+                          setData({ ...data, experiences: updated });
+                        }}
+                        className="w-full px-2.5 py-1.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#64748B] focus:border-[#4F46E5] outline-none leading-relaxed"
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
-            )}
+            </div>
+          )}
 
-            {/* ═══════════════════════════════════════════
-                WORKSPACE 6: SUPABASE & GLOBAL SETTINGS
-                ═══════════════════════════════════════════ */}
-            {activeTab === "site" && (
-              <div className="space-y-6">
-                {/* Supabase Storage Card */}
-                <div className="p-6 rounded-xl bg-surface border border-hairline space-y-4">
-                  <div className="flex items-center justify-between border-b border-hairline pb-3">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-mono font-bold text-sm">
-                        <Database size={16} />
-                      </div>
-                      <div>
-                        <h3 className="text-heading-5 font-semibold text-charcoal tracking-tight">
-                          Supabase Storage &amp; Database
-                        </h3>
-                        <p className="text-caption text-slate">
-                          Automatic Cloud CDN uploads for screenshots, profile photos, and documents.
-                        </p>
-                      </div>
-                    </div>
-                    <span className="px-2.5 py-1 rounded bg-canvas border border-hairline text-primary font-mono text-micro font-semibold flex items-center gap-1.5">
-                      <Cloud size={12} />
-                      <span>Ready</span>
-                    </span>
-                  </div>
-
-                  <div className="p-4 rounded-lg bg-canvas border border-hairline space-y-2">
-                    <div className="text-body-sm font-semibold text-charcoal">
-                      How to connect your Supabase Project:
-                    </div>
-                    <ol className="text-caption text-slate space-y-1.5 list-decimal list-inside font-mono">
-                      <li>Open your <strong>.env.local</strong> file in this project.</li>
-                      <li>Fill in <strong>NEXT_PUBLIC_SUPABASE_URL</strong> and <strong>NEXT_PUBLIC_SUPABASE_ANON_KEY</strong>.</li>
-                      <li>In Supabase Dashboard, create a Storage bucket named <strong>portfolio-assets</strong> and set it to Public.</li>
-                      <li>All future uploads in this CMS will automatically stream to your Supabase Cloud CDN!</li>
-                    </ol>
-                  </div>
+          {/* ═══════════════════════════════════════════
+              TAB 6: CLOUD & SETTINGS
+              ═══════════════════════════════════════════ */}
+          {activeTab === "site" && (
+            <div className="space-y-6">
+              <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-3">
+                <div className="flex items-center gap-2.5 text-xs font-mono text-[#0F172A] font-semibold">
+                  <Database size={15} className="text-[#4F46E5]" />
+                  <span>Supabase Storage Integration</span>
                 </div>
+                <p className="text-xs text-[#64748B] leading-relaxed">
+                  Configure <strong>NEXT_PUBLIC_SUPABASE_URL</strong> and <strong>NEXT_PUBLIC_SUPABASE_ANON_KEY</strong> in your <strong>.env.local</strong> to stream uploads to your public bucket <strong>portfolio-assets</strong>.
+                </p>
+              </div>
 
-                {/* Global Contact & Social Links */}
-                <div className="p-6 rounded-xl bg-surface border border-hairline space-y-5">
-                  <h3 className="text-heading-5 font-semibold text-charcoal tracking-tight border-b border-hairline pb-3">
-                    Global Contact &amp; Social Links
-                  </h3>
+              <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+                <h3 className="text-xs font-mono font-semibold uppercase text-[#64748B] tracking-wider border-b border-[#E2E8F0] pb-3">
+                  Global Social &amp; Contact Links
+                </h3>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-micro font-mono text-steel mb-1.5">Primary Email</label>
-                      <input
-                        type="email"
-                        value={data.site.email}
-                        onChange={(e) =>
-                          setData({ ...data, site: { ...data.site, email: e.target.value } })
-                        }
-                        className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-micro font-mono text-steel mb-1.5">GitHub URL</label>
-                      <input
-                        type="text"
-                        value={data.site.github}
-                        onChange={(e) =>
-                          setData({ ...data, site: { ...data.site, github: e.target.value } })
-                        }
-                        className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-micro font-mono text-steel mb-1.5">LinkedIn URL</label>
-                      <input
-                        type="text"
-                        value={data.site.linkedin}
-                        onChange={(e) =>
-                          setData({ ...data, site: { ...data.site, linkedin: e.target.value } })
-                        }
-                        className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-micro font-mono text-steel mb-1.5">Instagram URL</label>
-                      <input
-                        type="text"
-                        value={data.site.instagram}
-                        onChange={(e) =>
-                          setData({ ...data, site: { ...data.site, instagram: e.target.value } })
-                        }
-                        className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
-                      />
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      value={data.site.email}
+                      onChange={(e) =>
+                        setData({ ...data, site: { ...data.site, email: e.target.value } })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                    />
                   </div>
 
                   <div>
-                    <label className="block text-micro font-mono text-steel mb-1.5">Footer Note / Slogan</label>
+                    <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                      GitHub URL
+                    </label>
                     <input
                       type="text"
-                      value={data.site.footerNote}
+                      value={data.site.github}
                       onChange={(e) =>
-                        setData({ ...data, site: { ...data.site, footerNote: e.target.value } })
+                        setData({ ...data, site: { ...data.site, github: e.target.value } })
                       }
-                      className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none"
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                      LinkedIn URL
+                    </label>
+                    <input
+                      type="text"
+                      value={data.site.linkedin}
+                      onChange={(e) =>
+                        setData({ ...data, site: { ...data.site, linkedin: e.target.value } })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                      Instagram URL
+                    </label>
+                    <input
+                      type="text"
+                      value={data.site.instagram}
+                      onChange={(e) =>
+                        setData({ ...data, site: { ...data.site, instagram: e.target.value } })
+                      }
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
                     />
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
-        </div>
 
-        {/* Footer info in main */}
-        <footer className="px-6 md:px-8 py-3.5 border-t border-hairline text-caption text-steel font-mono flex items-center justify-between bg-surface-soft">
-          <span>Dareean Portfolio Studio · Supabase Ready</span>
-          <span>Local JSON DB &amp; Cloud Storage</span>
-        </footer>
-      </main>
+                <div>
+                  <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                    Footer Note
+                  </label>
+                  <input
+                    type="text"
+                    value={data.site.footerNote}
+                    onChange={(e) =>
+                      setData({ ...data, site: { ...data.site, footerNote: e.target.value } })
+                    }
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+        </main>
+      </div>
 
       {/* ═══════════════════════════════════════════
-          PROJECT EDITING MODAL / DRAWER (With File Upload)
+          PROJECT MODAL
           ═══════════════════════════════════════════ */}
       <AnimatePresence>
         {editingProject && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-charcoal/50 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
             <motion.div
-              initial={{ opacity: 0, scale: 0.96, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.96, y: 10 }}
-              className="w-full max-w-2xl bg-surface border border-hairline rounded-2xl shadow-elevation-3 overflow-hidden flex flex-col max-h-[90vh]"
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.97 }}
+              className="w-full max-w-2xl rounded-xl border border-[#E2E8F0] bg-white shadow-xl overflow-hidden flex flex-col max-h-[90vh]"
             >
-              {/* Modal Header */}
-              <div className="p-5 border-b border-hairline flex items-center justify-between bg-surface-soft">
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC]">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-mono font-bold text-sm">
-                    <Edit3 size={15} />
+                  <div className="w-7 h-7 rounded bg-[#EEF2FF] text-[#4F46E5] flex items-center justify-center">
+                    <Edit3 size={14} />
                   </div>
                   <div>
-                    <h3 className="text-body-md font-semibold text-charcoal">
-                      Edit Project Details
+                    <h3 className="font-semibold text-xs text-[#0F172A]">
+                      Edit Project
                     </h3>
-                    <p className="text-micro font-mono text-steel">
+                    <p className="text-[10px] font-mono text-[#64748B]">
                       {editingProject.slug}
                     </p>
                   </div>
@@ -1590,17 +1480,17 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                 <button
                   type="button"
                   onClick={() => setEditingProject(null)}
-                  className="p-1.5 text-steel hover:text-charcoal hover:bg-canvas rounded-lg transition-colors cursor-pointer"
+                  className="text-[#64748B] hover:text-[#0F172A] transition cursor-pointer"
                 >
-                  <X size={18} />
+                  <X size={16} />
                 </button>
               </div>
 
-              {/* Modal Body (Scrollable) */}
+              {/* Body */}
               <div className="p-6 overflow-y-auto space-y-4 flex-1">
-                {/* Image Upload Zone & Preview inside modal */}
-                <div className="p-4 rounded-xl bg-canvas border border-hairline flex flex-col sm:flex-row items-center gap-4">
-                  <div className="w-32 h-20 rounded-lg bg-surface-soft overflow-hidden relative border border-hairline flex-shrink-0">
+                {/* Upload Banner */}
+                <div className="p-3.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] flex flex-col sm:flex-row items-center gap-4">
+                  <div className="w-28 h-18 rounded bg-white overflow-hidden relative border border-[#E2E8F0] flex-shrink-0">
                     {editingProject.image ? (
                       <Image
                         src={editingProject.image}
@@ -1609,43 +1499,42 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         className="object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-muted font-mono text-[10px]">
-                        No img
+                      <div className="w-full h-full flex items-center justify-center text-[10px] font-mono text-[#94A3B8]">
+                        No image
                       </div>
                     )}
                   </div>
 
-                  <div className="flex-1 min-w-0 w-full space-y-2">
+                  <div className="flex-1 min-w-0 w-full space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <label className="block text-micro font-mono text-steel uppercase">
-                        Showcase Thumbnail
+                      <label className="block text-[10px] font-mono uppercase text-[#64748B]">
+                        Thumbnail Image
                       </label>
                       <button
                         type="button"
                         disabled={isUploading}
                         onClick={() => projectFileInputRef.current?.click()}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-charcoal hover:bg-ink-deep text-white text-caption font-mono font-medium transition-colors cursor-pointer"
+                        className="px-2.5 py-1 rounded bg-[#4F46E5] text-white text-[11px] font-mono font-medium hover:bg-[#4338CA] transition cursor-pointer shadow-xs"
                       >
-                        <Upload size={12} />
-                        <span>{isUploading ? "Uploading..." : "Upload New Image"}</span>
+                        {isUploading ? "Uploading..." : "Upload Image"}
                       </button>
                     </div>
 
                     <input
                       type="text"
-                      placeholder="Image URL or local path"
+                      placeholder="Image URL"
                       value={editingProject.image}
                       onChange={(e) =>
                         setEditingProject({ ...editingProject, image: e.target.value })
                       }
-                      className="w-full px-3 py-1.5 rounded-md bg-surface border border-hairline text-charcoal font-mono text-caption focus:border-primary focus:outline-none"
+                      className="w-full px-2.5 py-1.5 rounded bg-white border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-micro font-mono text-steel uppercase mb-1">
-                    Project Title
+                  <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                    Title
                   </label>
                   <input
                     type="text"
@@ -1653,13 +1542,13 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     onChange={(e) =>
                       setEditingProject({ ...editingProject, title: e.target.value })
                     }
-                    className="w-full px-3.5 py-2 rounded-lg bg-canvas border border-hairline text-charcoal font-semibold text-body-md focus:border-primary focus:outline-none"
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:border-[#4F46E5] outline-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-micro font-mono text-steel uppercase mb-1">
+                    <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
                       Category
                     </label>
                     <input
@@ -1668,12 +1557,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       onChange={(e) =>
                         setEditingProject({ ...editingProject, category: e.target.value })
                       }
-                      className="w-full px-3.5 py-2 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none"
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-micro font-mono text-steel uppercase mb-1">
+                    <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
                       Year
                     </label>
                     <input
@@ -1682,17 +1571,17 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       onChange={(e) =>
                         setEditingProject({
                           ...editingProject,
-                          year: parseInt(e.target.value) || 2025,
+                          year: parseInt(e.target.value) || 2026,
                         })
                       }
-                      className="w-full px-3.5 py-2 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none"
+                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-micro font-mono text-steel uppercase mb-1">
-                    Live Demo / Link URL
+                  <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                    Demo URL
                   </label>
                   <input
                     type="text"
@@ -1700,13 +1589,13 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     onChange={(e) =>
                       setEditingProject({ ...editingProject, link: e.target.value })
                     }
-                    className="w-full px-3.5 py-2 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none"
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-micro font-mono text-steel uppercase mb-1">
-                    Full Description
+                  <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                    Description
                   </label>
                   <textarea
                     rows={4}
@@ -1714,12 +1603,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     onChange={(e) =>
                       setEditingProject({ ...editingProject, description: e.target.value })
                     }
-                    className="w-full px-3.5 py-2.5 rounded-lg bg-canvas border border-hairline text-charcoal text-body-sm focus:border-primary focus:outline-none leading-relaxed"
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] outline-none leading-relaxed"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-micro font-mono text-steel uppercase mb-1">
+                  <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
                     Technologies (comma separated)
                   </label>
                   <input
@@ -1731,39 +1620,39 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         technologies: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
                       })
                     }
-                    className="w-full px-3.5 py-2 rounded-lg bg-canvas border border-hairline text-charcoal font-mono text-body-sm focus:border-primary focus:outline-none"
+                    className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
                   />
                 </div>
 
                 {/* Featured toggle */}
-                <div className="pt-2">
-                  <label className="flex items-center gap-3 p-3 rounded-lg bg-canvas border border-hairline cursor-pointer">
+                <div className="pt-1">
+                  <label className="flex items-center gap-2.5 p-3 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={editingProject.featured}
                       onChange={(e) =>
                         setEditingProject({ ...editingProject, featured: e.target.checked })
                       }
-                      className="w-4 h-4 text-primary rounded"
+                      className="w-4 h-4 text-[#4F46E5] rounded border-[#E2E8F0] focus:ring-[#4F46E5]"
                     />
                     <div>
-                      <div className="text-body-sm font-semibold text-charcoal">
-                        Feature this project on the Homepage
+                      <div className="text-xs font-semibold text-[#0F172A]">
+                        Feature this project on Homepage
                       </div>
-                      <div className="text-caption text-slate">
-                        Featured projects are displayed in the main showcase section on the landing page.
+                      <div className="text-[11px] text-[#64748B]">
+                        Displayed in the primary spotlight grid.
                       </div>
                     </div>
                   </label>
                 </div>
               </div>
 
-              {/* Modal Footer */}
-              <div className="p-4 border-t border-hairline bg-surface-soft flex items-center justify-between">
+              {/* Footer */}
+              <div className="px-6 py-3.5 border-t border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC]">
                 <button
                   type="button"
                   onClick={() => handleDeleteProject(editingProject.id, editingProject.title)}
-                  className="px-3.5 py-2 rounded-lg text-rose-600 hover:bg-rose-50 text-caption font-mono font-medium transition-colors cursor-pointer"
+                  className="text-xs font-mono text-rose-600 hover:underline cursor-pointer"
                 >
                   Delete Project
                 </button>
@@ -1772,7 +1661,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                   <button
                     type="button"
                     onClick={() => setEditingProject(null)}
-                    className="px-4 py-2 rounded-lg bg-canvas border border-hairline text-charcoal text-caption font-mono hover:bg-surface transition-colors cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-lg border border-[#E2E8F0] text-xs font-mono text-[#64748B] hover:text-[#0F172A] bg-white transition cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -1780,7 +1669,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                   <button
                     type="button"
                     onClick={() => saveProjectModal(editingProject)}
-                    className="px-5 py-2 rounded-lg bg-primary hover:bg-primary-pressed text-white text-caption font-mono font-semibold transition-colors cursor-pointer shadow-elevation-1"
+                    className="px-4 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-semibold transition cursor-pointer shadow-xs"
                   >
                     Done &amp; Update
                   </button>

@@ -120,7 +120,7 @@ export default function AboutBento({ aboutData }: AboutBentoProps) {
       transition: {
         duration: deviceInfo.prefersReducedMotion ? 0.01 : 0.6,
         delay: deviceInfo.prefersReducedMotion ? 0 : i * 0.1,
-        ease: [0.25, 0.46, 0.45, 0.94],
+        ease: [0.25, 0.46, 0.45, 0.94] as const,
       },
     }),
   };

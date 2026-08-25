@@ -57,7 +57,7 @@ export default function Hero({ heroData }: HeroProps) {
   const getTransition = (duration: number, delay: number) => ({
     duration: deviceInfo.prefersReducedMotion ? 0.01 : deviceInfo.isLowEnd ? duration * 0.7 : duration,
     delay: deviceInfo.prefersReducedMotion ? 0 : baseDelay + delay,
-    ease: [0.25, 0.46, 0.45, 0.94],
+    ease: [0.25, 0.46, 0.45, 0.94] as const,
   });
 
   const headline1 = heroData?.headlineLine1 || "FROM PIXEL";
