@@ -120,7 +120,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
       });
       const json = await res.json();
       if (json.success) {
-        showToast("All changes saved to portfolio_cms.json!");
+        showToast("All changes saved successfully!");
       } else {
         showToast(json.error || "Failed to save changes", "error");
       }
@@ -197,7 +197,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
 
   const navGroups = [
     {
-      groupTitle: "WORKSPACES",
+      groupTitle: "MAIN WORKSPACES",
       items: [
         {
           id: "projects",
@@ -220,7 +220,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
       ],
     },
     {
-      groupTitle: "EDITORIAL",
+      groupTitle: "EDITORIAL & FEED",
       items: [
         {
           id: "writing",
@@ -237,7 +237,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
       ],
     },
     {
-      groupTitle: "SETTINGS",
+      groupTitle: "SYSTEM SETTINGS",
       items: [
         {
           id: "site",
@@ -262,7 +262,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
             initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
-            className={`fixed top-4 right-4 z-50 px-4 py-2.5 rounded-lg border text-xs font-mono font-medium shadow-md flex items-center gap-2.5 ${
+            className={`fixed top-4 right-4 z-50 px-4 py-2.5 rounded-lg border text-xs font-mono font-medium shadow-lg flex items-center gap-2.5 ${
               toast.type === "success"
                 ? "bg-white text-[#0F172A] border-[#4F46E5]"
                 : "bg-rose-50 text-rose-700 border-rose-200"
@@ -328,39 +328,39 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
           SIDEBAR
           ═══════════════════════════════════════════ */}
       <aside
-        className={`fixed left-0 top-0 z-40 flex h-screen flex-col bg-white border-r border-[#E2E8F0] duration-200 ease-linear lg:static lg:translate-x-0 ${
-          sidebarOpen ? "w-64 translate-x-0" : "-translate-x-full w-0 lg:w-64"
+        className={`fixed left-0 top-0 z-40 flex h-screen flex-col bg-white border-r border-[#E2E8F0] duration-200 ease-in-out lg:static lg:translate-x-0 ${
+          sidebarOpen ? "w-64 translate-x-0 flex-shrink-0" : "-translate-x-full w-0 lg:w-64 flex-shrink-0"
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[#E2E8F0]">
-          <Link href="/cms" className="flex items-center gap-2.5">
+        <div className="flex h-16 items-center justify-between px-5 border-b border-[#E2E8F0]">
+          <Link href="/cms" className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-[#4F46E5] text-white flex items-center justify-center font-mono font-bold text-sm shadow-xs">
               D
             </div>
             <div>
-              <div className="text-sm font-semibold text-[#0F172A] tracking-tight">
+              <div className="text-sm font-semibold text-[#0F172A] tracking-tight leading-tight">
                 Dareean Studio
               </div>
-              <div className="text-[10px] text-[#64748B] font-mono">
-                CMS Control Plane
+              <div className="text-[11px] text-[#64748B] font-mono leading-tight">
+                CMS Studio
               </div>
             </div>
           </Link>
 
           <button
             onClick={() => setSidebarOpen(false)}
-            className="block lg:hidden text-[#64748B] hover:text-[#0F172A]"
+            className="block lg:hidden p-1 text-[#64748B] hover:text-[#0F172A]"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Navigation */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
+        <div className="flex-1 overflow-y-auto p-4 space-y-6">
           {navGroups.map((group, gIdx) => (
-            <div key={gIdx}>
-              <div className="mb-2 px-3 text-[10px] font-mono font-semibold uppercase text-[#64748B] tracking-wider">
+            <div key={gIdx} className="space-y-1.5">
+              <div className="px-2.5 text-[10px] font-mono font-semibold uppercase text-[#64748B] tracking-wider">
                 {group.groupTitle}
               </div>
 
@@ -373,20 +373,20 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       <button
                         type="button"
                         onClick={() => setActiveTab(item.id as CMSTab)}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-mono transition-colors cursor-pointer ${
+                        className={`w-full h-9 flex items-center justify-between px-2.5 rounded-lg text-xs transition-colors cursor-pointer ${
                           isActive
                             ? "bg-[#EEF2FF] text-[#4F46E5] font-semibold border border-[#E0E7FF]"
-                            : "text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9]"
+                            : "text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] font-medium"
                         }`}
                       >
                         <div className="flex items-center gap-2.5">
-                          <Icon size={14} className={isActive ? "text-[#4F46E5]" : "text-[#64748B]"} />
+                          <Icon size={15} className={isActive ? "text-[#4F46E5]" : "text-[#64748B]"} />
                           <span>{item.label}</span>
                         </div>
 
                         {item.count !== null && (
                           <span
-                            className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${
+                            className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold ${
                               isActive
                                 ? "bg-[#4F46E5] text-white"
                                 : "bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0]"
@@ -405,11 +405,11 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
         </div>
 
         {/* Footer */}
-        <div className="p-3 border-t border-[#E2E8F0] space-y-1.5 bg-white">
+        <div className="p-4 border-t border-[#E2E8F0] space-y-2 bg-white">
           <Link
             href="/"
             target="_blank"
-            className="flex items-center justify-between px-3 py-2 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#64748B] hover:text-[#0F172A] font-mono transition-colors"
+            className="flex h-9 items-center justify-between px-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#64748B] hover:text-[#0F172A] font-medium transition-colors"
           >
             <div className="flex items-center gap-2">
               <ExternalLink size={13} className="text-[#4F46E5]" />
@@ -424,7 +424,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
               await fetch("/api/cms/auth", { method: "DELETE" });
               window.location.reload();
             }}
-            className="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs text-[#64748B] hover:text-rose-600 font-mono transition-colors cursor-pointer"
+            className="w-full flex h-8 items-center gap-2 px-3 rounded-lg text-xs text-[#64748B] hover:text-rose-600 font-medium transition-colors cursor-pointer"
           >
             <LogOut size={13} />
             <span>Sign Out</span>
@@ -436,13 +436,13 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
           MAIN WORKSPACE
           ═══════════════════════════════════════════ */}
       <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden bg-[#F8FAFC]">
-        {/* Header Bar */}
-        <header className="sticky top-0 z-30 flex w-full bg-white/90 backdrop-blur-md border-b border-[#E2E8F0] px-6 py-3 justify-between items-center">
+        {/* Top Header Bar */}
+        <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between bg-white/95 backdrop-blur-md border-b border-[#E2E8F0] px-6 md:px-8">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-1.5 rounded border border-[#E2E8F0] bg-white text-[#64748B]"
+              className="lg:hidden p-1.5 rounded-lg border border-[#E2E8F0] bg-white text-[#64748B] hover:text-[#0F172A]"
             >
               <Menu size={16} />
             </button>
@@ -455,14 +455,14 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="relative hidden md:block">
+            <div className="relative hidden sm:block">
               <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748B]" />
               <input
                 type="text"
                 placeholder="Filter entries..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 pr-3 py-1.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] focus:bg-white focus:outline-none w-52"
+                className="h-9 pl-8 pr-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] focus:bg-white focus:outline-none w-48 md:w-56"
               />
             </div>
 
@@ -470,7 +470,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
               type="button"
               onClick={handleSave}
               disabled={isSaving}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
+              className="inline-flex h-9 items-center gap-2 px-4 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
             >
               {isSaving ? (
                 <>
@@ -487,42 +487,42 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
           </div>
         </header>
 
-        {/* Content Body */}
-        <main className="p-6 md:p-8 max-w-6xl space-y-6">
-          {/* KPI Stat Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
+        {/* Content Container with Consistent Margins & Whitespace */}
+        <main className="flex-1 w-full max-w-7xl mx-auto p-6 md:p-8 lg:p-10 space-y-8">
+          {/* Top 4 KPI Stat Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+            <div className="p-5 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
               <div className="text-[11px] font-mono text-[#64748B] uppercase tracking-wider font-medium">
                 Total Projects
               </div>
-              <div className="text-xl font-bold font-mono text-[#0F172A] mt-1">
+              <div className="text-2xl font-bold font-mono text-[#0F172A] mt-1.5">
                 {data.projects.length}
               </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
+            <div className="p-5 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
               <div className="text-[11px] font-mono text-[#64748B] uppercase tracking-wider font-medium">
                 Featured on Home
               </div>
-              <div className="text-xl font-bold font-mono text-[#4F46E5] mt-1">
+              <div className="text-2xl font-bold font-mono text-[#4F46E5] mt-1.5">
                 {featuredCount}
               </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
+            <div className="p-5 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
               <div className="text-[11px] font-mono text-[#64748B] uppercase tracking-wider font-medium">
                 Milestones
               </div>
-              <div className="text-xl font-bold font-mono text-[#0F172A] mt-1">
+              <div className="text-2xl font-bold font-mono text-[#0F172A] mt-1.5">
                 {data.experiences.length}
               </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
+            <div className="p-5 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
               <div className="text-[11px] font-mono text-[#64748B] uppercase tracking-wider font-medium">
                 Tech Stack
               </div>
-              <div className="text-xl font-bold font-mono text-[#0F172A] mt-1">
+              <div className="text-2xl font-bold font-mono text-[#0F172A] mt-1.5">
                 {data.about.techStack.length}
               </div>
             </div>
@@ -533,20 +533,20 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
               ═══════════════════════════════════════════ */}
           {activeTab === "projects" && (
             <div className="space-y-6">
-              <div className="flex items-center justify-between p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
                 <div>
-                  <h3 className="text-sm font-semibold text-[#0F172A]">
+                  <h3 className="text-base font-semibold text-[#0F172A] tracking-tight">
                     Projects &amp; Selected Works
                   </h3>
                   <p className="text-xs text-[#64748B] mt-0.5">
-                    Click the star to feature a project on the landing page.
+                    Click the star icon to feature a project on the portfolio landing page.
                   </p>
                 </div>
 
                 <button
                   type="button"
                   onClick={handleAddNewProject}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition-colors cursor-pointer shadow-xs"
+                  className="inline-flex h-9 items-center justify-center gap-1.5 px-4 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition-colors cursor-pointer shadow-xs flex-shrink-0"
                 >
                   <Plus size={14} />
                   <span>Add Project</span>
@@ -554,7 +554,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
               </div>
 
               {/* Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {data.projects
                   .filter((p) =>
                     searchQuery
@@ -565,37 +565,37 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                   .map((project) => (
                     <div
                       key={project.id}
-                      className={`rounded-xl border overflow-hidden flex flex-col justify-between bg-white shadow-xs transition-colors ${
-                        project.featured ? "border-[#4F46E5] ring-1 ring-[#4F46E5]/20" : "border-[#E2E8F0] hover:border-[#94A3B8]"
+                      className={`rounded-xl border overflow-hidden flex flex-col justify-between bg-white shadow-xs transition-all ${
+                        project.featured ? "border-[#4F46E5] ring-2 ring-[#4F46E5]/15" : "border-[#E2E8F0] hover:border-[#94A3B8]"
                       }`}
                     >
                       {/* Image Thumbnail */}
-                      <div className="relative h-40 bg-[#F1F5F9] border-b border-[#E2E8F0] overflow-hidden">
+                      <div className="relative aspect-[16/10] bg-[#F1F5F9] border-b border-[#E2E8F0] overflow-hidden">
                         {project.image ? (
                           <Image
                             src={project.image}
                             alt={project.title}
                             fill
-                            className="object-cover"
+                            className="object-cover object-top"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-xs font-mono text-[#94A3B8]">
-                            No image
+                            No preview image
                           </div>
                         )}
 
-                        <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between z-10">
-                          <span className="px-2 py-0.5 rounded bg-white/90 text-[#0F172A] font-mono text-[10px] font-semibold border border-[#E2E8F0] shadow-xs">
+                        <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10">
+                          <span className="px-2.5 py-1 rounded-md bg-white/95 backdrop-blur-xs text-[#0F172A] font-mono text-[10px] font-semibold border border-[#E2E8F0] shadow-xs">
                             {project.category} · {project.year}
                           </span>
 
                           <button
                             type="button"
                             onClick={() => toggleProjectFeatured(project.id)}
-                            className={`p-1.5 rounded transition-colors cursor-pointer ${
+                            className={`p-1.5 rounded-md transition-colors cursor-pointer ${
                               project.featured
                                 ? "bg-[#4F46E5] text-white shadow-xs"
-                                : "bg-white/90 text-[#64748B] hover:text-[#0F172A] border border-[#E2E8F0]"
+                                : "bg-white/95 backdrop-blur-xs text-[#64748B] hover:text-[#0F172A] border border-[#E2E8F0]"
                             }`}
                             title={project.featured ? "Featured on Home" : "Click to feature"}
                           >
@@ -604,17 +604,17 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         </div>
                       </div>
 
-                      {/* Info */}
-                      <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                      {/* Info Body */}
+                      <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                         <div>
-                          <h4 className="font-semibold text-sm text-[#0F172A] line-clamp-1">
+                          <h4 className="font-semibold text-sm text-[#0F172A] line-clamp-1 leading-snug">
                             {project.title}
                           </h4>
-                          <p className="text-xs text-[#64748B] line-clamp-2 mt-1 leading-relaxed">
+                          <p className="text-xs text-[#64748B] line-clamp-2 mt-1.5 leading-relaxed">
                             {project.description}
                           </p>
 
-                          <div className="flex flex-wrap gap-1 mt-3">
+                          <div className="flex flex-wrap gap-1.5 mt-3.5">
                             {project.technologies.slice(0, 3).map((tech, idx) => (
                               <span
                                 key={idx}
@@ -627,11 +627,11 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         </div>
 
                         {/* Actions */}
-                        <div className="pt-3 border-t border-[#E2E8F0] flex items-center justify-between">
+                        <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-between gap-3">
                           <button
                             type="button"
                             onClick={() => setEditingProject(project)}
-                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#F8FAFC] hover:border-[#4F46E5] border border-[#E2E8F0] text-[#0F172A] text-xs font-mono transition-colors cursor-pointer"
+                            className="inline-flex h-8 items-center gap-1.5 px-3 rounded-lg bg-[#F8FAFC] hover:border-[#4F46E5] border border-[#E2E8F0] text-[#0F172A] text-xs font-mono transition-colors cursor-pointer"
                           >
                             <Edit3 size={12} className="text-[#4F46E5]" />
                             <span>Edit Details</span>
@@ -640,10 +640,10 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                           <button
                             type="button"
                             onClick={() => handleDeleteProject(project.id, project.title)}
-                            className="p-1 text-[#64748B] hover:text-rose-600 transition cursor-pointer"
+                            className="p-1.5 text-[#64748B] hover:text-rose-600 transition cursor-pointer"
                             title="Delete project"
                           >
-                            <Trash2 size={14} />
+                            <Trash2 size={15} />
                           </button>
                         </div>
                       </div>
@@ -659,7 +659,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
           {activeTab === "hero" && (
             <div className="space-y-6">
               {/* Live Preview Box */}
-              <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-3">
+              <div className="p-6 md:p-8 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-3">
                 <div className="text-[11px] font-mono text-[#64748B] uppercase tracking-wider font-medium">
                   Live Typography Preview
                 </div>
@@ -676,14 +676,14 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
               </div>
 
               {/* Form Box */}
-              <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+              <div className="p-6 md:p-8 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-5">
                 <h3 className="text-xs font-mono font-semibold uppercase text-[#64748B] tracking-wider border-b border-[#E2E8F0] pb-3">
                   Headline Text
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                   <div>
-                    <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                    <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
                       Line 1
                     </label>
                     <input
@@ -692,12 +692,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       onChange={(e) =>
                         setData({ ...data, hero: { ...data.hero, headlineLine1: e.target.value } })
                       }
-                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                      className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                    <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
                       Line 2
                     </label>
                     <input
@@ -706,12 +706,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       onChange={(e) =>
                         setData({ ...data, hero: { ...data.hero, headlineLine2: e.target.value } })
                       }
-                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                      className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-mono text-[#4F46E5] uppercase font-semibold mb-1">
+                    <label className="block text-xs font-semibold text-[#4F46E5] mb-1.5">
                       Accent Word
                     </label>
                     <input
@@ -720,13 +720,13 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       onChange={(e) =>
                         setData({ ...data, hero: { ...data.hero, headlineAccent: e.target.value } })
                       }
-                      className="w-full px-3 py-2 rounded-lg bg-[#EEF2FF] border border-[#4F46E5]/40 text-xs font-mono font-semibold text-[#4F46E5] focus:border-[#4F46E5] focus:outline-none"
+                      className="w-full h-10 px-3.5 rounded-lg bg-[#EEF2FF] border border-[#4F46E5]/40 text-xs font-mono font-semibold text-[#4F46E5] focus:border-[#4F46E5] focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
                     Subtitle Narrative
                   </label>
                   <textarea
@@ -735,20 +735,20 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     onChange={(e) =>
                       setData({ ...data, hero: { ...data.hero, subtitle: e.target.value } })
                     }
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none leading-relaxed"
+                    className="w-full p-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none leading-relaxed"
                   />
                 </div>
               </div>
 
               {/* 3 Core Focus Pillars */}
-              <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+              <div className="p-6 md:p-8 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-5">
                 <h3 className="text-xs font-mono font-semibold uppercase text-[#64748B] tracking-wider border-b border-[#E2E8F0] pb-3">
                   3 Core Focus Pillars
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                   {data.hero.pillars.map((pillar, index) => (
-                    <div key={pillar.id || index} className="p-4 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] space-y-3">
+                    <div key={pillar.id || index} className="p-5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-3.5">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-mono font-bold text-[#4F46E5]">
                           /{pillar.num}
@@ -762,12 +762,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                             updated[index].tags = e.target.value;
                             setData({ ...data, hero: { ...data.hero, pillars: updated } });
                           }}
-                          className="px-2 py-0.5 rounded bg-white border border-[#E2E8F0] text-[10px] font-mono text-[#64748B] text-right"
+                          className="h-7 px-2.5 rounded bg-white border border-[#E2E8F0] text-[10px] font-mono text-[#64748B] text-right"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-[10px] font-mono text-[#64748B] mb-1">Title</label>
+                        <label className="block text-[11px] font-medium text-[#0F172A] mb-1">Title</label>
                         <input
                           type="text"
                           value={pillar.title}
@@ -776,12 +776,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                             updated[index].title = e.target.value;
                             setData({ ...data, hero: { ...data.hero, pillars: updated } });
                           }}
-                          className="w-full px-2.5 py-1.5 rounded bg-white border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                          className="w-full h-9 px-3 rounded-lg bg-white border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-[10px] font-mono text-[#64748B] mb-1">Description</label>
+                        <label className="block text-[11px] font-medium text-[#0F172A] mb-1">Description</label>
                         <textarea
                           rows={3}
                           value={pillar.desc}
@@ -790,7 +790,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                             updated[index].desc = e.target.value;
                             setData({ ...data, hero: { ...data.hero, pillars: updated } });
                           }}
-                          className="w-full px-2.5 py-1.5 rounded bg-white border border-[#E2E8F0] text-xs text-[#64748B] focus:border-[#4F46E5] focus:outline-none leading-relaxed"
+                          className="w-full p-3 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#64748B] focus:border-[#4F46E5] focus:outline-none leading-relaxed"
                         />
                       </div>
                     </div>
@@ -799,7 +799,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
               </div>
 
               {/* Narrative Statement */}
-              <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-3">
+              <div className="p-6 md:p-8 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-4">
                 <h3 className="text-xs font-mono font-semibold uppercase text-[#64748B] tracking-wider border-b border-[#E2E8F0] pb-3">
                   Scroll Reveal Narrative Statement
                 </h3>
@@ -809,7 +809,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                   onChange={(e) =>
                     setData({ ...data, narrative: { ...data.narrative, statement: e.target.value } })
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none leading-relaxed"
+                  className="w-full p-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none leading-relaxed"
                 />
               </div>
             </div>
@@ -821,14 +821,14 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
           {activeTab === "about" && (
             <div className="space-y-6">
               {/* Profile Card */}
-              <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+              <div className="p-6 md:p-8 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-5">
                 <h3 className="text-xs font-mono font-semibold uppercase text-[#64748B] tracking-wider border-b border-[#E2E8F0] pb-3">
                   Profile Identity
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-                  <div className="p-4 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] flex flex-col items-center text-center">
-                    <div className="w-24 h-24 rounded-full overflow-hidden relative border-2 border-[#4F46E5] mb-3 shadow-xs">
+                  <div className="p-5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex flex-col items-center text-center">
+                    <div className="w-24 h-24 rounded-full overflow-hidden relative border-2 border-[#4F46E5] mb-3.5 shadow-xs">
                       <Image
                         src={data.about.portraitImage || "/assets/foto_closeup.jpg"}
                         alt={data.about.fullName}
@@ -841,7 +841,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       type="button"
                       disabled={isUploading}
                       onClick={() => portraitFileInputRef.current?.click()}
-                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-[#4F46E5] text-white text-xs font-mono font-medium hover:bg-[#4338CA] transition cursor-pointer mb-2 shadow-xs"
+                      className="inline-flex h-8 items-center gap-1.5 px-3.5 rounded-lg bg-[#4F46E5] text-white text-xs font-mono font-medium hover:bg-[#4338CA] transition cursor-pointer mb-2.5 shadow-xs"
                     >
                       <Upload size={12} />
                       <span>{isUploading ? "Uploading..." : "Upload Photo"}</span>
@@ -855,9 +855,9 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     </div>
                   </div>
 
-                  <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                      <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
                         Full Name
                       </label>
                       <input
@@ -866,12 +866,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         onChange={(e) =>
                           setData({ ...data, about: { ...data.about, fullName: e.target.value } })
                         }
-                        className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                        className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                      <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
                         Role Tag
                       </label>
                       <input
@@ -880,12 +880,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         onChange={(e) =>
                           setData({ ...data, about: { ...data.about, roleTag: e.target.value } })
                         }
-                        className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                        className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                      <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
                         Portrait Image URL
                       </label>
                       <input
@@ -894,12 +894,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         onChange={(e) =>
                           setData({ ...data, about: { ...data.about, portraitImage: e.target.value } })
                         }
-                        className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                        className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                      <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
                         Location
                       </label>
                       <input
@@ -908,7 +908,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         onChange={(e) =>
                           setData({ ...data, about: { ...data.about, locationText: e.target.value } })
                         }
-                        className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                        className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
                       />
                     </div>
                   </div>
@@ -916,13 +916,13 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
               </div>
 
               {/* Bio Statement */}
-              <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+              <div className="p-6 md:p-8 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-5">
                 <h3 className="text-xs font-mono font-semibold uppercase text-[#64748B] tracking-wider border-b border-[#E2E8F0] pb-3">
                   Philosophy &amp; Biography
                 </h3>
 
                 <div>
-                  <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
                     Headline
                   </label>
                   <input
@@ -931,12 +931,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     onChange={(e) =>
                       setData({ ...data, about: { ...data.about, philosophyHeading: e.target.value } })
                     }
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                    className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
                     Bio Narrative
                   </label>
                   <textarea
@@ -945,21 +945,21 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     onChange={(e) =>
                       setData({ ...data, about: { ...data.about, philosophyBio: e.target.value } })
                     }
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none leading-relaxed"
+                    className="w-full p-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none leading-relaxed"
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <label className="block text-[11px] font-mono text-[#64748B] uppercase">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="block text-xs font-medium text-[#0F172A]">
                         Resume PDF URL
                       </label>
                       <button
                         type="button"
                         disabled={isUploading}
                         onClick={() => resumeFileInputRef.current?.click()}
-                        className="text-[10px] font-mono text-[#4F46E5] font-semibold hover:underline cursor-pointer"
+                        className="text-[11px] font-mono text-[#4F46E5] font-semibold hover:underline cursor-pointer"
                       >
                         Upload PDF
                       </button>
@@ -970,12 +970,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       onChange={(e) =>
                         setData({ ...data, about: { ...data.about, resumeUrl: e.target.value } })
                       }
-                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                      className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                    <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
                       Status Badge
                     </label>
                     <input
@@ -984,23 +984,23 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       onChange={(e) =>
                         setData({ ...data, about: { ...data.about, statusTag: e.target.value } })
                       }
-                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                      className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Tech Stack Chips */}
-              <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+              <div className="p-6 md:p-8 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-5">
                 <h3 className="text-xs font-mono font-semibold uppercase text-[#64748B] tracking-wider border-b border-[#E2E8F0] pb-3">
                   Tech Stack Skills ({data.about.techStack.length} chips)
                 </h3>
 
-                <div className="flex flex-wrap gap-2 p-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0]">
+                <div className="flex flex-wrap gap-2 p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
                   {data.about.techStack.map((tech, index) => (
                     <div
                       key={index}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] shadow-xs"
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] shadow-xs"
                     >
                       <span className="font-semibold">{tech.name}</span>
                       <span className="text-[#64748B] text-[10px]">({tech.category})</span>
@@ -1015,7 +1015,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                   ))}
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
+                <div className="flex flex-col sm:flex-row gap-3 pt-1">
                   <input
                     type="text"
                     placeholder="Skill name (e.g. Next.js, Golang)"
@@ -1027,13 +1027,13 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         handleAddTechStack();
                       }
                     }}
-                    className="flex-1 px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] focus:outline-none"
+                    className="flex-1 h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] focus:outline-none"
                   />
 
                   <select
                     value={newTechCategory}
                     onChange={(e) => setNewTechCategory(e.target.value)}
-                    className="px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] focus:outline-none"
+                    className="h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] focus:outline-none"
                   >
                     <option value="Framework">Framework</option>
                     <option value="Language">Language</option>
@@ -1049,7 +1049,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                   <button
                     type="button"
                     onClick={handleAddTechStack}
-                    className="px-4 py-2 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition cursor-pointer shadow-xs"
+                    className="h-10 px-5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition cursor-pointer shadow-xs flex-shrink-0"
                   >
                     Add Chip
                   </button>
@@ -1063,9 +1063,9 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
               ═══════════════════════════════════════════ */}
           {activeTab === "writing" && (
             <div className="space-y-6">
-              <div className="flex items-center justify-between p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
                 <div>
-                  <h3 className="text-sm font-semibold text-[#0F172A]">
+                  <h3 className="text-base font-semibold text-[#0F172A] tracking-tight">
                     Selected Publications &amp; Feed
                   </h3>
                   <p className="text-xs text-[#64748B] mt-0.5">
@@ -1087,17 +1087,17 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     };
                     setData({ ...data, stories: [newStory, ...data.stories] });
                   }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition cursor-pointer shadow-xs"
+                  className="inline-flex h-9 items-center justify-center gap-1.5 px-4 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition cursor-pointer shadow-xs flex-shrink-0"
                 >
                   <Plus size={14} />
                   <span>Add Article</span>
                 </button>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-5">
                 {data.stories.map((story, index) => (
-                  <div key={story.id} className="p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-3">
-                    <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2.5">
+                  <div key={story.id} className="p-5 md:p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+                    <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-3">
                       <input
                         type="text"
                         value={story.title}
@@ -1106,7 +1106,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                           updated[index].title = e.target.value;
                           setData({ ...data, stories: updated });
                         }}
-                        className="font-semibold text-xs text-[#0F172A] bg-transparent border-b border-transparent hover:border-[#E2E8F0] focus:border-[#4F46E5] outline-none px-1 flex-1 mr-4"
+                        className="font-semibold text-sm text-[#0F172A] bg-transparent border-b border-transparent hover:border-[#E2E8F0] focus:border-[#4F46E5] outline-none px-1 flex-1 mr-4"
                       />
 
                       <button
@@ -1117,15 +1117,15 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                             setData({ ...data, stories: updated });
                           }
                         }}
-                        className="p-1 text-[#64748B] hover:text-rose-600 transition cursor-pointer"
+                        className="p-1.5 text-[#64748B] hover:text-rose-600 transition cursor-pointer"
                       >
-                        <Trash2 size={14} />
+                        <Trash2 size={15} />
                       </button>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-[10px] font-mono text-[#64748B] mb-1">Date</label>
+                        <label className="block text-xs font-medium text-[#0F172A] mb-1">Date</label>
                         <input
                           type="text"
                           value={story.date}
@@ -1134,12 +1134,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                             updated[index].date = e.target.value;
                             setData({ ...data, stories: updated });
                           }}
-                          className="w-full px-2.5 py-1.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                          className="w-full h-9 px-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-[10px] font-mono text-[#64748B] mb-1">Category</label>
+                        <label className="block text-xs font-medium text-[#0F172A] mb-1">Category</label>
                         <input
                           type="text"
                           value={story.category}
@@ -1148,12 +1148,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                             updated[index].category = e.target.value;
                             setData({ ...data, stories: updated });
                           }}
-                          className="w-full px-2.5 py-1.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                          className="w-full h-9 px-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] outline-none"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-[10px] font-mono text-[#64748B] mb-1">Read Time</label>
+                        <label className="block text-xs font-medium text-[#0F172A] mb-1">Read Time</label>
                         <input
                           type="text"
                           value={story.readTime}
@@ -1162,13 +1162,13 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                             updated[index].readTime = e.target.value;
                             setData({ ...data, stories: updated });
                           }}
-                          className="w-full px-2.5 py-1.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                          className="w-full h-9 px-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-mono text-[#64748B] mb-1">Excerpt</label>
+                      <label className="block text-xs font-medium text-[#0F172A] mb-1">Excerpt</label>
                       <textarea
                         rows={2}
                         value={story.excerpt}
@@ -1177,7 +1177,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                           updated[index].excerpt = e.target.value;
                           setData({ ...data, stories: updated });
                         }}
-                        className="w-full px-2.5 py-1.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#64748B] focus:border-[#4F46E5] outline-none leading-relaxed"
+                        className="w-full p-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#64748B] focus:border-[#4F46E5] outline-none leading-relaxed"
                       />
                     </div>
                   </div>
@@ -1191,13 +1191,13 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
               ═══════════════════════════════════════════ */}
           {activeTab === "journey" && (
             <div className="space-y-6">
-              <div className="flex items-center justify-between p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl bg-white border border-[#E2E8F0] shadow-xs">
                 <div>
-                  <h3 className="text-sm font-semibold text-[#0F172A]">
+                  <h3 className="text-base font-semibold text-[#0F172A] tracking-tight">
                     Journey Milestones &amp; Experience
                   </h3>
                   <p className="text-xs text-[#64748B] mt-0.5">
-                    Entries displayed in the /journey timeline.
+                    Entries displayed in the /journey timeline ledger.
                   </p>
                 </div>
 
@@ -1217,18 +1217,18 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     };
                     setData({ ...data, experiences: [newExp, ...data.experiences] });
                   }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition cursor-pointer shadow-xs"
+                  className="inline-flex h-9 items-center justify-center gap-1.5 px-4 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition cursor-pointer shadow-xs flex-shrink-0"
                 >
                   <Plus size={14} />
                   <span>Add Milestone</span>
                 </button>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-5">
                 {data.experiences.map((exp, index) => (
-                  <div key={exp.id} className="p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-3">
-                    <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2.5">
-                      <div className="flex items-center gap-2 flex-1">
+                  <div key={exp.id} className="p-5 md:p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+                    <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-3">
+                      <div className="flex items-center gap-2.5 flex-1">
                         <span className="text-xs font-mono text-[#4F46E5] font-bold">#{index + 1}</span>
                         <input
                           type="text"
@@ -1239,7 +1239,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                             updated[index].role = e.target.value;
                             setData({ ...data, experiences: updated });
                           }}
-                          className="font-semibold text-xs text-[#0F172A] bg-transparent border-b border-transparent hover:border-[#E2E8F0] focus:border-[#4F46E5] outline-none px-1"
+                          className="font-semibold text-sm text-[#0F172A] bg-transparent border-b border-transparent hover:border-[#E2E8F0] focus:border-[#4F46E5] outline-none px-1"
                         />
                         <span className="text-[#64748B]">@</span>
                         <input
@@ -1263,7 +1263,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                             updated[index].category = e.target.value as any;
                             setData({ ...data, experiences: updated });
                           }}
-                          className="px-2 py-1 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                          className="h-8 px-2.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
                         >
                           <option value="community">Community</option>
                           <option value="work">Work</option>
@@ -1281,16 +1281,16 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                               setData({ ...data, experiences: updated });
                             }
                           }}
-                          className="p-1 text-[#64748B] hover:text-rose-600 transition cursor-pointer"
+                          className="p-1.5 text-[#64748B] hover:text-rose-600 transition cursor-pointer"
                         >
-                          <Trash2 size={14} />
+                          <Trash2 size={15} />
                         </button>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-[10px] font-mono text-[#64748B] mb-1">Start Date</label>
+                        <label className="block text-xs font-medium text-[#0F172A] mb-1">Start Date</label>
                         <input
                           type="text"
                           value={exp.dateStart}
@@ -1299,12 +1299,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                             updated[index].dateStart = e.target.value;
                             setData({ ...data, experiences: updated });
                           }}
-                          className="w-full px-2.5 py-1.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                          className="w-full h-9 px-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-[10px] font-mono text-[#64748B] mb-1">End Date</label>
+                        <label className="block text-xs font-medium text-[#0F172A] mb-1">End Date</label>
                         <input
                           type="text"
                           placeholder="Present (or YYYY-MM)"
@@ -1314,12 +1314,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                             updated[index].dateEnd = e.target.value;
                             setData({ ...data, experiences: updated });
                           }}
-                          className="w-full px-2.5 py-1.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                          className="w-full h-9 px-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-[10px] font-mono text-[#64748B] mb-1">Display Title</label>
+                        <label className="block text-xs font-medium text-[#0F172A] mb-1">Display Title</label>
                         <input
                           type="text"
                           value={exp.title}
@@ -1328,13 +1328,13 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                             updated[index].title = e.target.value;
                             setData({ ...data, experiences: updated });
                           }}
-                          className="w-full px-2.5 py-1.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                          className="w-full h-9 px-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] outline-none"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-mono text-[#64748B] mb-1">Description</label>
+                      <label className="block text-xs font-medium text-[#0F172A] mb-1">Description</label>
                       <textarea
                         rows={2}
                         value={exp.description}
@@ -1343,7 +1343,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                           updated[index].description = e.target.value;
                           setData({ ...data, experiences: updated });
                         }}
-                        className="w-full px-2.5 py-1.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#64748B] focus:border-[#4F46E5] outline-none leading-relaxed"
+                        className="w-full p-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#64748B] focus:border-[#4F46E5] outline-none leading-relaxed"
                       />
                     </div>
                   </div>
@@ -1357,9 +1357,9 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
               ═══════════════════════════════════════════ */}
           {activeTab === "site" && (
             <div className="space-y-6">
-              <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-3">
-                <div className="flex items-center gap-2.5 text-xs font-mono text-[#0F172A] font-semibold">
-                  <Database size={15} className="text-[#4F46E5]" />
+              <div className="p-6 md:p-8 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-3">
+                <div className="flex items-center gap-2.5 text-sm font-semibold text-[#0F172A]">
+                  <Database size={16} className="text-[#4F46E5]" />
                   <span>Supabase Storage Integration</span>
                 </div>
                 <p className="text-xs text-[#64748B] leading-relaxed">
@@ -1367,14 +1367,14 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                 </p>
               </div>
 
-              <div className="p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-4">
+              <div className="p-6 md:p-8 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-5">
                 <h3 className="text-xs font-mono font-semibold uppercase text-[#64748B] tracking-wider border-b border-[#E2E8F0] pb-3">
                   Global Social &amp; Contact Links
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                    <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
                       Email
                     </label>
                     <input
@@ -1383,12 +1383,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       onChange={(e) =>
                         setData({ ...data, site: { ...data.site, email: e.target.value } })
                       }
-                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                      className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                    <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
                       GitHub URL
                     </label>
                     <input
@@ -1397,12 +1397,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       onChange={(e) =>
                         setData({ ...data, site: { ...data.site, github: e.target.value } })
                       }
-                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                      className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                    <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
                       LinkedIn URL
                     </label>
                     <input
@@ -1411,12 +1411,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       onChange={(e) =>
                         setData({ ...data, site: { ...data.site, linkedin: e.target.value } })
                       }
-                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                      className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                    <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
                       Instagram URL
                     </label>
                     <input
@@ -1425,13 +1425,13 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       onChange={(e) =>
                         setData({ ...data, site: { ...data.site, instagram: e.target.value } })
                       }
-                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                      className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
                     Footer Note
                   </label>
                   <input
@@ -1440,7 +1440,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     onChange={(e) =>
                       setData({ ...data, site: { ...data.site, footerNote: e.target.value } })
                     }
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
+                    className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
                   />
                 </div>
               </div>
@@ -1468,10 +1468,10 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     <Edit3 size={14} />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-xs text-[#0F172A]">
-                      Edit Project
+                    <h3 className="font-semibold text-sm text-[#0F172A]">
+                      Edit Project Details
                     </h3>
-                    <p className="text-[10px] font-mono text-[#64748B]">
+                    <p className="text-[11px] font-mono text-[#64748B]">
                       {editingProject.slug}
                     </p>
                   </div>
@@ -1480,23 +1480,23 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                 <button
                   type="button"
                   onClick={() => setEditingProject(null)}
-                  className="text-[#64748B] hover:text-[#0F172A] transition cursor-pointer"
+                  className="p-1 text-[#64748B] hover:text-[#0F172A] transition cursor-pointer"
                 >
-                  <X size={16} />
+                  <X size={18} />
                 </button>
               </div>
 
               {/* Body */}
-              <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              <div className="p-6 overflow-y-auto space-y-5 flex-1">
                 {/* Upload Banner */}
-                <div className="p-3.5 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] flex flex-col sm:flex-row items-center gap-4">
-                  <div className="w-28 h-18 rounded bg-white overflow-hidden relative border border-[#E2E8F0] flex-shrink-0">
+                <div className="p-4 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] flex flex-col sm:flex-row items-center gap-4">
+                  <div className="w-28 h-20 rounded-lg bg-white overflow-hidden relative border border-[#E2E8F0] flex-shrink-0">
                     {editingProject.image ? (
                       <Image
                         src={editingProject.image}
                         alt={editingProject.title}
                         fill
-                        className="object-cover"
+                        className="object-cover object-top"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-[10px] font-mono text-[#94A3B8]">
@@ -1507,14 +1507,14 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
 
                   <div className="flex-1 min-w-0 w-full space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <label className="block text-[10px] font-mono uppercase text-[#64748B]">
+                      <label className="block text-xs font-medium text-[#0F172A]">
                         Thumbnail Image
                       </label>
                       <button
                         type="button"
                         disabled={isUploading}
                         onClick={() => projectFileInputRef.current?.click()}
-                        className="px-2.5 py-1 rounded bg-[#4F46E5] text-white text-[11px] font-mono font-medium hover:bg-[#4338CA] transition cursor-pointer shadow-xs"
+                        className="h-8 px-3 rounded-lg bg-[#4F46E5] text-white text-xs font-mono font-medium hover:bg-[#4338CA] transition cursor-pointer shadow-xs"
                       >
                         {isUploading ? "Uploading..." : "Upload Image"}
                       </button>
@@ -1527,14 +1527,14 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       onChange={(e) =>
                         setEditingProject({ ...editingProject, image: e.target.value })
                       }
-                      className="w-full px-2.5 py-1.5 rounded bg-white border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] outline-none"
+                      className="w-full h-9 px-3 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
-                    Title
+                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
+                    Project Title
                   </label>
                   <input
                     type="text"
@@ -1542,13 +1542,13 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     onChange={(e) =>
                       setEditingProject({ ...editingProject, title: e.target.value })
                     }
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                    className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:border-[#4F46E5] outline-none"
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                    <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
                       Category
                     </label>
                     <input
@@ -1557,12 +1557,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       onChange={(e) =>
                         setEditingProject({ ...editingProject, category: e.target.value })
                       }
-                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                      className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                    <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
                       Year
                     </label>
                     <input
@@ -1574,14 +1574,14 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                           year: parseInt(e.target.value) || 2026,
                         })
                       }
-                      className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                      className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
-                    Demo URL
+                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
+                    Live Demo / Source URL
                   </label>
                   <input
                     type="text"
@@ -1589,13 +1589,13 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     onChange={(e) =>
                       setEditingProject({ ...editingProject, link: e.target.value })
                     }
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] outline-none"
+                    className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
-                    Description
+                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
+                    Description &amp; Highlights
                   </label>
                   <textarea
                     rows={4}
@@ -1603,12 +1603,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     onChange={(e) =>
                       setEditingProject({ ...editingProject, description: e.target.value })
                     }
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] outline-none leading-relaxed"
+                    className="w-full p-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] outline-none leading-relaxed"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-mono text-[#64748B] uppercase mb-1">
+                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
                     Technologies (comma separated)
                   </label>
                   <input
@@ -1620,13 +1620,13 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         technologies: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
                       })
                     }
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                    className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
                   />
                 </div>
 
                 {/* Featured toggle */}
                 <div className="pt-1">
-                  <label className="flex items-center gap-2.5 p-3 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] cursor-pointer">
+                  <label className="flex items-center gap-3 p-3.5 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={editingProject.featured}
@@ -1640,7 +1640,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         Feature this project on Homepage
                       </div>
                       <div className="text-[11px] text-[#64748B]">
-                        Displayed in the primary spotlight grid.
+                        Displayed in the primary spotlight showcase.
                       </div>
                     </div>
                   </label>
@@ -1648,7 +1648,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
               </div>
 
               {/* Footer */}
-              <div className="px-6 py-3.5 border-t border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC]">
+              <div className="px-6 py-4 border-t border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC]">
                 <button
                   type="button"
                   onClick={() => handleDeleteProject(editingProject.id, editingProject.title)}
@@ -1657,11 +1657,11 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                   Delete Project
                 </button>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   <button
                     type="button"
                     onClick={() => setEditingProject(null)}
-                    className="px-3.5 py-1.5 rounded-lg border border-[#E2E8F0] text-xs font-mono text-[#64748B] hover:text-[#0F172A] bg-white transition cursor-pointer"
+                    className="h-9 px-4 rounded-lg border border-[#E2E8F0] text-xs font-mono text-[#64748B] hover:text-[#0F172A] bg-white transition cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -1669,7 +1669,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                   <button
                     type="button"
                     onClick={() => saveProjectModal(editingProject)}
-                    className="px-4 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-semibold transition cursor-pointer shadow-xs"
+                    className="h-9 px-5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-semibold transition cursor-pointer shadow-xs"
                   >
                     Done &amp; Update
                   </button>
