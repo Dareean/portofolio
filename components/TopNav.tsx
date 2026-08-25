@@ -25,6 +25,11 @@ export default function TopNav() {
   const { theme, toggleTheme } = useTheme();
   const isIntroSeen = useIntroSeen();
 
+  // Do not render public navigation on CMS dashboard
+  if (pathname?.startsWith("/cms")) {
+    return null;
+  }
+
   // Show nav after delay
   useEffect(() => {
     const delay = isHomePage && !isIntroSeen ? 2800 : 500;

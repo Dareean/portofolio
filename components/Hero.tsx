@@ -4,43 +4,22 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useIntroSeen, useDeviceType } from "@/lib/hooks";
-import { ArrowRight, Layers, Compass, Users } from "lucide-react";
+import { ArrowRight, Layers, Compass, Users, Code2, Sparkles, LucideIcon } from "lucide-react";
+import { HeroConfig } from "@/lib/cms";
 
-// ─── 3 Core Pillars (Focus & Philosophy) ───
-const PILLARS = [
-  {
-    num: "01",
-    title: "Full-Stack Systems",
-    icon: Layers,
-    tags: "React · Next.js · TypeScript · API",
-    desc: "Engineering high-performance web platforms and scalable backends with modular, resilient architecture.",
-    dotColor: "bg-blue-400",
-    hoverBorder: "group-hover:border-blue-500/30",
-    hoverGlow: "group-hover:bg-blue-500/[0.04]",
-  },
-  {
-    num: "02",
-    title: "Geospatial & IoT",
-    icon: Compass,
-    tags: "QGIS · Spatial Data · Telemetry",
-    desc: "Merging real-world sensors, automated mapping, and interactive dashboards to solve tangible environmental problems.",
-    dotColor: "bg-emerald-400",
-    hoverBorder: "group-hover:border-emerald-500/30",
-    hoverGlow: "group-hover:bg-emerald-500/[0.04]",
-  },
-  {
-    num: "03",
-    title: "Community & Leadership",
-    icon: Users,
-    tags: "Mentorship · Tadulako · I-Fest",
-    desc: "Leading tech initiatives and mentoring developer communities across Central Sulawesi to empower the next generation.",
-    dotColor: "bg-purple-400",
-    hoverBorder: "group-hover:border-purple-500/30",
-    hoverGlow: "group-hover:bg-purple-500/[0.04]",
-  },
-];
+const ICON_MAP: Record<string, LucideIcon> = {
+  Layers,
+  Compass,
+  Users,
+  Code2,
+  Sparkles,
+};
 
-function Hero() {
+interface HeroProps {
+  heroData?: HeroConfig;
+}
+
+export default function Hero({ heroData }: HeroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const statementRef = useRef<HTMLDivElement>(null);
   const isIntroSeen = useIntroSeen();
@@ -65,67 +44,76 @@ function Hero() {
       const y = (e.clientY - rect.top) / rect.height - 0.5;
       setMousePos({ x, y });
     },
-    [deviceInfo.isMobile, deviceInfo.isLowEnd, deviceInfo.prefersReducedMotion]
+    [deviceInfo]
   );
 
-  // Adaptive transition helper
-  const getTransition = (duration: number, delay: number): object => {
-    if (deviceInfo.prefersReducedMotion) {
-      return { duration: 0.01, delay: 0 };
-    }
-    if (deviceInfo.isLowEnd) {
-      return { duration: 0.3, delay: delay * 0.3 };
-    }
-    if (deviceInfo.isMobile) {
-      return { duration: duration * 0.8, delay: delay * 0.8 };
-    }
-    return { duration, delay, ease: [0.25, 0.46, 0.45, 0.94] };
-  };
+  const handleMouseLeave = useCallback(() => {
+    setMousePos({ x: 0, y: 0 });
+  }, []);
 
-  // Statement words for stagger animation — User's core brand slogan
-  const STATEMENT_LINES = [
-    { text: "FROM PIXEL", accent: false },
-    { text: "TO", accent: false },
-    { text: "PEOPLE.", accent: true },
-  ];
-
-  // Parallax offset (subtle, max 12px)
-  const parallaxX = mousePos.x * 12;
+  const parallaxX = mousePos.x * 12; // subtle max 12px shift
   const parallaxY = mousePos.y * 8;
+
+  const getTransition = (duration: number, delay: number) => ({
+    duration: deviceInfo.prefersReducedMotion ? 0.01 : deviceInfo.isLowEnd ? duration * 0.7 : duration,
+    delay: deviceInfo.prefersReducedMotion ? 0 : baseDelay + delay,
+    ease: [0.25, 0.46, 0.45, 0.94],
+  });
+
+  const headline1 = heroData?.headlineLine1 || "FROM PIXEL";
+  const headline2 = heroData?.headlineLine2 || "TO";
+  const headlineAccent = heroData?.headlineAccent || "PEOPLE.";
+  const subtitle = heroData?.subtitle || "Bridging technical execution with human impact — focusing on scalable web systems, geospatial tools, and developer communities.";
+
+  const pillars = heroData?.pillars || [
+    {
+      id: "fullstack",
+      num: "01",
+      title: "Full-Stack Systems",
+      icon: "Layers",
+      tags: "React · Next.js · TypeScript · API",
+      desc: "Engineering high-performance web platforms and scalable backends with modular, resilient architecture.",
+    },
+    {
+      id: "geospatial",
+      num: "02",
+      title: "Geospatial & IoT",
+      icon: "Compass",
+      tags: "QGIS · Spatial Data · Telemetry",
+      desc: "Merging real-world sensors, automated mapping, and interactive dashboards to solve tangible environmental problems.",
+    },
+    {
+      id: "community",
+      num: "03",
+      title: "Community & Leadership",
+      icon: "Users",
+      tags: "Mentorship · Tadulako · I-Fest",
+      desc: "Leading tech initiatives and mentoring developer communities across Central Sulawesi to empower the next generation.",
+    },
+  ];
 
   return (
     <section
+      id="hero"
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className="relative min-h-screen flex flex-col justify-center bg-[#0c0c0c] text-white overflow-hidden border-b border-white/[0.08]"
+      onMouseLeave={handleMouseLeave}
+      className="relative min-h-[90vh] md:min-h-screen flex flex-col justify-between bg-ink text-on-dark overflow-hidden pt-24 pb-20 md:pt-32 md:pb-28 border-b border-white/[0.08]"
     >
-      {/* ── Noise Grain Layer ── */}
-      <div
-        className="absolute inset-0 pointer-events-none z-[2] opacity-[0.04]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-        }}
-      />
+      {/* Subtle Noise / Grid Pattern Layer */}
+      <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none opacity-40" />
 
-      {/* ── Warm Ambient Glow — subtle, not cold blue ── */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] pointer-events-none z-[1]">
-        <div
-          className="w-full h-full rounded-full blur-[160px] opacity-[0.07]"
-          style={{ background: "radial-gradient(circle, rgba(86,69,212,0.6), rgba(86,69,212,0.2) 50%, transparent 80%)" }}
-        />
-      </div>
-
-      {/* ── Main Content ── */}
-      <div className="relative z-10 w-full px-6 md:px-10 lg:px-16 pt-24 pb-20 md:pt-32 md:pb-28">
-        <div className="max-w-[1400px] mx-auto">
-          {/* ── Identity Line — editorial, top-aligned ── */}
+      {/* Main Hero Content Area */}
+      <div className="relative z-10 w-full max-w-container mx-auto px-6 md:px-8">
+        <div className="max-w-4xl">
+          {/* ── Editorial Monogram & Identification ── */}
           <motion.div
-            className="mb-12 md:mb-16"
-            initial={{ opacity: 0, y: 10 }}
+            className="mb-8 md:mb-12"
+            initial={{ opacity: 0, y: 12 }}
             animate={showContent ? { opacity: 1, y: 0 } : {}}
-            transition={getTransition(0.6, 0)}
+            transition={getTransition(0.6, 0.05)}
           >
-            <p className="text-[13px] md:text-[14px] font-mono text-white/40 tracking-wide">
+            <p className="text-[13px] md:text-[14px] font-mono font-medium text-white/50 tracking-wider uppercase">
               Dareean Ahmad Raffi
             </p>
             <p className="text-[12px] md:text-[13px] font-mono text-white/25 tracking-wide mt-1">
@@ -145,25 +133,38 @@ function Hero() {
               transition: "transform 0.15s ease-out",
             }}
           >
-            {STATEMENT_LINES.map((line, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 40, skewY: 2 }}
-                animate={showContent ? { opacity: 1, y: 0, skewY: 0 } : {}}
-                transition={getTransition(0.8, 0.15 + i * 0.12)}
-                className="overflow-hidden"
-              >
-                <h1
-                  className={`hero-statement select-none ${
-                    line.accent
-                      ? "text-primary italic"
-                      : "text-white"
-                  }`}
-                >
-                  {line.text}
-                </h1>
-              </motion.div>
-            ))}
+            <motion.div
+              initial={{ opacity: 0, y: 40, skewY: 2 }}
+              animate={showContent ? { opacity: 1, y: 0, skewY: 0 } : {}}
+              transition={getTransition(0.8, 0.15)}
+              className="overflow-hidden"
+            >
+              <h1 className="hero-statement select-none text-white">
+                {headline1}
+              </h1>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 40, skewY: 2 }}
+              animate={showContent ? { opacity: 1, y: 0, skewY: 0 } : {}}
+              transition={getTransition(0.8, 0.27)}
+              className="overflow-hidden"
+            >
+              <h1 className="hero-statement select-none text-white">
+                {headline2}
+              </h1>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 40, skewY: 2 }}
+              animate={showContent ? { opacity: 1, y: 0, skewY: 0 } : {}}
+              transition={getTransition(0.8, 0.39)}
+              className="overflow-hidden"
+            >
+              <h1 className="hero-statement select-none text-primary italic">
+                {headlineAccent}
+              </h1>
+            </motion.div>
           </div>
 
           {/* ── Subtitle ── */}
@@ -173,8 +174,7 @@ function Hero() {
             animate={showContent ? { opacity: 1, y: 0 } : {}}
             transition={getTransition(0.7, 0.6)}
           >
-            Bridging technical execution with human impact —
-            focusing on scalable web systems, geospatial tools, and developer communities.
+            {subtitle}
           </motion.p>
 
           {/* ── 3 Core Pillars (Focus & Philosophy) ── */}
@@ -184,15 +184,15 @@ function Hero() {
             animate={showContent ? { opacity: 1 } : {}}
             transition={getTransition(0.5, 0.75)}
           >
-            {PILLARS.map((pillar, i) => {
-              const Icon = pillar.icon;
+            {pillars.map((pillar, i) => {
+              const Icon = ICON_MAP[pillar.icon] || Layers;
               return (
                 <motion.div
-                  key={pillar.num}
+                  key={pillar.num || i}
                   initial={{ opacity: 0, y: 24 }}
                   animate={showContent ? { opacity: 1, y: 0 } : {}}
                   transition={getTransition(0.6, 0.8 + i * 0.1)}
-                  className={`group relative rounded-xl p-5 md:p-6 bg-white/[0.02] border border-white/[0.07] ${pillar.hoverBorder} ${pillar.hoverGlow} transition-all duration-300 flex flex-col justify-between hover:-translate-y-1`}
+                  className="group relative rounded-xl p-5 md:p-6 bg-white/[0.02] border border-white/[0.07] hover:border-white/20 transition-all duration-300 flex flex-col justify-between hover:-translate-y-1"
                 >
                   <div>
                     {/* Header: Number & Icon */}
@@ -225,36 +225,26 @@ function Hero() {
             })}
           </motion.div>
 
-          {/* ── CTA Row ── */}
+          {/* ── Action Buttons ── */}
           <motion.div
-            className="flex flex-wrap items-center gap-6"
-            initial={{ opacity: 0, y: 14 }}
+            className="flex flex-wrap items-center gap-4 pt-2"
+            initial={{ opacity: 0, y: 12 }}
             animate={showContent ? { opacity: 1, y: 0 } : {}}
-            transition={getTransition(0.6, 1.1)}
+            transition={getTransition(0.5, 1.0)}
           >
             <Link
               href="#work"
-              className="group inline-flex items-center gap-2.5 px-5 py-2.5 bg-white/10 hover:bg-white/15 text-white text-[13px] md:text-[14px] font-medium rounded-lg border border-white/10 transition-all duration-300"
+              className="inline-flex items-center gap-2.5 px-6 py-3 bg-white text-ink text-button-md font-medium rounded-lg hover:bg-white/90 transition-all duration-200 group shadow-elevation-1"
             >
-              <span>Explore Selected Work</span>
-              <ArrowRight
-                size={14}
-                className="group-hover:translate-x-1 transition-transform duration-300"
-              />
+              <span>{heroData?.ctaWorkText || "Explore Selected Work"}</span>
+              <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform duration-200" />
             </Link>
 
             <Link
               href="/journey"
-              className="group inline-flex items-center gap-2 text-[13px] md:text-[14px] font-medium text-white/50 hover:text-white transition-colors duration-300"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-transparent text-white/70 hover:text-white text-button-md font-medium rounded-lg border border-white/10 hover:border-white/20 transition-all duration-200"
             >
-              <span className="relative">
-                Read My Journey
-                <span className="absolute left-0 -bottom-0.5 w-0 h-px bg-white/40 group-hover:w-full transition-all duration-300" />
-              </span>
-              <ArrowRight
-                size={14}
-                className="group-hover:translate-x-1 transition-transform duration-300"
-              />
+              <span>{heroData?.ctaJourneyText || "Read My Journey"}</span>
             </Link>
           </motion.div>
         </div>
@@ -262,5 +252,3 @@ function Hero() {
     </section>
   );
 }
-
-export default Hero;

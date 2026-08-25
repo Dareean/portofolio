@@ -20,15 +20,13 @@ import {
 } from "lucide-react";
 import { useDeviceType, getAnimationConfig } from "@/lib/hooks";
 
-// Generate categories dynamically
-const allCategories = PROJECTS.flatMap((p) =>
-  Array.isArray(p.category) ? p.category : [p.category],
-);
-const categories = ["All", ...Array.from(new Set(allCategories))];
-
-// Featured vs Regular projects
-const featuredProjects = PROJECTS.filter((p) => p.featured);
-const regularProjects = PROJECTS.filter((p) => !p.featured);
+// Helper for unique categories
+const getCategoriesFromProjects = (projects: typeof PROJECTS) => {
+  const allCategories = projects.flatMap((p) =>
+    Array.isArray(p.category) ? p.category : [p.category],
+  );
+  return ["All", ...Array.from(new Set(allCategories))];
+};
 
 // Featured Project Card
 function FeaturedProjectCard({
@@ -303,7 +301,15 @@ function BentoCard({
 }
 
 // Filter Tabs - Styled as Notion pill tabs
-function FilterTabs({ activeFilter, setActiveFilter }: { activeFilter: string; setActiveFilter: (f: string) => void }) {
+function FilterTabs({
+  categories,
+  activeFilter,
+  setActiveFilter,
+}: {
+  categories: string[];
+  activeFilter: string;
+  setActiveFilter: (f: string) => void;
+}) {
   return (
     <div className="relative flex items-center bg-transparent max-w-full">
       <div className="flex items-center gap-2 overflow-x-auto max-w-full scrollbar-hide w-full py-1">
@@ -335,7 +341,23 @@ export default function WorkPage() {
 
   const isScrollAnimationDisabled = deviceInfo.prefersReducedMotion || deviceInfo.isLowEnd || deviceInfo.isMobile;
 
+  const [projectsList, setProjectsList] = useState<typeof PROJECTS>(PROJECTS);
   const [activeFilter, setActiveFilter] = useState("All");
+
+  useEffect(() => {
+    fetch("/api/cms")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && json.data?.projects?.length > 0) {
+          setProjectsList(json.data.projects);
+        }
+      })
+      .catch((err) => console.log("Using static projects"));
+  }, []);
+
+  const categories = useMemo(() => getCategoriesFromProjects(projectsList), [projectsList]);
+  const featuredProjects = useMemo(() => projectsList.filter((p) => p.featured), [projectsList]);
+  const regularProjects = useMemo(() => projectsList.filter((p) => !p.featured), [projectsList]);
 
   const filteredRegularProjects = useMemo(() => {
     if (activeFilter === "All") return regularProjects;
@@ -343,7 +365,7 @@ export default function WorkPage() {
       const cats = Array.isArray(p.category) ? p.category : [p.category];
       return cats.includes(activeFilter);
     });
-  }, [activeFilter]);
+  }, [activeFilter, regularProjects]);
 
   const getSizeForProject = (index: number): "small" | "medium" | "large" | "xlarge" => {
     const patterns = ["large", "medium", "small", "xlarge", "small", "medium", "medium", "xlarge", "small", "large"];
@@ -487,7 +509,7 @@ export default function WorkPage() {
               </motion.h2>
             </div>
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}>
-              <FilterTabs activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
+              <FilterTabs categories={categories} activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
             </motion.div>
           </div>
 

@@ -1,0 +1,347 @@
+{
+  "hero": {
+    "badge": "Portfolio & Craft",
+    "headlineLine1": "FROM PIXEL",
+    "headlineLine2": "TO",
+    "headlineAccent": "PEOPLE.",
+    "subtitle": "Bridging technical execution with human impact — focusing on scalable web systems, geospatial tools, and developer communities.",
+    "ctaWorkText": "Explore Selected Work",
+    "ctaJourneyText": "Read My Journey",
+    "pillars": [
+      {
+        "id": "fullstack",
+        "num": "01",
+        "title": "Full-Stack Systems",
+        "icon": "Layers",
+        "tags": "React · Next.js · TypeScript · API",
+        "desc": "Engineering high-performance web platforms and scalable backends with modular, resilient architecture."
+      },
+      {
+        "id": "geospatial",
+        "num": "02",
+        "title": "Geospatial & IoT",
+        "icon": "Compass",
+        "tags": "QGIS · Spatial Data · Telemetry",
+        "desc": "Merging real-world sensors, automated mapping, and interactive dashboards to solve tangible environmental problems."
+      },
+      {
+        "id": "community",
+        "num": "03",
+        "title": "Community & Leadership",
+        "icon": "Users",
+        "tags": "Mentorship · Tadulako · I-Fest",
+        "desc": "Leading tech initiatives and mentoring developer communities across Central Sulawesi to empower the next generation."
+      }
+    ]
+  },
+  "narrative": {
+    "tag": "Narrative & Ethos",
+    "statement": "I see code not just as syntax, but as a bridge between ideas and human reality. My journey is defined by a relentless curiosity — from building scalable software platforms to nurturing tech communities in Central Sulawesi. From pixel to people."
+  },
+  "about": {
+    "portraitImage": "/assets/foto_closeup.jpg",
+    "fullName": "Dareean Ahmad Raffi",
+    "roleTag": "Full-Stack & UI/UX",
+    "locationText": "Palu, Central Sulawesi · 0°53' S",
+    "philosophyHeading": "From pixel to people — turning complex engineering into human-centered software.",
+    "philosophyBio": "I see code not merely as syntax, but as a bridge between ideas and reality. Based in Central Sulawesi, I combine formal computer science fundamentals with hands-on product craft — building everything from clinical platforms to geospatial disaster tools and empowering regional tech communities.",
+    "resumeUrl": "/assets/CV-Rafi(English).pdf",
+    "statusTag": "Remote Ready",
+    "timeZone": "Asia/Makassar",
+    "communityRoles": [
+      {
+        "org": "Programming Tadulako",
+        "role": "Mentor Lead"
+      },
+      {
+        "org": "I-Fest 2026",
+        "role": "PIC"
+      }
+    ],
+    "techStack": [
+      { "name": "Next.js 14", "category": "Framework" },
+      { "name": "TypeScript", "category": "Language" },
+      { "name": "React 19", "category": "Library" },
+      { "name": "Tailwind CSS", "category": "Styling" },
+      { "name": "Node.js", "category": "Backend" },
+      { "name": "Prisma ORM", "category": "Database" },
+      { "name": "QGIS", "category": "Spatial" },
+      { "name": "Figma", "category": "Design" },
+      { "name": "Python", "category": "Language" },
+      { "name": "IoT / ESP32", "category": "Hardware" }
+    ]
+  },
+  "projects": [
+    {
+      "id": 1,
+      "title": "Medicflow - Medical Record Submission",
+      "slug": "medicflow",
+      "category": "Web Platform",
+      "year": 2025,
+      "image": "/assets/medicflow-showcase.png",
+      "link": "https://medicflow.example.com",
+      "featured": true,
+      "description": "Medicflow is a comprehensive medical record platform designed to streamline clinical workflows and facilitate interaction between patients and doctors. It allows users to effortlessly handle patient records, history, and appointments in one place, reducing paperwork and increasing time for patient care.",
+      "technologies": ["Next.js", "TypeScript", "Tailwind CSS", "Prisma", "PostgreSQL"],
+      "metrics": [
+        { "label": "Workflow Efficiency", "value": "+40%" },
+        { "label": "Patient Records", "value": "1,000+" }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Sorot - Geospatial Environmental Reporting Platform",
+      "slug": "sorot",
+      "category": "Mobile App",
+      "year": 2025,
+      "image": "/assets/sorot-dummy_showcase.png",
+      "link": "https://sorot.example.com",
+      "featured": true,
+      "description": "Developed a comprehensive prototype geospatial reporting system enabling citizens to report environmental issues with automatic GPS mapping. The platform features real-time monitoring through QGIS integration and a responsive admin dashboard for efficient issue management.",
+      "technologies": ["Flutter", "Dart", "QGIS", "Firebase", "Google Maps API"],
+      "metrics": [
+        { "label": "GPS Accuracy", "value": "< 5m" },
+        { "label": "Response Time", "value": "Real-time" }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "DreamPOS - Inventory Management System",
+      "slug": "dreampos",
+      "category": "Web Platform",
+      "year": 2023,
+      "image": "/assets/greengnsulteng_web.png",
+      "link": "https://dreampos.example.com",
+      "featured": true,
+      "description": "A comprehensive web-based inventory management system designed to efficiently manage stock, products, brands, and categories. Features include product management with image upload, multi-level category organization, role-based access control, automatic barcode generation, Excel export, and tax management.",
+      "technologies": ["PHP", "MySQL", "Bootstrap", "PHPMailer", "PHPSpreadsheet"],
+      "metrics": [
+        { "label": "SKU Capacity", "value": "10,000+" },
+        { "label": "Export Formats", "value": "Excel/PDF" }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Green Generation Central Sulawesi Website",
+      "slug": "greengeneration",
+      "category": "Web Platform",
+      "year": 2025,
+      "image": "/assets/greengnsulteng_web.png",
+      "link": "https://greengenerationsulteng.org",
+      "featured": false,
+      "description": "An environmental awareness platform built for the youth community in Central Sulawesi, focusing on conservation campaigns, event registration, and eco-initiatives across regional districts.",
+      "technologies": ["Next.js", "Tailwind CSS", "Framer Motion"],
+      "metrics": [
+        { "label": "Active Members", "value": "300+" }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "JasaKita - Local Services Marketplace",
+      "slug": "jasakita",
+      "category": "Web App",
+      "year": 2024,
+      "image": "/assets/jasakita_showcase.png",
+      "link": "https://jasakita.example.com",
+      "featured": false,
+      "description": "A lightweight, localized peer-to-peer service discovery platform connecting local freelancers and skilled tradespeople in Central Sulawesi with direct client inquiries.",
+      "technologies": ["React", "Tailwind CSS", "Node.js", "Express"],
+      "metrics": [
+        { "label": "Listing Growth", "value": "+150%" }
+      ]
+    }
+  ],
+  "stories": [
+    {
+      "id": 3,
+      "title": "Building SOROT: Lessons from Geospatial App Development",
+      "excerpt": "Overcoming challenges in real-time GPS telemetry, QGIS mapping integration, and offline-first mobile architecture.",
+      "date": "Nov 2024",
+      "category": "Engineering",
+      "readTime": "5 min read",
+      "link": "/journey"
+    },
+    {
+      "id": 5,
+      "title": "Design System Deep Dive: Scalability in Production",
+      "excerpt": "Strategies for tokenizing design variables, atomic components, and maintaining visual consistency across large platforms.",
+      "date": "Aug 2024",
+      "category": "Design Systems",
+      "readTime": "4 min read",
+      "link": "/journey"
+    },
+    {
+      "id": 2,
+      "title": "Crafting a Minimalist Workspace & Engineering Workflow",
+      "excerpt": "Principles behind an intentional desk setup, hardware ergonomics, and focus-enhancing ambient tooling.",
+      "date": "Dec 2024",
+      "category": "Productivity",
+      "readTime": "3 min read",
+      "link": "/journey"
+    }
+  ],
+  "experiences": [
+    {
+      "id": 12,
+      "title": "I-Fest 2026",
+      "role": "PIC - Person In Charge",
+      "organization": "HMTI Tadulako University",
+      "dateStart": "2026-01",
+      "dateEnd": "",
+      "description": "Leading as Person In Charge (PIC) for I-Fest 2026, taking on comprehensive responsibility in organizing the annual informatics festival. Overseeing event planning, managing committee teams, coordinating with sponsors, and driving the vision for an impactful tech event.",
+      "highlights": ["Leadership", "Event Management", "Team Coordination", "Strategic Planning"],
+      "category": "committee"
+    },
+    {
+      "id": 10,
+      "title": "HammerCode Palu",
+      "role": "Community Member",
+      "organization": "HammerCode",
+      "dateStart": "2025-12",
+      "dateEnd": "",
+      "description": "Active member of HammerCode, an Eastern Indonesia programming community focused on collaborative learning, code sharing, workshops, code reviews, and hackathon preparations.",
+      "highlights": ["Collaborative Learning", "Code Reviews", "Open Source", "Hackathons"],
+      "category": "community"
+    },
+    {
+      "id": 14,
+      "title": "Active Member of HMTI",
+      "role": "Member",
+      "organization": "HMTI Tadulako University",
+      "dateStart": "2025-11",
+      "dateEnd": "",
+      "description": "Active member of Himpunan Mahasiswa Teknik Informatika (HMTI), participating in workshops, seminars, and collaborative development initiatives.",
+      "highlights": ["Workshop Participation", "Technical Seminars", "Student Community"],
+      "category": "community"
+    },
+    {
+      "id": 13,
+      "title": "Palu Developer Day 2026",
+      "role": "Public Relations Committee",
+      "organization": "Hammercode Palu",
+      "dateStart": "2025-11",
+      "dateEnd": "2026-01",
+      "description": "Managed media relations, promo content creation, and community engagement for the premier Palu Developer Day 2026 tech conference.",
+      "highlights": ["Media Relations", "Content Creation", "Community Engagement"],
+      "category": "committee"
+    },
+    {
+      "id": 11,
+      "title": "I-Fest 2025",
+      "role": "Liaison Officer",
+      "organization": "HMTI Tadulako University",
+      "dateStart": "2025-11",
+      "dateEnd": "2025-12",
+      "description": "Coordinated communication between committee divisions, managed external partnerships, and ensured smooth logistics flow throughout event preparation and execution.",
+      "highlights": ["Cross-team Coordination", "Stakeholder Management", "Event Logistics"],
+      "category": "volunteer"
+    },
+    {
+      "id": 9,
+      "title": "Commemoration Day - Expo Innovation",
+      "role": "Volunteer & Exhibitor",
+      "organization": "Faculty of Engineering, Tadulako University",
+      "dateStart": "2025-06",
+      "dateEnd": "2025-10",
+      "description": "Contributed to the annual commemoration event by showcasing innovative student projects at the Expo Innovation exhibition, demonstrating technological solutions to visitors.",
+      "highlights": ["Innovation Showcase", "Project Exhibition", "Public Engagement"],
+      "category": "volunteer"
+    },
+    {
+      "id": 8,
+      "title": "Guard Riders - Smart Helmet",
+      "role": "Team Member",
+      "organization": "Road Safety Innovation",
+      "dateStart": "2025-05",
+      "dateEnd": "2025-07",
+      "description": "Collaborated on the design of an IoT smart helmet to enhance motorcycle road safety. Advanced to the competition finals with automated impact sensors and telemetry.",
+      "highlights": ["IoT Development", "Safety Innovation", "Competition Finals"],
+      "category": "award",
+      "image": "/assets/rsict_2025.jpeg"
+    },
+    {
+      "id": 7,
+      "title": "Green Generation Central Sulawesi",
+      "role": "Communications Officer",
+      "organization": "Environmental Community",
+      "dateStart": "2025-01",
+      "dateEnd": "",
+      "description": "Spearheaded communication campaigns for regional environmental preservation, plastic reduction programs, and community clean-ups across Palu.",
+      "highlights": ["Environmental Awareness", "Community Service", "Sustainability"],
+      "category": "community"
+    },
+    {
+      "id": 6,
+      "title": "Programming Tadulako",
+      "role": "Mentor Coordinator",
+      "organization": "Programming Community",
+      "dateStart": "2025-01",
+      "dateEnd": "",
+      "description": "Coordinated mentors, structured technical learning modules, and facilitated weekly coding labs in web development and algorithms for university freshmen.",
+      "highlights": ["Mentor Coordination", "Meeting Management", "Community Engagement", "Technical Learning"],
+      "category": "community"
+    },
+    {
+      "id": 5,
+      "title": "UI/UX Design Competition",
+      "role": "UI/UX Designer",
+      "organization": "Campus Level Competition",
+      "dateStart": "2025-01",
+      "dateEnd": "2025-01",
+      "description": "Competed as a team in a campus-wide UI/UX Design competition, developing user-centered healthcare interface prototypes and presenting design rationale.",
+      "highlights": ["User Research", "Interface Design", "Prototyping"],
+      "category": "award"
+    },
+    {
+      "id": 4,
+      "title": "Started University",
+      "role": "Informatics Student",
+      "organization": "Tadulako University",
+      "dateStart": "2024-08",
+      "dateEnd": "",
+      "description": "Began formal bachelor's degree in Informatics, combining theoretical computer science foundations, discrete mathematics, and algorithms with practical product building.",
+      "highlights": ["Computer Science", "Software Engineering", "Algorithms"],
+      "category": "education"
+    },
+    {
+      "id": 3,
+      "title": "Teaching Factory Program",
+      "role": "Web Programmer Trainee",
+      "organization": "Gamelab Indonesia & Educa Studio",
+      "dateStart": "2023-09",
+      "dateEnd": "2024-06",
+      "description": "Completed intensive Teaching Factory program at PT. Educa Studio, developing production-ready web applications according to professional industry standards.",
+      "highlights": ["Production Environment", "Industry Standards", "Full-Stack Development"],
+      "category": "work"
+    },
+    {
+      "id": 2,
+      "title": "Web Programmer Internship",
+      "role": "Web Programmer Intern",
+      "organization": "PT. Educa Studio",
+      "dateStart": "2023-07",
+      "dateEnd": "2023-09",
+      "description": "First software engineering internship focusing on PHP and MySQL development, mastering team workflows, version control, and collaborative debugging.",
+      "highlights": ["Professional Development", "Team Collaboration", "Web Development"],
+      "category": "work"
+    },
+    {
+      "id": 1,
+      "title": "Started My Development Journey",
+      "role": "Self-taught Developer",
+      "organization": "Independent Learning",
+      "dateStart": "2021-06",
+      "dateEnd": "2023-06",
+      "description": "Began learning web fundamentals (HTML, CSS, JavaScript) independently in Central Sulawesi, building custom personal experiments and discovery tools.",
+      "highlights": ["HTML/CSS", "JavaScript", "Responsive Design"],
+      "category": "education"
+    }
+  ],
+  "site": {
+    "email": "dareean.business@gmail.com",
+    "github": "https://github.com/Dareean",
+    "linkedin": "https://linkedin.com/in/dareean",
+    "instagram": "https://instagram.com/dareean",
+    "footerNote": "Bringing stories to life, one pixel at a time. Based in Palu, Central Sulawesi."
+  }
+}

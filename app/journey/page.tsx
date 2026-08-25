@@ -41,9 +41,21 @@ function getYear(dateStr: string): number {
 }
 
 export default function JourneyPage() {
+  const [experiencesList, setExperiencesList] = useState<Experience[]>(EXPERIENCES);
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
   const deviceInfo = useDeviceType();
+
+  useEffect(() => {
+    fetch("/api/cms")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && json.data?.experiences?.length > 0) {
+          setExperiencesList(json.data.experiences);
+        }
+      })
+      .catch((err) => console.log("Using static experiences"));
+  }, []);
 
   // Toggle single item expansion
   const toggleExpand = (id: number) => {
@@ -69,12 +81,12 @@ export default function JourneyPage() {
 
   // Filter experiences
   const filteredExperiences = useMemo(() => {
-    if (activeFilter === "all") return EXPERIENCES;
+    if (activeFilter === "all") return experiencesList;
     if (activeFilter === "committee") {
-      return EXPERIENCES.filter((e) => e.category === "committee" || e.category === "volunteer");
+      return experiencesList.filter((e) => e.category === "committee" || e.category === "volunteer");
     }
-    return EXPERIENCES.filter((e) => e.category === activeFilter);
-  }, [activeFilter]);
+    return experiencesList.filter((e) => e.category === activeFilter);
+  }, [activeFilter, experiencesList]);
 
   // Group filtered experiences by year (descending)
   const groupedExperiences = useMemo(() => {

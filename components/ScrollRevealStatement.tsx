@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useDeviceType } from "@/lib/hooks";
+import { NarrativeConfig } from "@/lib/cms";
 
 interface WordProps {
   children: string;
@@ -26,7 +27,11 @@ function Word({ children, range, progress }: WordProps) {
   );
 }
 
-export default function ScrollRevealStatement() {
+interface ScrollRevealStatementProps {
+  narrativeData?: NarrativeConfig;
+}
+
+export default function ScrollRevealStatement({ narrativeData }: ScrollRevealStatementProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const deviceInfo = useDeviceType();
 
@@ -36,8 +41,10 @@ export default function ScrollRevealStatement() {
   });
 
   const statement =
+    narrativeData?.statement ||
     "I see code not just as syntax, but as a bridge between ideas and human reality. My journey is defined by a relentless curiosity — from building scalable software platforms to nurturing tech communities in Central Sulawesi. From pixel to people.";
 
+  const tag = narrativeData?.tag || "Narrative & Ethos";
   const words = statement.split(" ");
 
   return (
@@ -51,7 +58,7 @@ export default function ScrollRevealStatement() {
           <div className="flex items-center gap-3 mb-6 md:mb-8">
             <span className="w-8 h-px bg-primary/60" />
             <span className="text-micro-uppercase text-primary font-semibold tracking-wider font-mono">
-              Narrative &amp; Ethos
+              {tag}
             </span>
           </div>
 
@@ -60,7 +67,6 @@ export default function ScrollRevealStatement() {
             {words.map((word, i) => {
               const start = i / words.length;
               const end = start + 1 / words.length;
-              const isAccent = word.toLowerCase().includes("pixel") || word.toLowerCase().includes("people.") || word.toLowerCase().includes("curiosity");
 
               return (
                 <Word key={i} range={[start, end]} progress={scrollYProgress}>

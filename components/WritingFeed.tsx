@@ -3,45 +3,48 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, BookOpen, Clock } from "lucide-react";
-import { STORIES } from "@/lib/data";
+import { ArrowRight, Clock } from "lucide-react";
 import { useDeviceType } from "@/lib/hooks";
+import { CMSStory } from "@/lib/cms";
 
-// Selected articles to showcase on the landing page
-const FEATURED_STORIES = [
-  {
-    id: 3,
-    title: "Building SOROT: Lessons from Geospatial App Development",
-    excerpt: "Overcoming challenges in real-time GPS telemetry, QGIS mapping integration, and offline-first mobile architecture.",
-    date: "Nov 2024",
-    category: "Engineering",
-    readTime: "5 min read",
-    link: "/journey",
-  },
-  {
-    id: 5,
-    title: "Design System Deep Dive: Scalability in Production",
-    excerpt: "Strategies for tokenizing design variables, atomic components, and maintaining visual consistency across large platforms.",
-    date: "Aug 2024",
-    category: "Design Systems",
-    readTime: "4 min read",
-    link: "/journey",
-  },
-  {
-    id: 2,
-    title: "Crafting a Minimalist Workspace & Engineering Workflow",
-    excerpt: "Principles behind an intentional desk setup, hardware ergonomics, and focus-enhancing ambient tooling.",
-    date: "Dec 2024",
-    category: "Productivity",
-    readTime: "3 min read",
-    link: "/journey",
-  },
-];
+interface WritingFeedProps {
+  storiesData?: CMSStory[];
+}
 
-export default function WritingFeed() {
+export default function WritingFeed({ storiesData }: WritingFeedProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-80px" });
   const deviceInfo = useDeviceType();
+
+  const stories = storiesData || [
+    {
+      id: 3,
+      title: "Building SOROT: Lessons from Geospatial App Development",
+      excerpt: "Overcoming challenges in real-time GPS telemetry, QGIS mapping integration, and offline-first mobile architecture.",
+      date: "Nov 2024",
+      category: "Engineering",
+      readTime: "5 min read",
+      link: "/journey",
+    },
+    {
+      id: 5,
+      title: "Design System Deep Dive: Scalability in Production",
+      excerpt: "Strategies for tokenizing design variables, atomic components, and maintaining visual consistency across large platforms.",
+      date: "Aug 2024",
+      category: "Design Systems",
+      readTime: "4 min read",
+      link: "/journey",
+    },
+    {
+      id: 2,
+      title: "Crafting a Minimalist Workspace & Engineering Workflow",
+      excerpt: "Principles behind an intentional desk setup, hardware ergonomics, and focus-enhancing ambient tooling.",
+      date: "Dec 2024",
+      category: "Productivity",
+      readTime: "3 min read",
+      link: "/journey",
+    },
+  ];
 
   return (
     <section
@@ -55,7 +58,7 @@ export default function WritingFeed() {
           <div>
             <div className="flex items-center gap-3 mb-3">
               <span className="w-8 h-px bg-primary/40" />
-              <span className="text-micro-uppercase text-primary font-semibold tracking-wider">
+              <span className="text-micro-uppercase text-primary font-semibold tracking-wider font-mono">
                 Writing &amp; Perspective
               </span>
             </div>
@@ -69,7 +72,7 @@ export default function WritingFeed() {
 
           <Link
             href="/journey"
-            className="group inline-flex items-center gap-2 text-button-md font-medium text-steel hover:text-charcoal transition-colors duration-200"
+            className="group inline-flex items-center gap-2 text-button-md font-medium text-steel hover:text-charcoal transition-colors duration-200 font-mono"
           >
             <span>View All Stories</span>
             <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform duration-200" />
@@ -78,7 +81,7 @@ export default function WritingFeed() {
 
         {/* Minimalist Publication Feed — Linear/Substack style */}
         <div className="border-t border-hairline divide-y divide-hairline">
-          {FEATURED_STORIES.map((story, i) => (
+          {stories.map((story, i) => (
             <motion.div
               key={story.id}
               initial={{ opacity: 0, y: deviceInfo.isMobile ? 12 : 20 }}
