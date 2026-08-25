@@ -1,72 +1,93 @@
 import { Metadata } from "next";
-import { getCMSData, CMSBlogPost } from "@/lib/cms";
-import GsapTypingHeading from "@/components/GsapTypingHeading";
-import GsapRevealSection from "@/components/GsapRevealSection";
+import { getCMSData } from "@/lib/cms";
 import Footer from "@/components/Footer";
 import BlogClientView from "./BlogClientView";
-import { BookOpen, Sparkles, MapPin, Compass } from "lucide-react";
+import Link from "next/link";
+import { Mail, ArrowUpRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Blog & Journal · Dareean Ahmad Raffi",
-  description: "Personal journal, daily life logs, milestones, achievements, and engineering reflections by Dareean Ahmad Raffi in Palu, Central Sulawesi.",
+  title: "Blog & Insights · Dareean Ahmad Raffi",
+  description: "Featured insights, personal stories, daily life logs, and software engineering reflections by Dareean Ahmad Raffi in Palu, Central Sulawesi.",
 };
 
 export const dynamic = "force-dynamic";
 
 export default function BlogPage() {
   const cmsData = getCMSData();
-  const blogs: CMSBlogPost[] = cmsData.blogs || [];
 
   return (
-    <main className="min-h-screen bg-canvas text-charcoal pt-28 md:pt-32 pb-20 px-6 md:px-8 relative overflow-x-hidden">
-      {/* Subtle Background Glow Orbs */}
-      <div className="absolute top-20 left-1/4 w-[500px] h-[500px] bg-primary/[0.03] rounded-full blur-3xl pointer-events-none -z-10" />
-      <div className="absolute top-40 right-10 w-[400px] h-[400px] bg-amber-500/[0.025] rounded-full blur-3xl pointer-events-none -z-10" />
+    <main className="min-h-screen bg-canvas text-charcoal pt-28 md:pt-32 pb-20 px-4 sm:px-6 md:px-8 relative overflow-x-hidden">
+      <div className="max-w-6xl mx-auto space-y-20">
+        {/* ── Main Blog Client View (Header, Filter Pills, and 3-Column Card Grid) ── */}
+        <BlogClientView cmsData={cmsData} />
 
-      <div className="max-w-container mx-auto">
-        {/* ── Editorial Header Section ── */}
-        <div className="mb-12 md:mb-16">
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-8 border-b border-hairline">
-            <div className="max-w-2xl space-y-4">
-              <div className="flex items-center gap-3">
-                <span className="w-8 h-px bg-primary" />
-                <span className="inline-flex items-center gap-1.5 text-micro-uppercase text-primary font-bold tracking-wider font-mono">
-                  <Compass size={13} />
-                  <span>Journal &amp; Personal Feed</span>
-                </span>
+        {/* ── Bottom Section: "Reach Out Today" (Reference Style) ── */}
+        <section className="rounded-3xl bg-surface-soft/50 border border-hairline p-8 sm:p-12 md:p-14 shadow-xs">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
+            {/* Left Info */}
+            <div className="lg:col-span-6 space-y-4">
+              <div className="inline-flex items-center px-4 py-1 rounded-full bg-surface border border-hairline text-[11px] font-mono uppercase tracking-wider text-steel shadow-xs">
+                Contact Us
               </div>
 
-              <GsapTypingHeading
-                text="Life, Achievements &amp; Reflections"
-                as="h1"
-                className="text-heading-1 md:text-display-md lg:text-display-lg text-charcoal font-semibold tracking-tight leading-[1.15]"
-              />
+              <h2 className="text-heading-2 md:text-display-sm font-semibold text-charcoal tracking-tight">
+                Reach Out Today
+              </h2>
 
-              <p className="text-body-md md:text-body-lg text-slate leading-relaxed">
-                Catatan personal seputar keseharian developer, momentum pencapaian (*achievements*), proses kreatif, dan perjalanan membangun teknologi dari Palu, Sulawesi Tengah.
+              <p className="text-body-md text-slate leading-relaxed font-light">
+                Punya pertanyaan, ide kolaborasi proyek, atau ingin mengundang untuk mentoring komunitas teknologi di Palu? Saya selalu terbuka untuk berdiskusi.
               </p>
+
+              <div className="pt-4 space-y-2 text-body-sm font-mono">
+                <div>
+                  <span className="text-steel block text-micro uppercase">Email</span>
+                  <a
+                    href={`mailto:${cmsData.site.email || "dareean.business@gmail.com"}`}
+                    className="text-charcoal hover:text-[#4F46E5] font-semibold transition-colors"
+                  >
+                    {cmsData.site.email || "dareean.business@gmail.com"}
+                  </a>
+                </div>
+
+                <div className="pt-2">
+                  <span className="text-steel block text-micro uppercase">Location</span>
+                  <span className="text-charcoal">Palu, Central Sulawesi, Indonesia</span>
+                </div>
+              </div>
             </div>
 
-            {/* Quick Metrics / Status Ticker */}
-            <div className="flex flex-wrap lg:flex-col gap-2.5 flex-shrink-0">
-              <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface border border-hairline text-caption font-mono text-charcoal shadow-elevation-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-steel">Total Entries:</span>
-                <span className="font-semibold text-charcoal">{blogs.length} Stories</span>
-              </div>
+            {/* Right Action Box */}
+            <div className="lg:col-span-6 rounded-2xl bg-surface border border-hairline p-6 sm:p-8 space-y-4 shadow-elevation-1">
+              <h3 className="font-semibold text-charcoal text-body-md">
+                Let&apos;s Build Something Impactful
+              </h3>
 
-              <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface border border-hairline text-caption font-mono text-steel shadow-elevation-1">
-                <MapPin size={13} className="text-primary" />
-                <span>Palu, Sulawesi Tengah · WITA</span>
+              <p className="text-body-sm text-slate font-light leading-relaxed">
+                Kirim pesan langsung atau hubungi melalui LinkedIn untuk mendiskusikan arsitektur web modern, sistem geospasial, atau konsultasi teknis.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <Link
+                  href="/contact"
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition-colors shadow-xs"
+                >
+                  <Mail size={14} />
+                  <span>Kirim Pesan / Form</span>
+                </Link>
+
+                <Link
+                  href={cmsData.site.linkedin || "https://linkedin.com/in/dareean"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-full bg-surface-soft hover:bg-surface border border-hairline text-charcoal text-xs font-mono font-medium transition-colors"
+                >
+                  <span>LinkedIn</span>
+                  <ArrowUpRight size={14} />
+                </Link>
               </div>
             </div>
           </div>
-        </div>
-
-        {/* ── Interactive Client View (Search, Filters, Spotlight & Bento Grid) ── */}
-        <GsapRevealSection yOffset={25} duration={0.8}>
-          <BlogClientView initialBlogs={blogs} />
-        </GsapRevealSection>
+        </section>
       </div>
 
       <div className="mt-28">
