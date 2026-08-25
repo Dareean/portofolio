@@ -1,9 +1,14 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "./ThemeProvider";
 
 export default function WaveTransition() {
+  const pathname = usePathname();
+  if (pathname?.startsWith("/cms")) {
+    return null;
+  }
   const { isTransitioning, pendingTheme } = useTheme();
   const targetColor = pendingTheme === "light" ? "#FFFFFF" : "#0A1530";
 

@@ -440,18 +440,18 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
         className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden bg-[#F8FAFC]"
       >
         {/* Top Header Bar */}
-        <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between bg-white/95 backdrop-blur-md border-b border-[#E2E8F0] px-6 md:px-8">
+        <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between bg-white border-b border-[#E2E8F0] px-6 md:px-8 shadow-xs">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-1.5 rounded-lg border border-[#E2E8F0] bg-white text-[#64748B] hover:text-[#0F172A]"
+              className="lg:hidden p-1.5 rounded-lg border border-[#E2E8F0] bg-white text-[#64748B] hover:text-[#0F172A] cursor-pointer"
             >
               <Menu size={16} />
             </button>
 
-            <div className="flex items-center gap-2 text-xs font-mono">
-              <span className="text-[#64748B]">Dashboard</span>
+            <div className="flex items-center gap-2 text-xs">
+              <span className="text-[#64748B] font-medium">Dashboard</span>
               <span className="text-[#CBD5E1]">/</span>
               <span className="font-semibold text-[#0F172A]">{currentNav.label}</span>
             </div>
@@ -459,13 +459,13 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
 
           <div className="flex items-center gap-3">
             <div className="relative hidden sm:block">
-              <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748B]" />
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748B]" />
               <input
                 type="text"
-                placeholder="Filter entries..."
+                placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-9 pl-8 pr-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] focus:bg-white focus:outline-none w-48 md:w-56"
+                className="h-9 pl-8 pr-3.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] placeholder:text-[#94A3B8] focus:border-[#4F46E5] focus:bg-white focus:outline-none w-44 md:w-56 transition-all"
               />
             </div>
 
@@ -473,7 +473,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
               type="button"
               onClick={handleSave}
               disabled={isSaving}
-              className="inline-flex h-9 items-center gap-2 px-4 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
+              className="inline-flex h-9 items-center gap-2 px-4 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
             >
               {isSaving ? (
                 <>

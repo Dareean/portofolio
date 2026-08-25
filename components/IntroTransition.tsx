@@ -1,12 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import Image from "next/image";
 import { useTheme } from "./ThemeProvider";
 import { useDeviceType } from "@/lib/hooks";
 
 export default function IntroTransition() {
+  const pathname = usePathname();
+  if (pathname?.startsWith("/cms")) {
+    return null;
+  }
   const containerRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
   const blindsWrapRef = useRef<HTMLDivElement>(null);
