@@ -7,6 +7,7 @@ import IntroTransition from "@/components/IntroTransition";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import WaveTransition from "@/components/WaveTransition";
 import TopNav from "@/components/TopNav";
+import RecruiterAIAssistant from "@/components/RecruiterAIAssistant";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -40,6 +41,7 @@ export default function RootLayout({
           <LoadingScreen />
           <TopNav />
           <SmoothScroll>{children}</SmoothScroll>
+          <RecruiterAIAssistant />
           <div className="noise-bg" />
         </ThemeProvider>
       </body>
