@@ -16,6 +16,9 @@ import {
   ArrowRight,
   Copy,
   CheckCheck,
+  Tag,
+  BookOpen,
+  ListPlus,
 } from "lucide-react";
 
 interface AIAssistantButtonProps {
@@ -24,6 +27,8 @@ interface AIAssistantButtonProps {
     | "project_title"
     | "article_title"
     | "article_caption"
+    | "article_content"
+    | "article_tags"
     | "experience_description"
     | "bio"
     | "general";
@@ -37,6 +42,9 @@ interface AIAssistantButtonProps {
     organization?: string;
     year?: string | number;
     description?: string;
+    excerpt?: string;
+    content?: string;
+    tags?: string[] | string;
     [key: string]: any;
   };
   label?: string;
@@ -79,7 +87,15 @@ export function AIAssistantButton({
   }, [isOpen]);
 
   const handleRunAI = async (
-    action: "generate_description" | "generate_caption" | "generate_title" | "polish" | "translate"
+    action:
+      | "generate_description"
+      | "generate_caption"
+      | "generate_title"
+      | "generate_article"
+      | "generate_tags"
+      | "expand"
+      | "polish"
+      | "translate"
   ) => {
     setIsLoading(true);
     setErrorMsg(null);
@@ -133,6 +149,73 @@ export function AIAssistantButton({
   // Determine quick action presets based on fieldType
   const getActionPresets = () => {
     switch (fieldType) {
+      case "article_content":
+        return [
+          {
+            id: "generate_article",
+            label: "Auto-Draft Story & Insights",
+            icon: BookOpen,
+            desc: "Draft structured story with headings & takeaways in Markdown",
+          },
+          {
+            id: "expand",
+            label: "Expand Story & Add Learnings",
+            icon: ListPlus,
+            desc: "Enrich draft with deeper reflections and metrics",
+          },
+          {
+            id: "polish",
+            label: "Polish & Elevate Markdown",
+            icon: Sparkles,
+            desc: "Enhance vocabulary, flow, and formatting",
+          },
+        ];
+      case "article_tags":
+        return [
+          {
+            id: "generate_tags",
+            label: "Auto-Generate Smart Tags",
+            icon: Tag,
+            desc: "Suggest 3-5 relevant keywords from title, content & category",
+          },
+          {
+            id: "polish",
+            label: "Clean & Standardize Tags",
+            icon: Sparkles,
+            desc: "Format tags cleanly into comma-separated list",
+          },
+        ];
+      case "article_caption":
+        return [
+          {
+            id: "generate_caption",
+            label: "Auto-Generate Excerpt Caption",
+            icon: Sparkles,
+            desc: "Create engaging 1-2 sentence summary from content",
+          },
+          {
+            id: "polish",
+            label: "Refine Tone & Polish",
+            icon: Wand2,
+            desc: "Improve narrative flow and excerpt quality",
+          },
+        ];
+      case "project_title":
+      case "article_title":
+        return [
+          {
+            id: "generate_title",
+            label: "Suggest 3 Catchy Titles",
+            icon: Type,
+            desc: "Create memorable options from draft & category",
+          },
+          {
+            id: "polish",
+            label: "Polish Title",
+            icon: Sparkles,
+            desc: "Make current title sound crisp & professional",
+          },
+        ];
       case "project_description":
       case "experience_description":
         return [
@@ -153,37 +236,6 @@ export function AIAssistantButton({
             label: "Shorten into Caption (1-2 sentences)",
             icon: FileText,
             desc: "Condense long text into crisp card summary",
-          },
-        ];
-      case "article_caption":
-        return [
-          {
-            id: "generate_caption",
-            label: "Auto-Generate Excerpt Caption",
-            icon: Sparkles,
-            desc: "Create engaging 1-2 sentence article summary",
-          },
-          {
-            id: "polish",
-            label: "Refine Tone & Polish",
-            icon: Wand2,
-            desc: "Improve narrative flow and terminology",
-          },
-        ];
-      case "project_title":
-      case "article_title":
-        return [
-          {
-            id: "generate_title",
-            label: "Suggest 3 Catchy Titles",
-            icon: Type,
-            desc: "Create memorable options from description/tech",
-          },
-          {
-            id: "polish",
-            label: "Polish Title",
-            icon: Sparkles,
-            desc: "Make current title sound crisp & professional",
           },
         ];
       case "bio":

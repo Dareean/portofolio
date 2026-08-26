@@ -220,16 +220,50 @@ export function getCMSData(): PortfolioCMSData {
 /**
  * Saves updated CMS data atomically to file system (Server-side)
  */
-export function saveCMSData(data: PortfolioCMSData): boolean {
+export function saveCMSData(data: PortfolioCMSData): { success: boolean; error?: string } {
   try {
+    if (!data || typeof data !== "object") {
+      return { success: false, error: "Invalid CMS data structure" };
+    }
+
     const dir = path.dirname(DATA_FILE_PATH);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    fs.writeFileSync(DATA_FILE_PATH, JSON.stringify(data, null, 2), "utf-8");
-    return true;
-  } catch (error) {
+
+    const jsonString = JSON.stringify(data, null, 2);
+
+    // Attempt write with retry mechanism to prevent Windows EBUSY/file-lock collisions
+    let lastError: any = null;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const tempPath = `${DATA_FILE_PATH}.tmp.${Date.now()}`;
+        fs.writeFileSync(tempPath, jsonString, "utf-8");
+
+        try {
+          fs.renameSync(tempPath, DATA_FILE_PATH);
+        } catch {
+          // If atomic rename fails (e.g. locked destination on Windows), fallback to direct write
+          fs.writeFileSync(DATA_FILE_PATH, jsonString, "utf-8");
+          if (fs.existsSync(tempPath)) {
+            try {
+              fs.unlinkSync(tempPath);
+            } catch {}
+          }
+        }
+
+        return { success: true };
+      } catch (err) {
+        lastError = err;
+        // Small synchronous delay before retry
+        const start = Date.now();
+        while (Date.now() - start < 60 * attempt) {}
+      }
+    }
+
+    throw lastError || new Error("Failed to write file after 3 attempts");
+  } catch (error: any) {
     console.error("Error saving CMS data to file:", error);
-    return false;
+    return { success: false, error: error?.message || "Failed to persist data to filesystem" };
   }
 }

@@ -26,11 +26,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const saved = saveCMSData(body);
+    const saveResult = saveCMSData(body);
 
-    if (!saved) {
+    if (!saveResult.success) {
       return NextResponse.json(
-        { success: false, error: "Failed to persist data to filesystem" },
+        { success: false, error: saveResult.error || "Failed to persist data to filesystem" },
         { status: 500 }
       );
     }
@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
   } catch (error: any) {
+    console.error("API CMS POST Error:", error);
     return NextResponse.json(
       { success: false, error: error?.message || "Internal server error" },
       { status: 500 }

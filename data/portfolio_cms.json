@@ -628,7 +628,12 @@
       "content": "Menjadi Person In Charge (PIC) untuk Informatics Festival (I-Fest) 2026 merupakan salah satu pencapaian dan tanggung jawab terbesar yang pernah saya jalani.\n\n### Tantangan & Koordinasi Tim\nSebagai PIC, tantangan utama bukan hanya tentang menyusun jadwal acara, melainkan bagaimana menyatukan visi puluhan anggota panitia dari divisi Humas, Acara, Perkap, hingga Logistik.\n\nKami mengimplementasikan dasbor pemantauan berbasis web untuk melacak perkembangan persiapan secara real-time, menghemat koordinasi manual hingga 35%.\n\n### Pembelajaran Utama\n1. **Empati dalam Kepemimpinan**: Memahami kapasitas setiap divisi membantu menciptakan alur kerja yang sehat.\n2. **Manajemen Risiko**: Menyiapkan rencana cadangan (Plan B) untuk setiap skenario teknis.\n\nSemoga I-Fest 2026 menjadi inspirasi bagi seluruh mahasiswa dan komunitas teknologi di Sulawesi Tengah!",
       "coverImage": "/assets/dareean_web.png",
       "readTime": "4 min read",
-      "tags": ["Leadership", "I-Fest 2026", "Event Management", "Achievement"],
+      "tags": [
+        "Leadership",
+        "I-Fest 2026",
+        "Event Management",
+        "Achievement"
+      ],
       "featured": true
     },
     {
@@ -641,7 +646,12 @@
       "content": "Banyak yang bertanya bagaimana rasanya membangun karir software engineering dari Kota Palu, Sulawesi Tengah.\n\n### Rutinitas Pagi\nPagi hari dimulai dengan segelas kopi lokal dan me-review PR (Pull Request) atau tiket pengerjaan proyek. Fokus utama saya biasanya pada arsitektur sistem berbasis Next.js dan TypeScript.\n\n### Sesi Mentoring Sore Hari\nDi sore hari, saya rutin berkumpul bersama teman-teman di komunitas Programming Tadulako. Kami saling berbagi materi seputar arsitektur web modern, algoritma, serta mendampingi mahasiswa baru yang baru memulai belajar pemrograman.\n\n### Malam Refleksi\nMalam hari adalah waktu favorit saya untuk bereksperimen dengan pustaka baru seperti Framer Motion, GSAP, atau mengeksplorasi integrasi model AI Groq.",
       "coverImage": "/assets/greengnsulteng_web.png",
       "readTime": "3 min read",
-      "tags": ["Daily Life", "Palu", "Developer Routine", "Mentorship"],
+      "tags": [
+        "Daily Life",
+        "Palu",
+        "Developer Routine",
+        "Mentorship"
+      ],
       "featured": true
     },
     {
@@ -654,7 +664,12 @@
       "content": "Proyek SOROT lahir dari keinginan untuk membantu penanganan masalah lingkungan secara presisi melalui peta geospasial.\n\n### Arsitektur Sistem\nAplikasi mobile dibangun menggunakan Flutter, terhubung dengan backend Firebase dan pemetaan spasial QGIS. Pengguna dapat melaporkan lokasi kejadian dengan akurasi GPS di bawah 5 meter.\n\n### Pencapaian & Dampak\nPrototipe ini berhasil didemonstrasikan di hadapan pemangku kepentingan daerah dan menjadi salah satu milestone penting dalam eksplorasi saya di bidang IoT dan data spasial.",
       "coverImage": "/assets/sorot-dummy_showcase.png",
       "readTime": "5 min read",
-      "tags": ["Geospatial", "Flutter", "QGIS", "Projects"],
+      "tags": [
+        "Geospatial",
+        "Flutter",
+        "QGIS",
+        "Projects"
+      ],
       "featured": false
     }
   ],

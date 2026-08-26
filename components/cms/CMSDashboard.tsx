@@ -3191,9 +3191,31 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
-                    Judul Artikel / Cerita
-                  </label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-medium text-[#0F172A]">
+                      Judul Artikel / Cerita
+                    </label>
+                    <AIAssistantButton
+                      fieldType="article_title"
+                      currentValue={editingBlog.title}
+                      context={{
+                        category: editingBlog.category,
+                        content: editingBlog.content,
+                        excerpt: editingBlog.excerpt,
+                        tags: editingBlog.tags,
+                      }}
+                      onApply={(val) => {
+                        const cleanTitle = val.replace(/^Option\s*\d+:\s*/i, "").trim();
+                        const slug = cleanTitle
+                          .toLowerCase()
+                          .replace(/[^a-z0-9]+/g, "-")
+                          .replace(/(^-|-$)/g, "");
+                        setEditingBlog({ ...editingBlog, title: cleanTitle, slug: slug || editingBlog.slug });
+                      }}
+                      compact
+                      label="AI Title"
+                    />
+                  </div>
                   <input
                     type="text"
                     value={editingBlog.title}
@@ -3262,9 +3284,26 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
-                    Ringkasan Singkat (Excerpt)
-                  </label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-medium text-[#0F172A]">
+                      Ringkasan Singkat (Excerpt)
+                    </label>
+                    <AIAssistantButton
+                      fieldType="article_caption"
+                      currentValue={editingBlog.excerpt}
+                      context={{
+                        title: editingBlog.title,
+                        category: editingBlog.category,
+                        content: editingBlog.content,
+                        tags: editingBlog.tags,
+                      }}
+                      onApply={(val) =>
+                        setEditingBlog({ ...editingBlog, excerpt: val })
+                      }
+                      compact
+                      label="AI Excerpt"
+                    />
+                  </div>
                   <textarea
                     rows={2}
                     value={editingBlog.excerpt}
@@ -3276,9 +3315,25 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
-                    Isi Cerita / Artikel Lengkap (Markdown Supported)
-                  </label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-medium text-[#0F172A]">
+                      Isi Cerita / Artikel Lengkap (Markdown Supported)
+                    </label>
+                    <AIAssistantButton
+                      fieldType="article_content"
+                      currentValue={editingBlog.content}
+                      context={{
+                        title: editingBlog.title,
+                        category: editingBlog.category,
+                        excerpt: editingBlog.excerpt,
+                        tags: editingBlog.tags,
+                      }}
+                      onApply={(val) =>
+                        setEditingBlog({ ...editingBlog, content: val })
+                      }
+                      label="AI Story Writer"
+                    />
+                  </div>
                   <textarea
                     rows={8}
                     value={editingBlog.content}
@@ -3290,9 +3345,33 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-[#0F172A] mb-1.5">
-                    Tags (pisahkan dengan koma)
-                  </label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-medium text-[#0F172A]">
+                      Tags (pisahkan dengan koma)
+                    </label>
+                    <AIAssistantButton
+                      fieldType="article_tags"
+                      currentValue={editingBlog.tags.join(", ")}
+                      context={{
+                        title: editingBlog.title,
+                        category: editingBlog.category,
+                        excerpt: editingBlog.excerpt,
+                        content: editingBlog.content,
+                      }}
+                      onApply={(val) => {
+                        const tagsArr = val
+                          .split(/[,;\n]/)
+                          .map((s) => s.replace(/^[#\d\.\-\*\s]+/, "").trim())
+                          .filter(Boolean);
+                        setEditingBlog({
+                          ...editingBlog,
+                          tags: tagsArr,
+                        });
+                      }}
+                      compact
+                      label="AI Suggest Tags"
+                    />
+                  </div>
                   <input
                     type="text"
                     value={editingBlog.tags.join(", ")}

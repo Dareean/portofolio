@@ -25,8 +25,25 @@ export async function POST(req: Request) {
       context = {},
       language = "id",
     }: {
-      action: "generate_description" | "generate_caption" | "generate_title" | "polish" | "translate";
-      fieldType: "project_description" | "project_title" | "article_title" | "article_caption" | "experience_description" | "bio" | "general";
+      action:
+        | "generate_description"
+        | "generate_caption"
+        | "generate_title"
+        | "generate_article"
+        | "generate_tags"
+        | "expand"
+        | "polish"
+        | "translate";
+      fieldType:
+        | "project_description"
+        | "project_title"
+        | "article_title"
+        | "article_caption"
+        | "article_content"
+        | "article_tags"
+        | "experience_description"
+        | "bio"
+        | "general";
       currentValue?: string;
       context?: {
         title?: string;
@@ -35,6 +52,10 @@ export async function POST(req: Request) {
         role?: string;
         organization?: string;
         year?: string | number;
+        description?: string;
+        excerpt?: string;
+        content?: string;
+        tags?: string[] | string;
         [key: string]: any;
       };
       language?: "id" | "en";
@@ -42,13 +63,48 @@ export async function POST(req: Request) {
 
     const langName = language === "en" ? "English" : "Bahasa Indonesia";
 
-    let systemPrompt = `You are an elite Copilot AI Content Creator & Executive Copywriter for software engineer portfolios.
+    let systemPrompt = `You are an elite Copilot AI Content Creator & Executive Copywriter for software engineer portfolios and personal tech blogs.
 Your job is to generate concise, compelling, high-impact text in ${langName}.
 Keep industry standard technical terms in English (e.g. Full Stack, Next.js, UI/UX, REST API, Database, Dashboard).`;
 
     let userPrompt = "";
 
-    if (action === "generate_description") {
+    if (action === "generate_article" || (action === "generate_description" && fieldType === "article_content")) {
+      systemPrompt += `\nTask: Write an engaging, well-structured personal narrative and tech article in Markdown format in ${langName}.
+Structure the story cleanly with:
+- An engaging opening paragraph setting the context and background.
+- 2-3 narrative sections highlighting key milestones, technical solutions, and cross-team collaboration. Use subheadings (###).
+- A structured '### Pembelajaran Utama' (or '### Key Takeaways' in English) section with numbered insights.
+- A motivating closing sentence.
+Do NOT add conversational preamble, meta text, or wrapper quotes—return ONLY the markdown article body.`;
+      userPrompt = `Article Context:
+- Topic / Title: ${context.title || "Refleksi & Pengalaman"}
+- Category: ${context.category || "General"}
+- Excerpt / Summary: ${context.excerpt || ""}
+- Tags: ${Array.isArray(context.tags) ? context.tags.join(", ") : context.tags || ""}
+${currentValue ? `- Current Draft / Notes:\n"""${currentValue}"""` : ""}
+
+Generate the full markdown story in ${langName}.`;
+    } else if (action === "expand") {
+      systemPrompt += `\nTask: Expand and enrich the existing article draft in Markdown format in ${langName}. Add deeper storytelling, specific challenges overcome, metrics/impact (e.g. percentages or milestones), and structured key takeaways. Return ONLY the expanded markdown content without preamble or wrapper quotes.`;
+      userPrompt = `Article Context:
+- Title: ${context.title || ""}
+- Category: ${context.category || ""}
+- Current Draft to Expand:
+"""${currentValue || context.excerpt || ""}"""
+
+Expand this draft into a rich, structured story with headings and key learnings.`;
+    } else if (action === "generate_tags" || fieldType === "article_tags") {
+      systemPrompt += `\nTask: Generate 3 to 5 concise, highly relevant tags/keywords separated by commas (e.g. "Leadership, Event Management, Next.js, Community").
+Return ONLY the comma-separated tag list. Do NOT include hashtags (#), bullets, or numbering.`;
+      userPrompt = `Content Context:
+- Title: ${context.title || ""}
+- Category: ${context.category || ""}
+- Excerpt: ${context.excerpt || ""}
+- Full Content: ${context.content || currentValue || ""}
+
+Generate 3-5 relevant comma-separated tags.`;
+    } else if (action === "generate_description") {
       systemPrompt += `\nTask: Write a high-impact, professional description highlighting STAR achievements (Situation, Task, Action, Result) and key metrics where appropriate. Do NOT add preamble or quotes—return ONLY the raw final text.`;
       userPrompt = `Field Context:
 - Target Field Type: ${fieldType}
@@ -64,10 +120,11 @@ Generate a high-impact description in ${langName} (around 2-4 sentences or struc
       userPrompt = `Field Context:
 - Target Field Type: ${fieldType}
 - Title: ${context.title || "Project/Article"}
-- Key Details: ${context.category || ""} ${Array.isArray(context.technologies) ? context.technologies.join(", ") : context.technologies || ""}
-${currentValue ? `- Full Text to summarize into caption: "${currentValue}"` : ""}
+- Category: ${context.category || ""}
+- Content / Full Story: ${context.content || currentValue || ""}
+${currentValue && !context.content ? `- Draft notes: "${currentValue}"` : ""}
 
-Write a punchy, engaging 1-2 sentence caption in ${langName}.`;
+Write a punchy, engaging 1-2 sentence excerpt/caption in ${langName}.`;
     } else if (action === "generate_title") {
       systemPrompt += `\nTask: Create 3 punchy, professional, and memorable title options for a project or article. Do NOT add conversational fluff—return ONLY 3 options separated by newlines, formatted like:
 Option 1: [Title 1]
@@ -75,18 +132,17 @@ Option 2: [Title 2]
 Option 3: [Title 3]`;
       userPrompt = `Field Context:
 - Category: ${context.category || "Engineering"}
-- Tech Stack: ${Array.isArray(context.technologies) ? context.technologies.join(", ") : context.technologies || ""}
+- Content Context: ${context.content || context.excerpt || context.description || ""}
 ${currentValue ? `- Current Title or Notes: "${currentValue}"` : ""}
-${context.description ? `- Description Context: "${context.description}"` : ""}
 
 Generate 3 high-impact title options in ${langName}.`;
     } else if (action === "polish") {
-      systemPrompt += `\nTask: Refine and polish the user's draft text. Fix typos, enhance vocabulary, make active action verbs stronger, and ensure a smooth, professional tone. Return ONLY the polished text without quotes or preamble.`;
+      systemPrompt += `\nTask: Refine and polish the user's draft text. Fix typos, enhance vocabulary, make active action verbs stronger, and preserve Markdown formatting if present. Return ONLY the polished text without quotes or preamble.`;
       userPrompt = `Text to polish into executive ${langName}:
 """${currentValue || context.title || ""}"""`;
     } else if (action === "translate") {
       const targetLang = language === "en" ? "English" : "Bahasa Indonesia";
-      systemPrompt += `\nTask: Translate the input text into professional ${targetLang}. Preserve technical terms and formatting. Return ONLY the translated text.`;
+      systemPrompt += `\nTask: Translate the input text into professional ${targetLang}. Preserve technical terms and Markdown formatting. Return ONLY the translated text.`;
       userPrompt = `Text to translate:
 """${currentValue}"""`;
     }
@@ -129,7 +185,7 @@ Generate 3 high-impact title options in ${langName}.`;
               { role: "user", content: userPrompt },
             ],
             temperature: 0.4,
-            max_tokens: 800,
+            max_tokens: action === "generate_article" || action === "expand" ? 1500 : 800,
           }),
         });
 
