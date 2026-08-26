@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const data = getCMSData();
+    const data = await getCMSData();
     return NextResponse.json({ success: true, data }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json(
@@ -26,11 +26,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const saveResult = saveCMSData(body);
+    const saveResult = await saveCMSData(body);
 
     if (!saveResult.success) {
       return NextResponse.json(
-        { success: false, error: saveResult.error || "Failed to persist data to filesystem" },
+        { success: false, error: saveResult.error || "Failed to persist data" },
         { status: 500 }
       );
     }

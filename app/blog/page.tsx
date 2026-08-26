@@ -12,8 +12,8 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default function BlogPage() {
-  const cmsData = getCMSData();
+export default async function BlogPage() {
+  const cmsData = await getCMSData();
 
   return (
     <main className="min-h-screen bg-canvas text-charcoal pt-28 md:pt-32 pb-20 px-4 sm:px-6 md:px-8 relative overflow-x-hidden">

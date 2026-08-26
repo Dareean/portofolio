@@ -75,7 +75,7 @@ export async function POST(req: Request) {
     }
 
     // Load current CMS data
-    const currentCMS = getCMSData();
+    const currentCMS = await getCMSData();
 
     const systemPrompt = `You are an elite Resume-to-CMS Sync Engineer and AI Data Integrator.
 Your goal is to parse a candidate's CV document (PDF/DOCX/text) and compare it against their current portfolio CMS database.

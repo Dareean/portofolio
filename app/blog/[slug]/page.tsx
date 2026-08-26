@@ -11,7 +11,7 @@ interface BlogSlugProps {
 }
 
 export async function generateMetadata({ params }: BlogSlugProps): Promise<Metadata> {
-  const cmsData = getCMSData();
+  const cmsData = await getCMSData();
   const blog = (cmsData.blogs || []).find((b) => b.slug === params.slug);
 
   if (!blog) {
@@ -33,8 +33,8 @@ export async function generateMetadata({ params }: BlogSlugProps): Promise<Metad
 
 export const dynamic = "force-dynamic";
 
-export default function SingleBlogPostPage({ params }: BlogSlugProps) {
-  const cmsData = getCMSData();
+export default async function SingleBlogPostPage({ params }: BlogSlugProps) {
+  const cmsData = await getCMSData();
   const blogs = cmsData.blogs || [];
   const blog = blogs.find((b) => b.slug === params.slug);
 

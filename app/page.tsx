@@ -10,8 +10,8 @@ import { Project } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 
-export default function Home() {
-  const cmsData = getCMSData();
+export default async function Home() {
+  const cmsData = await getCMSData();
 
   // Map CMS projects to Project type for WorkList
   const featuredProjects: Project[] = (cmsData.projects || [])
