@@ -222,6 +222,7 @@ export interface Experience {
   category:
     | "education"
     | "work"
+    | "internship"
     | "award"
     | "community"
     | "volunteer"

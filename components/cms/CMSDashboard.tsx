@@ -164,6 +164,8 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
   // Modal state
   const [editingProject, setEditingProject] = useState<CMSProject | null>(null);
   const [editingBlog, setEditingBlog] = useState<CMSBlogPost | null>(null);
+  const [editingExperience, setEditingExperience] = useState<CMSExperience | null>(null);
+  const [editingStory, setEditingStory] = useState<CMSStory | null>(null);
 
   // Uploading states
   const [isUploading, setIsUploading] = useState(false);
@@ -269,43 +271,105 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
     }
   };
 
-  // Quick toggle featured for a project
+  // Quick toggle featured for a project (automatically moves featured projects to top)
   const toggleProjectFeatured = (id: number) => {
     const updated = data.projects.map((p) =>
       p.id === id ? { ...p, featured: !p.featured } : p
     );
+    // Sort featured projects to the top
+    updated.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
     setData({ ...data, projects: updated });
-    showToast("Project visibility updated!");
+    const isNowFeatured = updated.find((p) => p.id === id)?.featured;
+    showToast(
+      isNowFeatured
+        ? "⭐ Project disorot & dipindahkan ke paling atas!"
+        : "Project tidak disorot lagi."
+    );
   };
 
   // Save edited project from modal
   const saveProjectModal = (updatedProject: CMSProject) => {
-    const updated = data.projects.map((p) =>
-      p.id === updatedProject.id ? updatedProject : p
-    );
+    if (!updatedProject.title.trim()) {
+      showToast("Mohon isi Judul Project!", "error");
+      return;
+    }
+
+    const index = data.projects.findIndex((p) => p.id === updatedProject.id);
+    let updated: CMSProject[];
+    if (index >= 0) {
+      updated = [...data.projects];
+      updated[index] = updatedProject;
+    } else {
+      updated = [updatedProject, ...data.projects];
+    }
+    updated.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
     setData({ ...data, projects: updated });
     setEditingProject(null);
-    showToast("Project updated!");
+    showToast(index >= 0 ? "Project updated!" : "New project added!");
   };
 
-  // Add new project
+  // Add new project (opens pop-up modal first)
   const handleAddNewProject = () => {
     const newProj: CMSProject = {
       id: Date.now(),
-      title: "New Project Showcase",
+      title: "",
       slug: `project-${Date.now()}`,
       category: "Web Platform",
       year: new Date().getFullYear(),
       image: "/assets/greengnsulteng_web.png",
       link: "https://example.com",
       featured: false,
-      description: "Case study of system architecture, technology stack, and engineering impact.",
+      description: "",
       technologies: ["React", "TypeScript", "Tailwind CSS"],
       metrics: [{ label: "Impact", value: "+30%" }],
     };
-    setData({ ...data, projects: [newProj, ...data.projects] });
     setEditingProject(newProj);
-    showToast("New project added.");
+  };
+
+  // Add new publication article (opens pop-up modal first)
+  const handleAddNewStory = () => {
+    const newStory: CMSStory = {
+      id: Date.now(),
+      title: "",
+      excerpt: "",
+      date: new Date().toLocaleDateString("en-US", { month: "short", year: "numeric" }),
+      category: "Engineering",
+      readTime: "3 min read",
+      link: "/journey",
+    };
+    setEditingStory(newStory);
+  };
+
+  // Add new journey milestone (opens pop-up modal)
+  const handleAddNewExperience = () => {
+    const newExp: CMSExperience = {
+      id: Date.now(),
+      title: "",
+      role: "",
+      organization: "",
+      dateStart: `${new Date().getFullYear()}-01`,
+      dateEnd: "Present",
+      description: "",
+      highlights: [],
+      category: "community",
+    };
+    setEditingExperience(newExp);
+  };
+
+  // Sort journey experiences by start date (newest first)
+  const handleSortExperiencesByDate = () => {
+    const parseDate = (d: string) => {
+      if (!d) return "0000-00";
+      if (d.length === 4) return `${d}-01`;
+      return d;
+    };
+    const sorted = [...data.experiences].sort((a, b) => {
+      const dateA = parseDate(a.dateStart);
+      const dateB = parseDate(b.dateStart);
+      return dateB.localeCompare(dateA);
+    });
+    setData({ ...data, experiences: sorted });
+    showToast("Milestone berhasil diurutkan berdasarkan tanggal (terbaru dulu)!");
   };
 
   // Delete a project
@@ -650,7 +714,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
         },
         {
           id: "blogs",
-          label: "Blog Posts (Cerita/Pencapaian)",
+          label: "Blog Posts",
           icon: BookOpen,
           count: (data.blogs || []).length,
         },
@@ -801,8 +865,13 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
         {/* Header */}
         <div className="flex h-16 items-center justify-between px-5 border-b border-[#E2E8F0]">
           <Link href="/cms" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#4F46E5] text-white flex items-center justify-center font-mono font-bold text-sm shadow-xs">
-              D
+            <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-[#E2E8F0] shadow-xs flex-shrink-0 bg-[#4F46E5]/10">
+              <Image
+                src="/assets/logo_lambang_dareean.png"
+                alt="Dareean Logo"
+                fill
+                className="object-cover"
+              />
             </div>
             <div>
               <div className="text-sm font-semibold text-[#0F172A] tracking-tight leading-tight">
@@ -839,20 +908,20 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       <button
                         type="button"
                         onClick={() => setActiveTab(item.id as CMSTab)}
-                        className={`w-full h-9 flex items-center justify-between px-2.5 rounded-lg text-xs transition-colors cursor-pointer ${
+                        className={`w-full min-h-[36px] py-1.5 flex items-center justify-between gap-2 px-2.5 rounded-lg text-xs transition-colors cursor-pointer ${
                           isActive
                             ? "bg-[#EEF2FF] text-[#4F46E5] font-semibold border border-[#E0E7FF]"
                             : "text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] font-medium"
                         }`}
                       >
-                        <div className="flex items-center gap-2.5">
-                          <Icon size={15} className={isActive ? "text-[#4F46E5]" : "text-[#64748B]"} />
-                          <span>{item.label}</span>
+                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                          <Icon size={15} className={`flex-shrink-0 ${isActive ? "text-[#4F46E5]" : "text-[#64748B]"}`} />
+                          <span className="truncate text-left">{item.label}</span>
                         </div>
 
                         {item.count !== null && (
                           <span
-                            className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold ${
+                            className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold flex-shrink-0 ${
                               isActive
                                 ? "bg-[#4F46E5] text-white"
                                 : "bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0]"
@@ -1036,6 +1105,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         p.category.toLowerCase().includes(searchQuery.toLowerCase())
                       : true
                   )
+                  .sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
                   .map((project) => (
                     <div
                       key={project.id}
@@ -1563,24 +1633,13 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     Selected Publications &amp; Feed
                   </h3>
                   <p className="text-xs text-[#64748B] mt-0.5">
-                    Articles displayed in the editorial feed.
+                    Articles displayed in the editorial feed ({data.stories.length} articles).
                   </p>
                 </div>
 
                 <button
                   type="button"
-                  onClick={() => {
-                    const newStory: CMSStory = {
-                      id: Date.now(),
-                      title: "New Publication Article",
-                      excerpt: "Summary of technical reflections and architecture decisions.",
-                      date: "Aug 2026",
-                      category: "Engineering",
-                      readTime: "4 min read",
-                      link: "/journey",
-                    };
-                    setData({ ...data, stories: [newStory, ...data.stories] });
-                  }}
+                  onClick={handleAddNewStory}
                   className="inline-flex h-9 items-center justify-center gap-1.5 px-4 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition cursor-pointer shadow-xs flex-shrink-0"
                 >
                   <Plus size={14} />
@@ -1588,105 +1647,61 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                 </button>
               </div>
 
-              <div className="space-y-5">
+              <div className="space-y-3">
                 {data.stories.map((story, index) => (
-                  <div key={story.id} className="p-5 md:p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-4">
-                    <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-3">
-                      <input
-                        type="text"
-                        value={story.title}
-                        onChange={(e) => {
-                          const updated = [...data.stories];
-                          updated[index].title = e.target.value;
-                          setData({ ...data, stories: updated });
-                        }}
-                        className="font-semibold text-sm text-[#0F172A] bg-transparent border-b border-transparent hover:border-[#E2E8F0] focus:border-[#4F46E5] outline-none px-1 flex-1 mr-4"
-                      />
+                  <div
+                    key={story.id}
+                    className="p-5 rounded-xl bg-white border border-[#E2E8F0] shadow-xs hover:border-[#CBD5E1] transition flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                  >
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      <span className="text-xs font-mono text-[#4F46E5] font-bold mt-0.5">
+                        #{index + 1}
+                      </span>
+                      <div className="space-y-1 flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h4 className="font-semibold text-sm text-[#0F172A]">
+                            {story.title || "Untitled Article"}
+                          </h4>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 uppercase font-medium">
+                            {story.category}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 text-xs text-[#64748B]">
+                          <span className="font-mono text-[11px]">{story.date}</span>
+                          <span className="text-[#CBD5E1]">·</span>
+                          <span className="font-mono text-[11px]">{story.readTime}</span>
+                        </div>
+                        {story.excerpt && (
+                          <p className="text-xs text-[#64748B] line-clamp-2 mt-1 leading-relaxed">
+                            {story.excerpt}
+                          </p>
+                        )}
+                      </div>
+                    </div>
 
+                    <div className="flex items-center gap-2 self-end sm:self-center">
+                      <button
+                        type="button"
+                        onClick={() => setEditingStory(story)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E2E8F0] hover:bg-[#F8FAFC] text-xs font-mono font-medium text-[#0F172A] transition cursor-pointer"
+                      >
+                        <Edit3 size={13} className="text-[#4F46E5]" />
+                        <span>Edit</span>
+                      </button>
                       <button
                         type="button"
                         onClick={() => {
-                          if (confirm(`Delete article "${story.title}"?`)) {
+                          if (confirm(`Hapus artikel "${story.title}"?`)) {
                             const updated = data.stories.filter((s) => s.id !== story.id);
                             setData({ ...data, stories: updated });
+                            showToast("Artikel dihapus!");
                           }
                         }}
-                        className="p-1.5 text-[#64748B] hover:text-rose-600 transition cursor-pointer"
+                        className="p-1.5 text-[#64748B] hover:text-rose-600 transition cursor-pointer rounded-lg hover:bg-rose-50"
+                        title="Hapus Artikel"
                       >
                         <Trash2 size={15} />
                       </button>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-xs font-medium text-[#0F172A] mb-1">Date</label>
-                        <input
-                          type="text"
-                          value={story.date}
-                          onChange={(e) => {
-                            const updated = [...data.stories];
-                            updated[index].date = e.target.value;
-                            setData({ ...data, stories: updated });
-                          }}
-                          className="w-full h-9 px-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-medium text-[#0F172A] mb-1">Category</label>
-                        <input
-                          type="text"
-                          value={story.category}
-                          onChange={(e) => {
-                            const updated = [...data.stories];
-                            updated[index].category = e.target.value;
-                            setData({ ...data, stories: updated });
-                          }}
-                          className="w-full h-9 px-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] outline-none"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-medium text-[#0F172A] mb-1">Read Time</label>
-                        <input
-                          type="text"
-                          value={story.readTime}
-                          onChange={(e) => {
-                            const updated = [...data.stories];
-                            updated[index].readTime = e.target.value;
-                            setData({ ...data, stories: updated });
-                          }}
-                          className="w-full h-9 px-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <label className="block text-xs font-medium text-[#0F172A]">Excerpt / Caption</label>
-                        <AIAssistantButton
-                          fieldType="article_caption"
-                          currentValue={story.excerpt}
-                          context={{ title: story.title, category: story.category }}
-                          onApply={(val) => {
-                            const updated = [...data.stories];
-                            updated[index].excerpt = val;
-                            setData({ ...data, stories: updated });
-                          }}
-                          compact
-                          label="AI Caption"
-                        />
-                      </div>
-                      <textarea
-                        rows={2}
-                        value={story.excerpt}
-                        onChange={(e) => {
-                          const updated = [...data.stories];
-                          updated[index].excerpt = e.target.value;
-                          setData({ ...data, stories: updated });
-                        }}
-                        className="w-full p-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#64748B] focus:border-[#4F46E5] outline-none leading-relaxed"
-                      />
                     </div>
                   </div>
                 ))}
@@ -1884,171 +1899,129 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     Journey Milestones &amp; Experience
                   </h3>
                   <p className="text-xs text-[#64748B] mt-0.5">
-                    Entries displayed in the /journey timeline ledger.
+                    Entries displayed in the /journey timeline ledger ({data.experiences.length} milestones).
                   </p>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    const newExp: CMSExperience = {
-                      id: Date.now(),
-                      title: "New Milestone",
-                      role: "Role Title",
-                      organization: "Organization / Project",
-                      dateStart: "2026-01",
-                      dateEnd: "",
-                      description: "Description of the milestone, responsibilities, and achievements.",
-                      highlights: ["Leadership", "Engineering"],
-                      category: "community",
-                    };
-                    setData({ ...data, experiences: [newExp, ...data.experiences] });
-                  }}
-                  className="inline-flex h-9 items-center justify-center gap-1.5 px-4 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition cursor-pointer shadow-xs flex-shrink-0"
-                >
-                  <Plus size={14} />
-                  <span>Add Milestone</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleSortExperiencesByDate}
+                    className="inline-flex h-9 items-center justify-center gap-1.5 px-3.5 rounded-lg border border-[#E2E8F0] hover:bg-[#F8FAFC] text-[#0F172A] text-xs font-mono font-medium transition cursor-pointer shadow-xs"
+                    title="Urutkan milestone dari yang terbaru berdasarkan tanggal"
+                  >
+                    <Calendar size={14} className="text-[#4F46E5]" />
+                    <span>Urutkan Tanggal</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleAddNewExperience}
+                    className="inline-flex h-9 items-center justify-center gap-1.5 px-4 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-medium transition cursor-pointer shadow-xs flex-shrink-0"
+                  >
+                    <Plus size={14} />
+                    <span>Add Milestone</span>
+                  </button>
+                </div>
               </div>
 
-              <div className="space-y-5">
-                {data.experiences.map((exp, index) => (
-                  <div key={exp.id} className="p-5 md:p-6 rounded-xl bg-white border border-[#E2E8F0] shadow-xs space-y-4">
-                    <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-3">
-                      <div className="flex items-center gap-2.5 flex-1">
-                        <span className="text-xs font-mono text-[#4F46E5] font-bold">#{index + 1}</span>
-                        <input
-                          type="text"
-                          value={exp.role}
-                          placeholder="Role"
-                          onChange={(e) => {
-                            const updated = [...data.experiences];
-                            updated[index].role = e.target.value;
-                            setData({ ...data, experiences: updated });
-                          }}
-                          className="font-semibold text-sm text-[#0F172A] bg-transparent border-b border-transparent hover:border-[#E2E8F0] focus:border-[#4F46E5] outline-none px-1"
-                        />
-                        <span className="text-[#64748B]">@</span>
-                        <input
-                          type="text"
-                          value={exp.organization}
-                          placeholder="Organization"
-                          onChange={(e) => {
-                            const updated = [...data.experiences];
-                            updated[index].organization = e.target.value;
-                            setData({ ...data, experiences: updated });
-                          }}
-                          className="text-xs text-[#64748B] bg-transparent border-b border-transparent hover:border-[#E2E8F0] focus:border-[#4F46E5] outline-none px-1"
-                        />
+              <div className="space-y-3">
+                {data.experiences.map((exp, index) => {
+                  const categoryColors: Record<string, string> = {
+                    work: "bg-blue-50 text-blue-700 border-blue-200",
+                    internship: "bg-teal-50 text-teal-700 border-teal-200",
+                    community: "bg-purple-50 text-purple-700 border-purple-200",
+                    award: "bg-amber-50 text-amber-700 border-amber-200",
+                    committee: "bg-indigo-50 text-indigo-700 border-indigo-200",
+                    volunteer: "bg-rose-50 text-rose-700 border-rose-200",
+                    education: "bg-emerald-50 text-emerald-700 border-emerald-200",
+                  };
+
+                  return (
+                    <div
+                      key={exp.id}
+                      className="p-5 rounded-xl bg-white border border-[#E2E8F0] shadow-xs hover:border-[#CBD5E1] transition flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                    >
+                      <div className="flex items-start gap-3.5 flex-1 min-w-0">
+                        <span className="text-xs font-mono text-[#4F46E5] font-bold mt-0.5">
+                          #{index + 1}
+                        </span>
+                        <div className="space-y-1 flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h4 className="font-semibold text-sm text-[#0F172A]">
+                              {exp.role || "Untitled Role"}
+                            </h4>
+                            <span className="text-xs text-[#64748B]">
+                              @ {exp.organization || "Organization"}
+                            </span>
+                            <span
+                              className={`text-[10px] font-mono px-2 py-0.5 rounded-md border uppercase font-medium ${
+                                categoryColors[exp.category] ||
+                                "bg-slate-50 text-slate-700 border-slate-200"
+                              }`}
+                            >
+                              {exp.category}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-3 text-xs text-[#64748B]">
+                            <span className="font-mono text-[11px]">
+                              {exp.dateStart} — {exp.dateEnd || "Present"}
+                            </span>
+                            {exp.title && exp.title !== `${exp.role} @ ${exp.organization}` && (
+                              <span className="text-slate-400 italic font-mono text-[11px] truncate">
+                                ({exp.title})
+                              </span>
+                            )}
+                          </div>
+                          {exp.description && (
+                            <p className="text-xs text-[#64748B] line-clamp-2 mt-1 leading-relaxed">
+                              {exp.description}
+                            </p>
+                          )}
+                          {exp.highlights && exp.highlights.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {exp.highlights.map((h, hIdx) => (
+                                <span
+                                  key={hIdx}
+                                  className="px-1.5 py-0.5 rounded bg-slate-100 text-[10px] text-slate-600 font-mono"
+                                >
+                                  #{h}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <select
-                          value={exp.category}
-                          onChange={(e) => {
-                            const updated = [...data.experiences];
-                            updated[index].category = e.target.value as any;
-                            setData({ ...data, experiences: updated });
-                          }}
-                          className="h-8 px-2.5 rounded bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                      <div className="flex items-center gap-2 self-end sm:self-center">
+                        <button
+                          type="button"
+                          onClick={() => setEditingExperience(exp)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E2E8F0] hover:bg-[#F8FAFC] text-xs font-mono font-medium text-[#0F172A] transition cursor-pointer"
                         >
-                          <option value="community">Community</option>
-                          <option value="work">Work</option>
-                          <option value="award">Award</option>
-                          <option value="committee">Committee</option>
-                          <option value="volunteer">Volunteer</option>
-                          <option value="education">Education</option>
-                        </select>
-
+                          <Edit3 size={13} className="text-[#4F46E5]" />
+                          <span>Edit</span>
+                        </button>
                         <button
                           type="button"
                           onClick={() => {
-                            if (confirm(`Delete "${exp.role} @ ${exp.organization}"?`)) {
+                            if (
+                              confirm(`Hapus milestone "${exp.role} @ ${exp.organization}"?`)
+                            ) {
                               const updated = data.experiences.filter((e) => e.id !== exp.id);
                               setData({ ...data, experiences: updated });
+                              showToast("Milestone dihapus!");
                             }
                           }}
-                          className="p-1.5 text-[#64748B] hover:text-rose-600 transition cursor-pointer"
+                          className="p-1.5 text-[#64748B] hover:text-rose-600 transition cursor-pointer rounded-lg hover:bg-rose-50"
+                          title="Hapus Milestone"
                         >
                           <Trash2 size={15} />
                         </button>
                       </div>
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-xs font-medium text-[#0F172A] mb-1">Start Date</label>
-                        <input
-                          type="text"
-                          value={exp.dateStart}
-                          onChange={(e) => {
-                            const updated = [...data.experiences];
-                            updated[index].dateStart = e.target.value;
-                            setData({ ...data, experiences: updated });
-                          }}
-                          className="w-full h-9 px-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-medium text-[#0F172A] mb-1">End Date</label>
-                        <input
-                          type="text"
-                          placeholder="Present (or YYYY-MM)"
-                          value={exp.dateEnd || ""}
-                          onChange={(e) => {
-                            const updated = [...data.experiences];
-                            updated[index].dateEnd = e.target.value;
-                            setData({ ...data, experiences: updated });
-                          }}
-                          className="w-full h-9 px-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-medium text-[#0F172A] mb-1">Display Title</label>
-                        <input
-                          type="text"
-                          value={exp.title}
-                          onChange={(e) => {
-                            const updated = [...data.experiences];
-                            updated[index].title = e.target.value;
-                            setData({ ...data, experiences: updated });
-                          }}
-                          className="w-full h-9 px-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] outline-none"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <label className="block text-xs font-medium text-[#0F172A]">Description</label>
-                        <AIAssistantButton
-                          fieldType="experience_description"
-                          currentValue={exp.description}
-                          context={{ role: exp.role, organization: exp.organization, category: exp.category }}
-                          onApply={(val) => {
-                            const updated = [...data.experiences];
-                            updated[index].description = val;
-                            setData({ ...data, experiences: updated });
-                          }}
-                          compact
-                          label="AI Description"
-                        />
-                      </div>
-                      <textarea
-                        rows={2}
-                        value={exp.description}
-                        onChange={(e) => {
-                          const updated = [...data.experiences];
-                          updated[index].description = e.target.value;
-                          setData({ ...data, experiences: updated });
-                        }}
-                        className="w-full p-3 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#64748B] focus:border-[#4F46E5] outline-none leading-relaxed"
-                      />
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
@@ -3452,6 +3425,570 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     className="h-9 px-5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-semibold transition cursor-pointer shadow-xs"
                   >
                     Simpan &amp; Publish
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+        {/* ═══════════════════════════════════════════
+            JOURNEY MILESTONE EDIT MODAL
+            ═══════════════════════════════════════════ */}
+        {editingExperience && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0F172A]/50 backdrop-blur-xs">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              className="w-full max-w-2xl bg-white rounded-2xl border border-[#E2E8F0] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+            >
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC]">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] text-[#4F46E5] flex items-center justify-center">
+                    <Compass size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-[#0F172A]">
+                      {data.experiences.some((e) => e.id === editingExperience.id)
+                        ? "Edit Journey Milestone"
+                        : "Tambah Journey Milestone Baru"}
+                    </h3>
+                    <p className="text-[11px] text-[#64748B]">
+                      Entri ini akan tampil di timeline ledger halaman /journey
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setEditingExperience(null)}
+                  className="p-1 text-[#64748B] hover:text-[#0F172A] transition cursor-pointer rounded-lg hover:bg-slate-200/50"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Body */}
+              <div className="p-6 overflow-y-auto space-y-5 flex-1">
+                {/* Role & Organization */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-[#0F172A] mb-1.5">
+                      Role / Position <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Lead Developer, PIC Event"
+                      value={editingExperience.role}
+                      onChange={(e) =>
+                        setEditingExperience({ ...editingExperience, role: e.target.value })
+                      }
+                      className="w-full h-10 px-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-medium text-[#0F172A] focus:bg-white focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/20 outline-none transition"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[#0F172A] mb-1.5">
+                      Organization / Event / Company <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Programming Tadulako, I-Fest 2026"
+                      value={editingExperience.organization}
+                      onChange={(e) =>
+                        setEditingExperience({ ...editingExperience, organization: e.target.value })
+                      }
+                      className="w-full h-10 px-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-medium text-[#0F172A] focus:bg-white focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/20 outline-none transition"
+                    />
+                  </div>
+                </div>
+
+                {/* Category & Display Title */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-[#0F172A] mb-1.5">
+                      Kategori
+                    </label>
+                    <select
+                      value={editingExperience.category}
+                      onChange={(e) =>
+                        setEditingExperience({
+                          ...editingExperience,
+                          category: e.target.value as any,
+                        })
+                      }
+                      className="w-full h-10 px-3 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-medium text-[#0F172A] focus:bg-white focus:border-[#4F46E5] outline-none transition cursor-pointer"
+                    >
+                      <option value="work">Work / Pekerjaan (Full-Time / Part-Time)</option>
+                      <option value="internship">Internship / Magang</option>
+                      <option value="community">Community &amp; Leadership</option>
+                      <option value="committee">Committee &amp; Event</option>
+                      <option value="award">Competition &amp; Award</option>
+                      <option value="volunteer">Volunteer</option>
+                      <option value="education">Education</option>
+                    </select>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-semibold text-[#0F172A] mb-1.5">
+                      Display Title (Tampilan Judul Timeline)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Lead Engineer @ Programming Tadulako"
+                      value={editingExperience.title}
+                      onChange={(e) =>
+                        setEditingExperience({ ...editingExperience, title: e.target.value })
+                      }
+                      className="w-full h-10 px-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-medium text-[#0F172A] focus:bg-white focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/20 outline-none transition"
+                    />
+                  </div>
+                </div>
+
+                {/* Dates (Calendar Pickers) */}
+                <div className="space-y-3 p-4 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Start Date */}
+                    <div>
+                      <label className="block text-xs font-semibold text-[#0F172A] mb-1.5 flex items-center gap-1.5">
+                        <Calendar size={14} className="text-[#4F46E5] flex-shrink-0" />
+                        <span>Tanggal Mulai</span>
+                      </label>
+                      <input
+                        type="month"
+                        value={
+                          editingExperience.dateStart && editingExperience.dateStart.length >= 7
+                            ? editingExperience.dateStart.slice(0, 7)
+                            : `${new Date().getFullYear()}-01`
+                        }
+                        onChange={(e) =>
+                          setEditingExperience({
+                            ...editingExperience,
+                            dateStart: e.target.value,
+                          })
+                        }
+                        className="w-full h-10 px-3.5 rounded-xl bg-white border border-[#E2E8F0] text-xs font-medium text-[#0F172A] focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/20 outline-none transition cursor-pointer shadow-xs"
+                      />
+                    </div>
+
+                    {/* End Date */}
+                    <div>
+                      <label className="block text-xs font-semibold text-[#0F172A] mb-1.5 flex items-center gap-1.5">
+                        <Calendar size={14} className="text-[#4F46E5] flex-shrink-0" />
+                        <span>Tanggal Selesai</span>
+                      </label>
+                      {!editingExperience.dateEnd || editingExperience.dateEnd === "Present" ? (
+                        <div className="w-full h-10 px-3.5 rounded-xl bg-indigo-50/70 border border-indigo-200/60 flex items-center justify-between text-xs text-[#4F46E5] font-semibold">
+                          <span>Present (Masih Berlangsung)</span>
+                          <span className="w-2 h-2 rounded-full bg-[#4F46E5] animate-pulse" />
+                        </div>
+                      ) : (
+                        <input
+                          type="month"
+                          value={
+                            editingExperience.dateEnd && editingExperience.dateEnd.length >= 7
+                              ? editingExperience.dateEnd.slice(0, 7)
+                              : ""
+                          }
+                          onChange={(e) =>
+                            setEditingExperience({
+                              ...editingExperience,
+                              dateEnd: e.target.value,
+                            })
+                          }
+                          className="w-full h-10 px-3.5 rounded-xl bg-white border border-[#E2E8F0] text-xs font-medium text-[#0F172A] focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/20 outline-none transition cursor-pointer shadow-xs"
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Present Toggle Checkbox */}
+                  <div className="flex items-center justify-end pt-2 border-t border-[#E2E8F0]/70">
+                    <label className="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-[#4F46E5] hover:text-[#4338CA] transition select-none">
+                      <input
+                        type="checkbox"
+                        checked={!editingExperience.dateEnd || editingExperience.dateEnd === "Present"}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setEditingExperience({ ...editingExperience, dateEnd: "Present" });
+                          } else {
+                            setEditingExperience({
+                              ...editingExperience,
+                              dateEnd: `${new Date().getFullYear()}-06`,
+                            });
+                          }
+                        }}
+                        className="w-4 h-4 accent-[#4F46E5] rounded cursor-pointer"
+                      />
+                      <span>Posisi/pengalaman ini masih aktif berlangsung (Present)</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Description & AI Assistant */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-semibold text-[#0F172A]">
+                      Deskripsi &amp; Key Responsibilities
+                    </label>
+                    <AIAssistantButton
+                      fieldType="experience_description"
+                      currentValue={editingExperience.description}
+                      context={{
+                        role: editingExperience.role,
+                        organization: editingExperience.organization,
+                        category: editingExperience.category,
+                        title:
+                          editingExperience.title ||
+                          `${editingExperience.role} @ ${editingExperience.organization}`,
+                      }}
+                      onApply={(val) =>
+                        setEditingExperience({ ...editingExperience, description: val })
+                      }
+                      compact
+                      label="AI Enhance Description"
+                    />
+                  </div>
+                  <textarea
+                    rows={4}
+                    placeholder="Tuliskan detail pencapaian, tanggung jawab, dan dampak dari milestone ini..."
+                    value={editingExperience.description}
+                    onChange={(e) =>
+                      setEditingExperience({ ...editingExperience, description: e.target.value })
+                    }
+                    className="w-full p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:bg-white focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/20 outline-none leading-relaxed transition"
+                  />
+                </div>
+
+                {/* Key Highlights / Skills / Tags */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-semibold text-[#0F172A]">
+                      Highlights / Tech / Tags (Pisahkan dengan koma)
+                    </label>
+                    <AIAssistantButton
+                      fieldType="experience_tags"
+                      currentValue={(editingExperience.highlights || []).join(", ")}
+                      context={{
+                        role: editingExperience.role,
+                        organization: editingExperience.organization,
+                        category: editingExperience.category,
+                        description: editingExperience.description,
+                        title: editingExperience.title,
+                      }}
+                      onApply={(val) => {
+                        const tags = val
+                          .split(",")
+                          .map((t) => t.trim().replace(/^#/, ""))
+                          .filter(Boolean);
+                        setEditingExperience({ ...editingExperience, highlights: tags });
+                      }}
+                      compact
+                      label="AI Suggest Tags"
+                    />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="e.g. Leadership, Next.js, Workshop, Mentorship"
+                    value={(editingExperience.highlights || []).join(", ")}
+                    onChange={(e) => {
+                      const tags = e.target.value
+                        .split(",")
+                        .map((t) => t.trim())
+                        .filter(Boolean);
+                      setEditingExperience({ ...editingExperience, highlights: tags });
+                    }}
+                    className="w-full h-10 px-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-medium text-[#0F172A] focus:bg-white focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/20 outline-none transition"
+                  />
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="px-6 py-4 border-t border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC]">
+                {data.experiences.some((e) => e.id === editingExperience.id) ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (
+                        confirm(
+                          `Hapus milestone "${editingExperience.role} @ ${editingExperience.organization}"?`
+                        )
+                      ) {
+                        const updated = data.experiences.filter(
+                          (e) => e.id !== editingExperience.id
+                        );
+                        setData({ ...data, experiences: updated });
+                        setEditingExperience(null);
+                        showToast("Milestone dihapus!");
+                      }
+                    }}
+                    className="text-xs font-mono text-rose-600 hover:underline cursor-pointer"
+                  >
+                    Hapus Milestone
+                  </button>
+                ) : (
+                  <div />
+                )}
+
+                <div className="flex items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setEditingExperience(null)}
+                    className="h-9 px-4 rounded-lg border border-[#E2E8F0] text-xs font-mono text-[#64748B] hover:text-[#0F172A] bg-white transition cursor-pointer"
+                  >
+                    Batal
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!editingExperience.role.trim() || !editingExperience.organization.trim()) {
+                        showToast("Mohon isi Role dan Organization!", "error");
+                        return;
+                      }
+
+                      const finalExp = {
+                        ...editingExperience,
+                        title:
+                          editingExperience.title.trim() ||
+                          `${editingExperience.role} @ ${editingExperience.organization}`,
+                      };
+
+                      const index = data.experiences.findIndex((e) => e.id === finalExp.id);
+                      let updated: CMSExperience[];
+                      if (index >= 0) {
+                        updated = [...data.experiences];
+                        updated[index] = finalExp;
+                      } else {
+                        updated = [finalExp, ...data.experiences];
+                      }
+
+                      // Auto-sort by dateStart (newest first)
+                      const parseDate = (d: string) => {
+                        if (!d) return "0000-00";
+                        if (d.length === 4) return `${d}-01`;
+                        return d;
+                      };
+                      updated.sort((a, b) => {
+                        const dateA = parseDate(a.dateStart);
+                        const dateB = parseDate(b.dateStart);
+                        return dateB.localeCompare(dateA);
+                      });
+
+                      setData({ ...data, experiences: updated });
+                      setEditingExperience(null);
+                      showToast("Milestone journey berhasil disimpan & diurutkan berdasarkan tanggal!");
+                    }}
+                    className="h-9 px-5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-semibold transition cursor-pointer shadow-xs"
+                  >
+                    Simpan Milestone
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+        {/* ═══════════════════════════════════════════
+            PUBLICATION ARTICLE EDIT MODAL
+            ═══════════════════════════════════════════ */}
+        {editingStory && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0F172A]/50 backdrop-blur-xs">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              className="w-full max-w-xl bg-white rounded-2xl border border-[#E2E8F0] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+            >
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC]">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] text-[#4F46E5] flex items-center justify-center">
+                    <FileText size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-[#0F172A]">
+                      {data.stories.some((s) => s.id === editingStory.id)
+                        ? "Edit Publication Article"
+                        : "Tambah Publication Article Baru"}
+                    </h3>
+                    <p className="text-[11px] text-[#64748B]">
+                      Artikel ini akan tampil pada editorial feed beranda &amp; halaman publikasi
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setEditingStory(null)}
+                  className="p-1 text-[#64748B] hover:text-[#0F172A] transition cursor-pointer rounded-lg hover:bg-slate-200/50"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Body */}
+              <div className="p-6 overflow-y-auto space-y-4 flex-1">
+                <div>
+                  <label className="block text-xs font-semibold text-[#0F172A] mb-1.5">
+                    Judul Artikel / Title <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Building SOROT: Lessons from Geospatial App Development"
+                    value={editingStory.title}
+                    onChange={(e) =>
+                      setEditingStory({ ...editingStory, title: e.target.value })
+                    }
+                    className="w-full h-10 px-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-medium text-[#0F172A] focus:bg-white focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/20 outline-none transition"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-[#0F172A] mb-1.5">
+                      Kategori
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Engineering"
+                      value={editingStory.category}
+                      onChange={(e) =>
+                        setEditingStory({ ...editingStory, category: e.target.value })
+                      }
+                      className="w-full h-10 px-3 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-medium text-[#0F172A] focus:bg-white focus:border-[#4F46E5] outline-none transition"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[#0F172A] mb-1.5">
+                      Tanggal
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Nov 2024"
+                      value={editingStory.date}
+                      onChange={(e) =>
+                        setEditingStory({ ...editingStory, date: e.target.value })
+                      }
+                      className="w-full h-10 px-3 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:bg-white focus:border-[#4F46E5] outline-none transition"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[#0F172A] mb-1.5">
+                      Waktu Baca
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 5 min read"
+                      value={editingStory.readTime}
+                      onChange={(e) =>
+                        setEditingStory({ ...editingStory, readTime: e.target.value })
+                      }
+                      className="w-full h-10 px-3 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:bg-white focus:border-[#4F46E5] outline-none transition"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-semibold text-[#0F172A]">
+                      Excerpt / Caption Summary
+                    </label>
+                    <AIAssistantButton
+                      fieldType="article_caption"
+                      currentValue={editingStory.excerpt}
+                      context={{
+                        title: editingStory.title,
+                        category: editingStory.category,
+                      }}
+                      onApply={(val) =>
+                        setEditingStory({ ...editingStory, excerpt: val })
+                      }
+                      compact
+                      label="AI Caption"
+                    />
+                  </div>
+                  <textarea
+                    rows={3}
+                    placeholder="Ringkasan atau caption artikel..."
+                    value={editingStory.excerpt}
+                    onChange={(e) =>
+                      setEditingStory({ ...editingStory, excerpt: e.target.value })
+                    }
+                    className="w-full p-3 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:bg-white focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/20 outline-none leading-relaxed transition"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-[#0F172A] mb-1.5">
+                    Target Link / URL
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. /journey or https://medium.com/..."
+                    value={editingStory.link}
+                    onChange={(e) =>
+                      setEditingStory({ ...editingStory, link: e.target.value })
+                    }
+                    className="w-full h-10 px-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:bg-white focus:border-[#4F46E5] outline-none transition"
+                  />
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="px-6 py-4 border-t border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC]">
+                {data.stories.some((s) => s.id === editingStory.id) ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (confirm(`Hapus artikel "${editingStory.title}"?`)) {
+                        const updated = data.stories.filter((s) => s.id !== editingStory.id);
+                        setData({ ...data, stories: updated });
+                        setEditingStory(null);
+                        showToast("Artikel dihapus!");
+                      }
+                    }}
+                    className="text-xs font-mono text-rose-600 hover:underline cursor-pointer"
+                  >
+                    Hapus Artikel
+                  </button>
+                ) : (
+                  <div />
+                )}
+
+                <div className="flex items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setEditingStory(null)}
+                    className="h-9 px-4 rounded-lg border border-[#E2E8F0] text-xs font-mono text-[#64748B] hover:text-[#0F172A] bg-white transition cursor-pointer"
+                  >
+                    Batal
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!editingStory.title.trim()) {
+                        showToast("Mohon isi Judul Artikel!", "error");
+                        return;
+                      }
+
+                      const index = data.stories.findIndex((s) => s.id === editingStory.id);
+                      let updated: CMSStory[];
+                      if (index >= 0) {
+                        updated = [...data.stories];
+                        updated[index] = editingStory;
+                      } else {
+                        updated = [editingStory, ...data.stories];
+                      }
+
+                      setData({ ...data, stories: updated });
+                      setEditingStory(null);
+                      showToast("Artikel berhasil disimpan!");
+                    }}
+                    className="h-9 px-5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-semibold transition cursor-pointer shadow-xs"
+                  >
+                    Simpan Article
                   </button>
                 </div>
               </div>

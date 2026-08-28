@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import {
   Lock,
@@ -80,8 +81,13 @@ export default function CMSLoginForm({ onSuccess }: CMSLoginFormProps) {
         {/* Monogram / Header */}
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 rounded-lg bg-[#4F46E5] text-white font-mono font-bold text-sm flex items-center justify-center shadow-xs">
-              D
+            <div className="relative w-9 h-9 rounded-lg overflow-hidden border border-[#E2E8F0] shadow-xs flex-shrink-0 bg-[#4F46E5]/10">
+              <Image
+                src="/assets/logo_lambang_dareean.png"
+                alt="Dareean Logo"
+                fill
+                className="object-cover"
+              />
             </div>
             <div>
               <div className="text-[11px] font-mono uppercase tracking-widest text-[#4F46E5] font-semibold">

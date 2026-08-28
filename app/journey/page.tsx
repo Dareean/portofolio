@@ -82,6 +82,9 @@ export default function JourneyPage() {
   // Filter experiences
   const filteredExperiences = useMemo(() => {
     if (activeFilter === "all") return experiencesList;
+    if (activeFilter === "work") {
+      return experiencesList.filter((e) => e.category === "work" || e.category === "internship");
+    }
     if (activeFilter === "committee") {
       return experiencesList.filter((e) => e.category === "committee" || e.category === "volunteer");
     }

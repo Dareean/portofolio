@@ -41,7 +41,7 @@
   "about": {
     "portraitImage": "/assets/foto_closeup.jpg",
     "fullName": "Dareean Ahmad Raffi",
-    "roleTag": "Mahasiswa Teknik Informatika · Full Stack Developer",
+    "roleTag": "Undegraduate Informatics Engineering Student · Full Stack Developer",
     "locationText": "Palu, Sulawesi Tengah, Indonesia",
     "philosophyHeading": "From pixel to people — turning complex engineering into human-centered software.",
     "philosophyBio": "Saya melihat kode bukan sekadar sintaks, melainkan jembatan antara ide dan realitas. Berbasis di Palu, Sulawesi Tengah, saya menggabungkan fondasi ilmu komputer formal dengan praktik produk nyata — membangun platform klinis, alat geospasial untuk penanggulangan bencana, serta memberdayakan komunitas teknologi regional.",
@@ -358,19 +358,15 @@
   ],
   "experiences": [
     {
-      "id": 1787600002,
-      "title": "Panitia Humas – Palu Developer Day 2026",
-      "role": "Panitia Humas",
-      "organization": "Palu Developer Day",
-      "dateStart": "2025-09",
-      "dateEnd": "2026-02",
-      "description": "Menyusun kalender konten dan strategi penyebaran informasi untuk meningkatkan keterlibatan masyarakat. Kampanye media sosial dan kolaborasi dengan komunitas lokal berhasil meningkatkan jumlah pendaftar secara organik sebesar 30% dan memperluas jangkauan acara ke 5 kota tetangga.",
-      "highlights": [
-        "Komunikasi",
-        "Strategi Konten",
-        "Keterlibatan Komunitas"
-      ],
-      "category": "work"
+      "id": 1787904074204,
+      "title": "Internship",
+      "role": "Business Service",
+      "organization": "PT Telkom Indonesia Witel Sulbagteng",
+      "dateStart": "2026-07",
+      "dateEnd": "Present",
+      "description": "In the \"Business Service\" position at PT Telkom Indonesia Witel Sulbagteng, Central Sulawesi, you will be responsible for achieving the following results:\n\n1. Providing professional services that assist customers in completing their requests and resolving issues, thereby improving the service quality and helping PT Telkom Indonesia Witel Sulbagteng excel in the Central Sulawesi telecommunications industry.\n\n2. Establishing quality customer relationships, which will contribute to building service quality and supporting PT Telkom Indonesia Witel Sulbagteng's success in the Central Sulawesi telecommunications industry.\n\n3. By achieving those outcomes, you will develop your skills in providing professional services and assist customers in resolving their requests and issues. This will help build service quality and support PT Telkom Indonesia Witel Sulbagteng's success in the Central Sulawesi telecommunications industry.\"",
+      "highlights": [],
+      "category": "internship"
     },
     {
       "id": 1787600003,
@@ -400,23 +396,7 @@
         "Event Management",
         "Stakeholder Coordination"
       ],
-      "category": "work"
-    },
-    {
-      "id": 12,
-      "title": "I-Fest 2026",
-      "role": "PIC - Person In Charge",
-      "organization": "HMTI Tadulako University",
-      "dateStart": "2026-01",
-      "dateEnd": "",
-      "description": "Leading as Person In Charge (PIC) for I-Fest 2026, taking on comprehensive responsibility in organizing the annual informatics festival. Overseeing event planning, managing committee teams, coordinating with sponsors, and driving the vision for an impactful tech event.",
-      "highlights": [
-        "Leadership",
-        "Event Management",
-        "Team Coordination",
-        "Strategic Planning"
-      ],
-      "category": "committee"
+      "category": "community"
     },
     {
       "id": 10,
@@ -478,6 +458,21 @@
         "Event Logistics"
       ],
       "category": "volunteer"
+    },
+    {
+      "id": 1787600002,
+      "title": "Panitia Humas – Palu Developer Day 2026",
+      "role": "Panitia Humas",
+      "organization": "Palu Developer Day",
+      "dateStart": "2025-09",
+      "dateEnd": "2026-02",
+      "description": "Menyusun kalender konten dan strategi penyebaran informasi untuk meningkatkan keterlibatan masyarakat. Kampanye media sosial dan kolaborasi dengan komunitas lokal berhasil meningkatkan jumlah pendaftar secara organik sebesar 30% dan memperluas jangkauan acara ke 5 kota tetangga.",
+      "highlights": [
+        "Komunikasi",
+        "Strategi Konten",
+        "Keterlibatan Komunitas"
+      ],
+      "category": "work"
     },
     {
       "id": 9,

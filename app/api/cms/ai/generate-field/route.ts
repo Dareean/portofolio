@@ -42,6 +42,7 @@ export async function POST(req: Request) {
         | "article_content"
         | "article_tags"
         | "experience_description"
+        | "experience_tags"
         | "bio"
         | "general";
       currentValue?: string;
@@ -94,27 +95,42 @@ Generate the full markdown story in ${langName}.`;
 """${currentValue || context.excerpt || ""}"""
 
 Expand this draft into a rich, structured story with headings and key learnings.`;
-    } else if (action === "generate_tags" || fieldType === "article_tags") {
-      systemPrompt += `\nTask: Generate 3 to 5 concise, highly relevant tags/keywords separated by commas (e.g. "Leadership, Event Management, Next.js, Community").
-Return ONLY the comma-separated tag list. Do NOT include hashtags (#), bullets, or numbering.`;
+    } else if (action === "generate_tags" || fieldType === "article_tags" || fieldType === "experience_tags") {
+      systemPrompt += `\nTask: Generate 3 to 6 concise, highly relevant professional skills, technologies, or key highlight tags separated by commas (e.g. "Customer Support, B2B Sales, Telecommunication, Data Analysis, Leadership").
+Return ONLY the comma-separated tag list. Do NOT include hashtags (#), bullets, wrapper quotes, or numbering.`;
       userPrompt = `Content Context:
-- Title: ${context.title || ""}
+- Role / Subject: ${context.role || context.title || "Experience"}
+- Organization / Company: ${context.organization || ""}
 - Category: ${context.category || ""}
-- Excerpt: ${context.excerpt || ""}
-- Full Content: ${context.content || currentValue || ""}
+- Description / Responsibilities: ${context.description || currentValue || context.excerpt || ""}
+${currentValue ? `- Current Tags: "${currentValue}"` : ""}
 
-Generate 3-5 relevant comma-separated tags.`;
+Generate 3-6 relevant, professional comma-separated tags and skills.`;
     } else if (action === "generate_description") {
-      systemPrompt += `\nTask: Write a high-impact, professional description highlighting STAR achievements (Situation, Task, Action, Result) and key metrics where appropriate. Do NOT add preamble or quotes—return ONLY the raw final text.`;
+      const subjectTitle =
+        context.title ||
+        (context.role
+          ? `${context.role} di ${context.organization || "Perusahaan/Organisasi"}`
+          : "Pengalaman Kerja / Proyek");
+      const roleOrg = context.role
+        ? `${context.role} @ ${context.organization || ""}`
+        : context.organization || "";
+
+      systemPrompt += `\nTask: Write a high-impact, executive professional description highlighting key responsibilities, achievements, and technical impact. Do NOT add preamble or wrapper quotes—return ONLY the final raw text.`;
       userPrompt = `Field Context:
 - Target Field Type: ${fieldType}
-- Title/Subject: ${context.title || "Software Project"}
-- Category: ${context.category || "Web Application"}
-- Technologies Used: ${Array.isArray(context.technologies) ? context.technologies.join(", ") : context.technologies || "Modern Web Stack"}
-- Role / Org: ${context.role ? `${context.role} @ ${context.organization}` : ""}
-${currentValue ? `- Current Draft / Notes: "${currentValue}"` : ""}
+- Role / Position: ${context.role || subjectTitle}
+- Organization / Company: ${context.organization || "N/A"}
+- Display Title / Subject: ${context.title || subjectTitle}
+- Category: ${context.category || "General"}
+- Tech Stack / Skills: ${Array.isArray(context.technologies) ? context.technologies.join(", ") : context.technologies || ""}
+${
+  currentValue
+    ? `- Current Draft / User Notes: "${currentValue}"`
+    : `- Note: The description field is currently empty. Generate a detailed, professional description and key responsibilities for the role "${context.role || subjectTitle}" at "${context.organization || "Perusahaan/Organisasi"}" in ${langName}.`
+}
 
-Generate a high-impact description in ${langName} (around 2-4 sentences or structured STAR bullet points).`;
+Generate a high-impact professional description (2-4 concise sentences or bullet points highlighting key responsibilities, workflows, and achievements) in ${langName}.`;
     } else if (action === "generate_caption") {
       systemPrompt += `\nTask: Write a crisp, catchy 1-2 sentence caption or summary (max 25-35 words). Perfect for card excerpts or feed preview captions. Do NOT add preamble or quotes—return ONLY the raw caption text.`;
       userPrompt = `Field Context:

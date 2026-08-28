@@ -30,6 +30,7 @@ interface AIAssistantButtonProps {
     | "article_content"
     | "article_tags"
     | "experience_description"
+    | "experience_tags"
     | "bio"
     | "general";
   currentValue?: string;
@@ -171,12 +172,13 @@ export function AIAssistantButton({
           },
         ];
       case "article_tags":
+      case "experience_tags":
         return [
           {
             id: "generate_tags",
-            label: "Auto-Generate Smart Tags",
+            label: "Auto-Generate Smart Tags & Skills",
             icon: Tag,
-            desc: "Suggest 3-5 relevant keywords from title, content & category",
+            desc: "Suggest 3-5 relevant skills/keywords from role, org & description",
           },
           {
             id: "polish",

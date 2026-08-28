@@ -84,7 +84,7 @@ export interface CMSExperience {
   dateEnd?: string;
   description: string;
   highlights: string[];
-  category: "work" | "education" | "award" | "community" | "volunteer" | "committee";
+  category: "work" | "internship" | "education" | "award" | "community" | "volunteer" | "committee";
   image?: string;
 }
 

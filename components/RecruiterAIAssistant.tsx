@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
@@ -32,6 +33,13 @@ const QUICK_QUESTIONS = [
 ];
 
 export default function RecruiterAIAssistant() {
+  const pathname = usePathname();
+
+  // Hide chatbot on CMS pages & login form
+  if (pathname?.startsWith("/cms")) {
+    return null;
+  }
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
