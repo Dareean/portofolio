@@ -42,6 +42,7 @@ function getYear(dateStr: string): number {
 
 export default function JourneyPage() {
   const [experiencesList, setExperiencesList] = useState<Experience[]>(EXPERIENCES);
+  const [siteData, setSiteData] = useState<any>(undefined);
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
   const deviceInfo = useDeviceType();
@@ -50,8 +51,13 @@ export default function JourneyPage() {
     fetch("/api/cms")
       .then((res) => res.json())
       .then((json) => {
-        if (json.success && json.data?.experiences?.length > 0) {
-          setExperiencesList(json.data.experiences);
+        if (json.success && json.data) {
+          if (json.data.experiences?.length > 0) {
+            setExperiencesList(json.data.experiences);
+          }
+          if (json.data.site) {
+            setSiteData(json.data.site);
+          }
         }
       })
       .catch((err) => console.log("Using static experiences"));
@@ -369,7 +375,7 @@ export default function JourneyPage() {
         </section>
       </main>
 
-      <Footer />
+      <Footer siteData={siteData} />
     </div>
   );
 }

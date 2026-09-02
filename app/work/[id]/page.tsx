@@ -1,17 +1,31 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { PROJECTS } from "@/lib/data";
+import { PROJECTS, Project } from "@/lib/data";
 import TopNav from "@/components/TopNav";
 import { ChevronLeft, ArrowRight, ExternalLink, Stethoscope, Globe, Users, ShieldAlert, CreditCard, BookOpen, UserCheck, Palette, Leaf, Zap, Code, LayoutGrid } from "lucide-react";
 
 export default function ProjectDetailPage() {
   const params = useParams();
   const projectId = Number(params.id);
-  const project = PROJECTS.find((p) => p.id === projectId);
+  const [projectsList, setProjectsList] = useState<Project[]>(PROJECTS);
+
+  useEffect(() => {
+    fetch("/api/cms")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && json.data?.projects?.length > 0) {
+          setProjectsList(json.data.projects);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const project = projectsList.find((p) => p.id === projectId);
 
   if (!project) {
     return (
@@ -169,7 +183,7 @@ export default function ProjectDetailPage() {
             <LayoutGrid className="w-5 h-5 text-steel" /> Other Projects Database
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {PROJECTS.filter((p) => p.id !== project.id).slice(0, 3).map((relatedProject) => (
+            {projectsList.filter((p) => p.id !== project.id).slice(0, 3).map((relatedProject) => (
               <Link key={relatedProject.id} href={`/work/${relatedProject.id}`} className="group block">
                 <div className="bg-canvas border border-hairline rounded-lg shadow-elevation-1 hover:shadow-elevation-2 overflow-hidden flex flex-col h-full transition-all duration-300">
                   {/* Image Cover */}

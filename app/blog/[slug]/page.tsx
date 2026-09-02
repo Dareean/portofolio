@@ -57,7 +57,7 @@ export default async function SingleBlogPostPage({ params }: BlogSlugProps) {
       />
 
       <div className="mt-28">
-        <Footer />
+        <Footer siteData={cmsData.site} />
       </div>
     </main>
   );

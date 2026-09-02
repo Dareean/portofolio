@@ -9,28 +9,44 @@ import { useDeviceType } from "@/lib/hooks";
 
 type FooterLink = { href: string; label: string; external?: boolean };
 
-const FOOTER_LINKS: Record<string, FooterLink[]> = {
-  Navigation: [
-    { href: "/", label: "Home" },
-    { href: "/work", label: "Work" },
-    { href: "/blog", label: "Blog" },
-    { href: "/journey", label: "Journey" },
-    { href: "/contact", label: "Contact" },
-  ],
-  Social: [
-    { href: "https://github.com/Dareean", label: "GitHub", external: true },
-    { href: "https://www.linkedin.com/in/dareean-ahmad-raffi-mardin-72247a229/", label: "LinkedIn", external: true },
-    { href: "https://www.instagram.com/darenrafi/", label: "Instagram", external: true },
-  ],
-  "Get in Touch": [
-    { href: "mailto:dmardin@gmail.com", label: "dmardin@gmail.com", external: true },
-  ],
-};
+interface FooterProps {
+  siteData?: {
+    email?: string;
+    github?: string;
+    linkedin?: string;
+    instagram?: string;
+    footerNote?: string;
+  };
+}
 
-export default function Footer() {
+export default function Footer({ siteData }: FooterProps) {
   const currentYear = new Date().getFullYear();
   const footerRef = useRef<HTMLElement>(null);
   const deviceInfo = useDeviceType();
+
+  const email = siteData?.email || "dmardin@gmail.com";
+  const github = siteData?.github || "https://github.com/Dareean";
+  const linkedin = siteData?.linkedin || "https://www.linkedin.com/in/dareean-ahmad-raffi-mardin-72247a229/";
+  const instagram = siteData?.instagram || "https://www.instagram.com/darenrafi/";
+  const footerNote = siteData?.footerNote || "Bringing stories to life, one pixel at a time. Based in Palu, Central Sulawesi.";
+
+  const dynamicFooterLinks: Record<string, FooterLink[]> = {
+    Navigation: [
+      { href: "/", label: "Home" },
+      { href: "/work", label: "Work" },
+      { href: "/blog", label: "Blog" },
+      { href: "/journey", label: "Journey" },
+      { href: "/contact", label: "Contact" },
+    ],
+    Social: [
+      { href: github, label: "GitHub", external: true },
+      { href: linkedin, label: "LinkedIn", external: true },
+      { href: instagram, label: "Instagram", external: true },
+    ],
+    "Get in Touch": [
+      { href: `mailto:${email}`, label: email, external: true },
+    ],
+  };
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -81,12 +97,12 @@ export default function Footer() {
               <span className="text-heading-5 text-charcoal font-semibold">Dareean</span>
             </div>
             <p className="text-body-sm text-steel leading-relaxed">
-              Bringing stories to life, one pixel at a time. Based in Palu, Central Sulawesi.
+              {footerNote}
             </p>
           </div>
 
           {/* Link columns */}
-          {Object.entries(FOOTER_LINKS).map(([group, links]) => (
+          {Object.entries(dynamicFooterLinks).map(([group, links]) => (
             <div key={group}>
               <h4 className="text-caption-bold text-charcoal uppercase tracking-wider mb-4">
                 {group}

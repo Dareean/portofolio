@@ -66,6 +66,9 @@ import {
   Square,
   Printer,
   FileCheck,
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 type CMSTab = "projects" | "hero" | "about" | "writing" | "blogs" | "journey" | "ai" | "site";
@@ -272,6 +275,11 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
       const json = await res.json().catch(() => null);
 
       if (res.ok && json?.success) {
+        if (overrideData) {
+          setData(overrideData);
+        } else if (json.data) {
+          setData(json.data);
+        }
         showToast("Perubahan berhasil disimpan!");
         return true;
       } else {
@@ -791,21 +799,26 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
       <AnimatePresence>
         {toast && (
           <motion.div
-            initial={{ opacity: 0, y: -16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -16 }}
-            className={`fixed top-4 right-4 z-50 px-4 py-2.5 rounded-lg border text-xs font-mono font-medium shadow-lg flex items-center gap-2.5 ${
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className={`fixed top-5 left-1/2 -translate-x-1/2 z-[9999] px-5 py-3 rounded-xl border text-xs font-mono font-medium shadow-2xl flex items-center gap-3 backdrop-blur-md ${
               toast.type === "success"
-                ? "bg-white text-[#0F172A] border-[#4F46E5]"
-                : "bg-rose-50 text-rose-700 border-rose-200"
+                ? "bg-[#0F172A]/95 text-white border-white/15"
+                : "bg-rose-600 text-white border-rose-500"
             }`}
           >
             {toast.type === "success" ? (
-              <Check size={14} className="text-[#4F46E5]" />
+              <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                <Check size={13} strokeWidth={3} />
+              </span>
             ) : (
-              <AlertCircle size={14} className="text-rose-500" />
+              <span className="w-5 h-5 rounded-full bg-white/20 text-white flex items-center justify-center">
+                <AlertCircle size={13} strokeWidth={3} />
+              </span>
             )}
-            <span>{toast.message}</span>
+            <span className="text-xs font-sans font-medium tracking-wide">{toast.message}</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -835,9 +848,16 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
           const file = e.target.files?.[0];
           if (file && editingBlog) {
             handleFileUpload(file, "blogs", (url) => {
-              setEditingBlog({ ...editingBlog, coverImage: url });
+              const currentImages = editingBlog.images || [];
+              const nextImages = currentImages.includes(url) ? currentImages : [url, ...currentImages];
+              setEditingBlog({
+                ...editingBlog,
+                coverImage: url,
+                images: nextImages,
+              });
             });
           }
+          if (e.target) e.target.value = "";
         }}
       />
 
@@ -872,16 +892,19 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
             }
             setIsUploading(false);
             if (uploadedUrls.length > 0) {
-              const currentImages = editingBlog.images || (editingBlog.coverImage ? [editingBlog.coverImage] : []);
+              const currentImages = editingBlog.images || [];
               const nextImages = Array.from(new Set([...currentImages, ...uploadedUrls]));
+              const nextCover = editingBlog.coverImage && editingBlog.coverImage.trim() 
+                ? editingBlog.coverImage 
+                : nextImages[0];
               setEditingBlog({
                 ...editingBlog,
                 images: nextImages,
-                coverImage: editingBlog.coverImage || nextImages[0],
+                coverImage: nextCover,
               });
-              showToast(`${uploadedUrls.length} image(s) added to gallery!`);
+              showToast(`${uploadedUrls.length} foto berhasil diunggah!`);
             } else {
-              showToast("Failed to upload gallery images", "error");
+              showToast("Gagal mengunggah foto galeri", "error");
             }
           }
           if (e.target) e.target.value = "";
@@ -1814,7 +1837,8 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       category: "Daily Life",
                       excerpt: "Ringkasan cerita keseharian atau pencapaian Anda...",
                       content: "Tuliskan isi cerita lengkap Anda di sini...",
-                      coverImage: "/assets/dareean_web.png",
+                      coverImage: "",
+                      images: [],
                       readTime: "3 min read",
                       tags: ["Daily Life", "Achievement"],
                       featured: false,
@@ -2915,6 +2939,27 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                     className="w-full h-10 px-3.5 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] focus:border-[#4F46E5] focus:outline-none"
                   />
                 </div>
+
+                <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => handleSave()}
+                    disabled={isSaving}
+                    className="inline-flex h-9 items-center gap-2 px-5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
+                  >
+                    {isSaving ? (
+                      <>
+                        <RefreshCw size={13} className="animate-spin" />
+                        <span>Menyimpan Perubahan...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Save size={13} />
+                        <span>Simpan Perubahan Cloud &amp; Social</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -3225,28 +3270,52 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
 
                   <div className="flex-1 min-w-0 w-full space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <label className="block text-xs font-medium text-[#0F172A]">
-                        Gambar Sampul (Cover Image)
-                      </label>
-                      <button
-                        type="button"
-                        disabled={isUploading}
-                        onClick={() => blogCoverFileInputRef.current?.click()}
-                        className="h-8 px-3 rounded-lg bg-[#4F46E5] text-white text-xs font-mono font-medium hover:bg-[#4338CA] transition cursor-pointer shadow-xs"
-                      >
-                        {isUploading ? "Uploading..." : "Upload Cover"}
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <label className="block text-xs font-medium text-[#0F172A]">
+                          Gambar Sampul (Cover Image)
+                        </label>
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-indigo-50 text-[#4F46E5] border border-indigo-100">
+                          {editingBlog.coverImage ? "Aktif" : "Otomatis dari Foto #1"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        {editingBlog.coverImage && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const firstImg = editingBlog.images?.[0] || "";
+                              setEditingBlog({ ...editingBlog, coverImage: firstImg });
+                              showToast(firstImg ? "Cover di-reset ke foto pertama galeri" : "Cover dikosongkan");
+                            }}
+                            className="h-8 px-2.5 rounded-lg border border-[#E2E8F0] bg-white text-slate-600 hover:text-rose-600 text-xs font-mono transition cursor-pointer shadow-xs"
+                            title="Reset cover"
+                          >
+                            Reset
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          disabled={isUploading}
+                          onClick={() => blogCoverFileInputRef.current?.click()}
+                          className="h-8 px-3 rounded-lg bg-[#4F46E5] text-white text-xs font-mono font-medium hover:bg-[#4338CA] transition cursor-pointer shadow-xs"
+                        >
+                          {isUploading ? "Uploading..." : "Upload Cover Kustom"}
+                        </button>
+                      </div>
                     </div>
 
                     <input
                       type="text"
-                      placeholder="Cover Image URL"
+                      placeholder="Cover Image URL (Opsional, otomatis mengambil foto pertama dari galeri di bawah jika kosong)"
                       value={editingBlog.coverImage || ""}
                       onChange={(e) =>
                         setEditingBlog({ ...editingBlog, coverImage: e.target.value })
                       }
                       className="w-full h-9 px-3 rounded-lg bg-white border border-[#E2E8F0] text-xs text-[#0F172A] font-mono focus:border-[#4F46E5] outline-none"
                     />
+                    <p className="text-[11px] text-[#64748B]">
+                      💡 <em>Otomatis memilih foto pertama dari galeri di bawah sebagai sampul. Anda juga bisa mengunggah cover kustom terpisah atau mengklik tombol &quot;Set Jadi Sampul&quot; di salah satu foto di bawah.</em>
+                    </p>
                   </div>
                 </div>
 
@@ -3261,7 +3330,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         <span>Galeri Foto Carousel (Multi-Gambar)</span>
                       </label>
                       <p className="text-[11px] text-[#64748B] mt-0.5">
-                        Unggah beberapa foto dokumentasi untuk ditampilkan sebagai carousel slide interaktif.
+                        Unggah foto dokumentasi. <strong>Arahkan kursor ke foto lalu klik tombol panah (‹ / ›) untuk mengatur urutan slide carousel.</strong>
                       </p>
                     </div>
 
@@ -3295,11 +3364,49 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                               className="object-cover"
                             />
                             {/* Overlay Controls */}
-                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-1.5">
+                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
                               <div className="flex items-center justify-between">
-                                <span className="text-[9px] font-mono text-white/90 bg-black/40 px-1 rounded">
-                                  #{iIdx + 1}
-                                </span>
+                                <div className="flex items-center gap-1">
+                                  <span className="text-[10px] font-mono font-bold text-white bg-black/60 px-1.5 py-0.5 rounded">
+                                    #{iIdx + 1}
+                                  </span>
+                                  {/* Geser Kiri / Prev */}
+                                  <button
+                                    type="button"
+                                    disabled={iIdx === 0}
+                                    onClick={() => {
+                                      if (iIdx === 0) return;
+                                      const newImgs = [...(editingBlog.images || [])];
+                                      const temp = newImgs[iIdx - 1];
+                                      newImgs[iIdx - 1] = newImgs[iIdx];
+                                      newImgs[iIdx] = temp;
+                                      setEditingBlog({ ...editingBlog, images: newImgs });
+                                      showToast(`Foto digeser ke posisi #${iIdx}`);
+                                    }}
+                                    className="w-5 h-5 flex items-center justify-center rounded bg-white/25 hover:bg-white/40 disabled:opacity-20 disabled:cursor-not-allowed text-white cursor-pointer transition"
+                                    title="Geser ke kiri / urutan sebelumnya"
+                                  >
+                                    <ChevronLeft size={13} strokeWidth={2.5} />
+                                  </button>
+                                  {/* Geser Kanan / Next */}
+                                  <button
+                                    type="button"
+                                    disabled={iIdx >= (editingBlog.images?.length || 0) - 1}
+                                    onClick={() => {
+                                      if (iIdx >= (editingBlog.images?.length || 0) - 1) return;
+                                      const newImgs = [...(editingBlog.images || [])];
+                                      const temp = newImgs[iIdx + 1];
+                                      newImgs[iIdx + 1] = newImgs[iIdx];
+                                      newImgs[iIdx] = temp;
+                                      setEditingBlog({ ...editingBlog, images: newImgs });
+                                      showToast(`Foto digeser ke posisi #${iIdx + 2}`);
+                                    }}
+                                    className="w-5 h-5 flex items-center justify-center rounded bg-white/25 hover:bg-white/40 disabled:opacity-20 disabled:cursor-not-allowed text-white cursor-pointer transition"
+                                    title="Geser ke kanan / urutan berikutnya"
+                                  >
+                                    <ChevronRight size={13} strokeWidth={2.5} />
+                                  </button>
+                                </div>
                                 <button
                                   type="button"
                                   onClick={() => {
@@ -3364,12 +3471,15 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                       type="button"
                       onClick={() => {
                         if (!newGalleryUrl.trim()) return;
-                        const current = editingBlog.images || (editingBlog.coverImage ? [editingBlog.coverImage] : []);
+                        const current = editingBlog.images || [];
                         const next = [...current, newGalleryUrl.trim()];
+                        const nextCover = editingBlog.coverImage && editingBlog.coverImage.trim()
+                          ? editingBlog.coverImage
+                          : next[0];
                         setEditingBlog({
                           ...editingBlog,
                           images: next,
-                          coverImage: editingBlog.coverImage || next[0],
+                          coverImage: nextCover,
                         });
                         setNewGalleryUrl("");
                         showToast("Foto ditambahkan ke galeri carousel!");

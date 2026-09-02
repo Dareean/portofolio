@@ -358,15 +358,19 @@
   ],
   "experiences": [
     {
-      "id": 1787904074204,
-      "title": "Internship",
-      "role": "Business Service",
-      "organization": "PT Telkom Indonesia Witel Sulbagteng",
-      "dateStart": "2026-07",
-      "dateEnd": "Present",
-      "description": "In the \"Business Service\" position at PT Telkom Indonesia Witel Sulbagteng, Central Sulawesi, you will be responsible for achieving the following results:\n\n1. Providing professional services that assist customers in completing their requests and resolving issues, thereby improving the service quality and helping PT Telkom Indonesia Witel Sulbagteng excel in the Central Sulawesi telecommunications industry.\n\n2. Establishing quality customer relationships, which will contribute to building service quality and supporting PT Telkom Indonesia Witel Sulbagteng's success in the Central Sulawesi telecommunications industry.\n\n3. By achieving those outcomes, you will develop your skills in providing professional services and assist customers in resolving their requests and issues. This will help build service quality and support PT Telkom Indonesia Witel Sulbagteng's success in the Central Sulawesi telecommunications industry.\"",
-      "highlights": [],
-      "category": "internship"
+      "id": 1787600002,
+      "title": "Panitia Humas – Palu Developer Day 2026",
+      "role": "Panitia Humas",
+      "organization": "Palu Developer Day",
+      "dateStart": "2025-09",
+      "dateEnd": "2026-02",
+      "description": "Menyusun kalender konten dan strategi penyebaran informasi untuk meningkatkan keterlibatan masyarakat. Kampanye media sosial dan kolaborasi dengan komunitas lokal berhasil meningkatkan jumlah pendaftar secara organik sebesar 30% dan memperluas jangkauan acara ke 5 kota tetangga.",
+      "highlights": [
+        "Komunikasi",
+        "Strategi Konten",
+        "Keterlibatan Komunitas"
+      ],
+      "category": "work"
     },
     {
       "id": 1787600003,
@@ -396,7 +400,23 @@
         "Event Management",
         "Stakeholder Coordination"
       ],
-      "category": "community"
+      "category": "work"
+    },
+    {
+      "id": 12,
+      "title": "I-Fest 2026",
+      "role": "PIC - Person In Charge",
+      "organization": "HMTI Tadulako University",
+      "dateStart": "2026-01",
+      "dateEnd": "",
+      "description": "Leading as Person In Charge (PIC) for I-Fest 2026, taking on comprehensive responsibility in organizing the annual informatics festival. Overseeing event planning, managing committee teams, coordinating with sponsors, and driving the vision for an impactful tech event.",
+      "highlights": [
+        "Leadership",
+        "Event Management",
+        "Team Coordination",
+        "Strategic Planning"
+      ],
+      "category": "committee"
     },
     {
       "id": 10,
@@ -458,21 +478,6 @@
         "Event Logistics"
       ],
       "category": "volunteer"
-    },
-    {
-      "id": 1787600002,
-      "title": "Panitia Humas – Palu Developer Day 2026",
-      "role": "Panitia Humas",
-      "organization": "Palu Developer Day",
-      "dateStart": "2025-09",
-      "dateEnd": "2026-02",
-      "description": "Menyusun kalender konten dan strategi penyebaran informasi untuk meningkatkan keterlibatan masyarakat. Kampanye media sosial dan kolaborasi dengan komunitas lokal berhasil meningkatkan jumlah pendaftar secara organik sebesar 30% dan memperluas jangkauan acara ke 5 kota tetangga.",
-      "highlights": [
-        "Komunikasi",
-        "Strategi Konten",
-        "Keterlibatan Komunitas"
-      ],
-      "category": "work"
     },
     {
       "id": 9,
@@ -614,6 +619,32 @@
   ],
   "blogs": [
     {
+      "id": 1788336551165,
+      "title": "Top 10 Finalist & 1st Honorable Mention —  Lomba Inovasi Daerah Masyarakat Berbasis Teknologi Tepat Guna (TTG) Kategori Digitalisasi Pembayaran",
+      "slug": "top-10-finalist-1st-honorable-mention-lomba-inovasi-daerah-masyarakat-berbasis-teknologi-tepat-guna-ttg-kategori-digitalisasi-pembayaran",
+      "date": "2026-09-02",
+      "category": "Achievement",
+      "excerpt": "We built DIGICAKRA —a CMS‑powered digital platform that modernizes Fotocopy Cakrawala’s ordering and service workflow. The solution delivers:\n\n- Online document‑printing orders  \n- QRIS‑based digital payments  \n- Real‑time order tracking  \n- A comprehensive office‑stationery (ATK) catalog and ordering system  \n- Digital loyalty stamps and rewards  \n\nOur objective was more than a website; we aimed to create a practical tool that enhances customer experience while streamlining business operations. This project sharpened our skills in product development, problem‑solving, teamwork, UI/UX, and translating real‑world needs into a functional digital product.",
+      "content": "Thrilled to announce that our team was selected as one of the Top 10 finalists and earned a 1st Honorable Mention (Harapan 1) in the Lomba Inovasi Daerah Masyarakat Berbasis Teknologi Tepat Guna (TTG), Digitalisasi Pembayaran category.  \n\nFor this challenge we built DIGICAKRA —a CMS‑powered digital platform that modernizes Fotocopy Cakrawala’s ordering and service workflow. The solution delivers online document‑printing orders, QRIS‑based payments, real‑time order tracking, a comprehensive office‑stationery catalog, and digital loyalty stamps—all designed to elevate customer experience while streamlining operations.\n\nFrom Paper to Pixels: The Challenge  \n\nFotocopy Cakrawala struggled with manual order slips, cash‑only transactions, and a fragmented inventory system. Our goal was to replace the legacy workflow with a single, intuitive interface that could be accessed from any device. By leveraging a headless CMS and a responsive front‑end built with React, we turned a chaotic process into a smooth, end‑to‑end digital experience.\n\nArchitecture & Features: Building DIGICAKRA  \n- CMS‑Backed Order Management – Contentful powers dynamic templates for print jobs, allowing staff to update pricing and availability instantly.  \n- QRIS Payment Integration – Customers pay via QR code, reducing cash handling and providing instant transaction receipts.  \n- Real‑Time Tracking – WebSocket‑based updates let users see the status of their print job from submission to pickup.  \n- ATK Catalog & Cart – A searchable, filter‑rich catalog of office supplies with bulk‑order discounts.  \n- Digital Loyalty System – Gamified stamps unlock rewards, encouraging repeat business and data collection for future personalization.\n\nCollaboration & Iteration: Team Dynamics  \nThe project was a true cross‑disciplinary effort. Product managers mapped user journeys, designers iterated on low‑fidelity wireframes, and developers implemented a micro‑services architecture with Node.js and PostgreSQL. Weekly sprint reviews with the client ensured that every feature met real‑world needs, while pair‑programming sessions accelerated bug fixes and knowledge sharing.\n\nKey Takeaways  \n1. User‑Centric Design Wins – Iterative prototyping with real customers uncovered pain points that a purely technical solution would miss.  \n2. Modular Architecture Scales – Decoupling the payment gateway and inventory modules allowed us to swap components without redeploying the entire stack.  \n3. Data‑Driven Loyalty – Tracking stamp usage provided actionable insights for targeted promotions and inventory forecasting.  \n4.Team Synergy Matters – Regular cross‑team stand‑ups kept the project on schedule and aligned everyone toward the same vision.  \n5. Recognition Fuels Growth – Being a Top 10 finalist validates our approach and motivates us to tackle even more ambitious projects.\n\nI’m proud to carry this achievement forward and excited to see DIGICAKRA transform how Fotocopy Cakrawala serves its community. 🚀  \n\n🔗 [DIGICAKRA] https://digicakra.vercel.app",
+      "coverImage": "https://dxpnunrodscisjjtccvo.supabase.co/storage/v1/object/public/portfolio-assets/blogs/1788336859582_WhatsApp_Image_2026-09-02_at_14.53.54__1_.jpeg",
+      "readTime": "5",
+      "tags": [
+        "Innovation",
+        "Digital Payments",
+        "Technological Advancement",
+        "Financial Technology",
+        "Achievement"
+      ],
+      "featured": true,
+      "images": [
+        "https://dxpnunrodscisjjtccvo.supabase.co/storage/v1/object/public/portfolio-assets/blogs/1788336859582_WhatsApp_Image_2026-09-02_at_14.53.54__1_.jpeg",
+        "https://dxpnunrodscisjjtccvo.supabase.co/storage/v1/object/public/portfolio-assets/blogs/1788336858564_WhatsApp_Image_2026-09-02_at_14.53.53.jpeg",
+        "https://dxpnunrodscisjjtccvo.supabase.co/storage/v1/object/public/portfolio-assets/blogs/1788336821155_SEISMO-41.jpg",
+        "https://dxpnunrodscisjjtccvo.supabase.co/storage/v1/object/public/portfolio-assets/blogs/1788336821817_SEISMO-42.jpg",
+        "https://dxpnunrodscisjjtccvo.supabase.co/storage/v1/object/public/portfolio-assets/blogs/1788336822879_SEISMO-44.jpg"
+      ]
+    },
+    {
       "id": 1,
       "title": "Perjalanan Menjadi Person In Charge (PIC) I-Fest 2026",
       "slug": "perjalanan-pic-ifest-2026",
@@ -622,11 +653,6 @@
       "excerpt": "Pengalaman berharga memimpin perencanaan festival teknologi terbesar di Departemen Informatika UNTAD, mengelola tim lintas divisi, dan koordinasi mitra industri.",
       "content": "Menjadi Person In Charge (PIC) untuk Informatics Festival (I-Fest) 2026 merupakan salah satu pencapaian dan tanggung jawab terbesar yang pernah saya jalani.\n\n### Tantangan & Koordinasi Tim\nSebagai PIC, tantangan utama bukan hanya tentang menyusun jadwal acara, melainkan bagaimana menyatukan visi puluhan anggota panitia dari divisi Humas, Acara, Perkap, hingga Logistik.\n\nKami mengimplementasikan dasbor pemantauan berbasis web untuk melacak perkembangan persiapan secara real-time, menghemat koordinasi manual hingga 35%.\n\n### Pembelajaran Utama\n1. **Empati dalam Kepemimpinan**: Memahami kapasitas setiap divisi membantu menciptakan alur kerja yang sehat.\n2. **Manajemen Risiko**: Menyiapkan rencana cadangan (Plan B) untuk setiap skenario teknis.\n\nSemoga I-Fest 2026 menjadi inspirasi bagi seluruh mahasiswa dan komunitas teknologi di Sulawesi Tengah!",
       "coverImage": "/assets/dareean_web.png",
-      "images": [
-        "/assets/dareean_web.png",
-        "/assets/greengnsulteng_web.png",
-        "/assets/sorot-dummy_showcase.png"
-      ],
       "readTime": "4 min read",
       "tags": [
         "Leadership",
@@ -674,10 +700,10 @@
     }
   ],
   "site": {
-    "email": "dareean.business@gmail.com",
+    "email": "dmardin@gmail.com",
     "github": "https://github.com/Dareean",
-    "linkedin": "https://linkedin.com/in/dareean",
-    "instagram": "https://instagram.com/dareean",
-    "footerNote": "Bringing stories to life, one pixel at a time. Based in Palu, Central Sulawesi."
+    "linkedin": "https://www.linkedin.com/in/dareean-ahmad-raffi-mardin-72247a229/",
+    "instagram": "https://instagram.com/darenrafi",
+    "footerNote": "Bringing stories to life, one pixel at a time. Verified Live Update 2026."
   }
 }

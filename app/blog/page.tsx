@@ -91,7 +91,7 @@ export default async function BlogPage() {
       </div>
 
       <div className="mt-28">
-        <Footer />
+        <Footer siteData={cmsData.site} />
       </div>
     </main>
   );

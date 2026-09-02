@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import TopNav from "@/components/TopNav";
@@ -24,7 +24,19 @@ export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [siteData, setSiteData] = useState<any>(null);
   const deviceInfo = useDeviceType();
+
+  useEffect(() => {
+    fetch("/api/cms")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && json.data?.site) {
+          setSiteData(json.data.site);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,11 +64,16 @@ export default function ContactPage() {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const email = siteData?.email || "dmardin@gmail.com";
+  const github = siteData?.github || "https://github.com/Dareean";
+  const linkedin = siteData?.linkedin || "https://www.linkedin.com/in/dareean-ahmad-raffi-mardin-72247a229/";
+  const instagram = siteData?.instagram || "https://instagram.com/darenrafi";
+
   const socialLinks = [
-    { name: "GitHub", url: "https://github.com/Dareean", icon: <Github className="w-5 h-5" /> },
-    { name: "LinkedIn", url: "https://www.linkedin.com/in/dareean-ahmad-raffi-mardin-72247a229/", icon: <Linkedin className="w-5 h-5" /> },
-    { name: "Email", url: "mailto:dmardin@gmail.com", icon: <Mail className="w-5 h-5" /> },
-    { name: "Instagram", url: "https://instagram.com/darenrafi", icon: <Instagram className="w-5 h-5" /> },
+    { name: "GitHub", url: github, icon: <Github className="w-5 h-5" /> },
+    { name: "LinkedIn", url: linkedin, icon: <Linkedin className="w-5 h-5" /> },
+    { name: "Email", url: `mailto:${email}`, icon: <Mail className="w-5 h-5" /> },
+    { name: "Instagram", url: instagram, icon: <Instagram className="w-5 h-5" /> },
   ];
 
   return (

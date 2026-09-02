@@ -68,7 +68,7 @@ export default async function Home() {
       <div className="section-divider mx-auto max-w-5xl" />
 
       {/* Footer */}
-      <Footer />
+      <Footer siteData={cmsData.site} />
     </main>
   );
 }

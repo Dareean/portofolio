@@ -19,7 +19,11 @@ export function isSupabaseConfigured(): boolean {
  * Client-side safe Supabase instance
  */
 export const supabase = isSupabaseConfigured()
-  ? createClient(supabaseUrl, supabaseAnonKey)
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        fetch: (url, init) => fetch(url, { ...init, cache: "no-store" }),
+      },
+    })
   : null;
 
 /**
@@ -30,6 +34,9 @@ export function getServiceSupabase() {
   const key = supabaseServiceKey || supabaseAnonKey;
   return createClient(supabaseUrl, key, {
     auth: { persistSession: false },
+    global: {
+      fetch: (url, init) => fetch(url, { ...init, cache: "no-store" }),
+    },
   });
 }
 
