@@ -3,11 +3,12 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import {
   Calendar,
   Clock,
   ChevronLeft,
+  ChevronRight,
   Share2,
   Tag,
   Check,
@@ -17,6 +18,8 @@ import {
   BookOpen,
   ArrowRight,
   Sparkles,
+  Image as ImageIcon,
+  Maximize2,
 } from "lucide-react";
 import { CMSBlogPost, PortfolioCMSData } from "@/lib/cms";
 
@@ -32,6 +35,13 @@ export default function ArticleReaderClient({
   relatedPosts,
 }: ArticleReaderClientProps) {
   const [copied, setCopied] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Collect all images from blog.images array or fallback to blog.coverImage
+  const allImages = blog.images && blog.images.length > 0 
+    ? blog.images 
+    : (blog.coverImage ? [blog.coverImage] : []);
+
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
@@ -228,17 +238,112 @@ export default function ArticleReaderClient({
           </div>
         </header>
 
-        {/* ── High-Res Cover Image Banner ── */}
-        {blog.coverImage && (
-          <div className="relative aspect-[16/9] rounded-3xl overflow-hidden border border-hairline mb-12 shadow-elevation-2">
-            <Image
-              src={blog.coverImage}
-              alt={blog.title}
-              fill
-              className="object-cover object-center"
-              priority
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+        {/* ── Editorial Image Carousel & Cover Banner ── */}
+        {allImages.length > 0 && (
+          <div className="mb-12 space-y-3">
+            <div className="relative aspect-[16/10] sm:aspect-[16/9] rounded-3xl overflow-hidden border border-hairline shadow-elevation-2 bg-surface-soft group">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={currentImageIndex}
+                  initial={{ opacity: 0, scale: 1.03 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.35, ease: "easeInOut" }}
+                  className="absolute inset-0 w-full h-full"
+                >
+                  <Image
+                    src={allImages[currentImageIndex]}
+                    alt={`${blog.title} - Foto ${currentImageIndex + 1}`}
+                    fill
+                    className="object-cover object-center"
+                    priority={currentImageIndex === 0}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Carousel Navigation Buttons (if > 1 image) */}
+              {allImages.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentImageIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+                    }}
+                    className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md text-white flex items-center justify-center transition-all opacity-80 group-hover:opacity-100 cursor-pointer shadow-lg hover:scale-105"
+                    aria-label="Previous slide"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+                    }}
+                    className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md text-white flex items-center justify-center transition-all opacity-80 group-hover:opacity-100 cursor-pointer shadow-lg hover:scale-105"
+                    aria-label="Next slide"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+
+                  {/* Top-Right Badge: Counter */}
+                  <div className="absolute top-4 right-4 z-10 px-3 py-1 rounded-full bg-black/50 backdrop-blur-md text-white text-micro font-mono flex items-center gap-1.5 shadow-xs border border-white/10">
+                    <ImageIcon size={12} className="text-primary-300" />
+                    <span>
+                      {currentImageIndex + 1} / {allImages.length}
+                    </span>
+                  </div>
+
+                  {/* Bottom Dots Indicator */}
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
+                    {allImages.map((_, dotIdx) => (
+                      <button
+                        key={dotIdx}
+                        type="button"
+                        onClick={() => setCurrentImageIndex(dotIdx)}
+                        className={`h-2 rounded-full transition-all cursor-pointer ${
+                          dotIdx === currentImageIndex
+                            ? "w-6 bg-white"
+                            : "w-2 bg-white/40 hover:bg-white/70"
+                        }`}
+                        aria-label={`Go to slide ${dotIdx + 1}`}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Thumbnail Strip (if > 1 image) */}
+            {allImages.length > 1 && (
+              <div className="flex items-center gap-2 overflow-x-auto py-1 px-1 no-scrollbar">
+                {allImages.map((imgUrl, thumbIdx) => {
+                  const isSelected = thumbIdx === currentImageIndex;
+                  return (
+                    <button
+                      key={thumbIdx}
+                      type="button"
+                      onClick={() => setCurrentImageIndex(thumbIdx)}
+                      className={`relative w-20 sm:w-24 aspect-[16/10] rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 cursor-pointer shadow-xs ${
+                        isSelected
+                          ? "border-primary ring-2 ring-primary/25 scale-[1.03]"
+                          : "border-hairline opacity-60 hover:opacity-100"
+                      }`}
+                    >
+                      <Image
+                        src={imgUrl}
+                        alt={`Thumbnail ${thumbIdx + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 

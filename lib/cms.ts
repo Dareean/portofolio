@@ -105,6 +105,7 @@ export interface CMSBlogPost {
   excerpt: string;
   content: string;
   coverImage?: string;
+  images?: string[];
   readTime: string;
   tags: string[];
   featured?: boolean;

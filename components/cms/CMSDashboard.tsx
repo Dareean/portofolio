@@ -37,6 +37,7 @@ import {
   Calendar,
   Clock,
   Tag,
+  Image as ImageIcon,
   Briefcase,
   Trophy,
   ArrowRight,
@@ -176,10 +177,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
   const resumeFileInputRef = useRef<HTMLInputElement>(null);
   const pdfFileInputRef = useRef<HTMLInputElement>(null);
   const blogCoverFileInputRef = useRef<HTMLInputElement>(null);
+  const blogGalleryFileInputRef = useRef<HTMLInputElement>(null);
 
   // New tech input state
   const [newTechName, setNewTechName] = useState("");
   const [newTechCategory, setNewTechCategory] = useState("Framework");
+  const [newGalleryUrl, setNewGalleryUrl] = useState("");
 
   // ═══════════════════════════════════════════
   // AI STUDIO & PDF SYNC STATES
@@ -248,26 +251,54 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
     }
   };
 
-  // Save full data to API
-  const handleSave = async () => {
-    if (!data) return;
+  // Save full data to API (accepts optional data override for atomic state sync)
+  const handleSave = async (overrideData?: PortfolioCMSData): Promise<boolean> => {
+    const dataToSave = overrideData || data;
+    if (!dataToSave) return false;
     setIsSaving(true);
     try {
+      console.log("[CMS] Saving data payload...", {
+        projectsCount: dataToSave.projects?.length,
+        blogsCount: dataToSave.blogs?.length,
+        siteEmail: dataToSave.site?.email,
+      });
+
       const res = await fetch("/api/cms", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(dataToSave),
       });
-      const json = await res.json();
-      if (json.success) {
-        showToast("All changes saved successfully!");
+
+      const json = await res.json().catch(() => null);
+
+      if (res.ok && json?.success) {
+        showToast("Perubahan berhasil disimpan!");
+        return true;
       } else {
-        showToast(json.error || "Failed to save changes", "error");
+        const errorMsg = json?.error || `Server error (${res.status}): Gagal menyimpan`;
+        console.error("[CMS Save Error]", errorMsg);
+        showToast(errorMsg, "error");
+        return false;
       }
-    } catch (err) {
-      showToast("Network error while saving", "error");
+    } catch (err: any) {
+      console.error("[CMS Network Error]", err);
+      showToast(err?.message || "Koneksi jaringan error saat menyimpan", "error");
+      return false;
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  // Helper to persist blog changes immediately to server
+  const persistBlogs = async (updatedBlogs: CMSBlogPost[], toastMsg?: string) => {
+    const nextData: PortfolioCMSData = {
+      ...data,
+      blogs: updatedBlogs,
+    };
+    setData(nextData);
+    const ok = await handleSave(nextData);
+    if (ok && toastMsg) {
+      showToast(toastMsg);
     }
   };
 
@@ -812,6 +843,53 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
 
       <input
         type="file"
+        ref={blogGalleryFileInputRef}
+        accept="image/*"
+        multiple
+        className="hidden"
+        onChange={async (e) => {
+          const files = e.target.files;
+          if (files && files.length > 0 && editingBlog) {
+            const fileList = Array.from(files);
+            setIsUploading(true);
+            const uploadedUrls: string[] = [];
+            for (const file of fileList) {
+              try {
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("folder", "blogs");
+                const res = await fetch("/api/cms/upload", {
+                  method: "POST",
+                  body: formData,
+                });
+                const json = await res.json();
+                if (res.ok && json.success && json.url) {
+                  uploadedUrls.push(json.url);
+                }
+              } catch (uploadErr) {
+                console.error("Gallery upload error:", uploadErr);
+              }
+            }
+            setIsUploading(false);
+            if (uploadedUrls.length > 0) {
+              const currentImages = editingBlog.images || (editingBlog.coverImage ? [editingBlog.coverImage] : []);
+              const nextImages = Array.from(new Set([...currentImages, ...uploadedUrls]));
+              setEditingBlog({
+                ...editingBlog,
+                images: nextImages,
+                coverImage: editingBlog.coverImage || nextImages[0],
+              });
+              showToast(`${uploadedUrls.length} image(s) added to gallery!`);
+            } else {
+              showToast("Failed to upload gallery images", "error");
+            }
+          }
+          if (e.target) e.target.value = "";
+        }}
+      />
+
+      <input
+        type="file"
         ref={portraitFileInputRef}
         accept="image/*"
         className="hidden"
@@ -1010,7 +1088,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
 
               <button
                 type="button"
-                onClick={handleSave}
+                onClick={() => handleSave()}
                 disabled={isSaving}
                 className="inline-flex h-9 items-center gap-2 px-4 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-medium transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
               >
@@ -1785,19 +1863,27 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         )}
 
                         <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10">
-                          <span
-                            className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold border shadow-xs ${
-                              blog.category === "Achievement"
-                                ? "bg-amber-50 text-amber-700 border-amber-200"
-                                : blog.category === "Daily Life"
-                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                : blog.category === "Tech"
-                                ? "bg-blue-50 text-blue-700 border-blue-200"
-                                : "bg-purple-50 text-purple-700 border-purple-200"
-                            }`}
-                          >
-                            {blog.category}
-                          </span>
+                          <div className="flex items-center gap-1.5">
+                            <span
+                              className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold border shadow-xs ${
+                                blog.category === "Achievement"
+                                  ? "bg-amber-50 text-amber-700 border-amber-200"
+                                  : blog.category === "Daily Life"
+                                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                  : blog.category === "Tech"
+                                  ? "bg-blue-50 text-blue-700 border-blue-200"
+                                  : "bg-purple-50 text-purple-700 border-purple-200"
+                              }`}
+                            >
+                              {blog.category}
+                            </span>
+                            {blog.images && blog.images.length > 1 && (
+                              <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold bg-white/95 text-slate-800 border border-[#E2E8F0] shadow-xs flex items-center gap-1">
+                                <ImageIcon size={10} className="text-[#4F46E5]" />
+                                {blog.images.length}
+                              </span>
+                            )}
+                          </div>
 
                           <button
                             type="button"
@@ -1805,7 +1891,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                               const updated = (data.blogs || []).map((b) =>
                                 b.id === blog.id ? { ...b, featured: !b.featured } : b
                               );
-                              setData({ ...data, blogs: updated });
+                              persistBlogs(updated, blog.featured ? "Unfeatured post" : "Post featured on Home/Blog!");
                             }}
                             className={`p-1.5 rounded-md transition cursor-pointer ${
                               blog.featured
@@ -1864,7 +1950,7 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                         <div className="flex items-center gap-1.5">
                           <button
                             type="button"
-                            onClick={() => setEditingBlog({ ...blog })}
+                            onClick={() => setEditingBlog({ ...blog, images: blog.images || (blog.coverImage ? [blog.coverImage] : []) })}
                             className="p-1.5 rounded-lg border border-[#E2E8F0] bg-white text-[#64748B] hover:text-[#4F46E5] transition cursor-pointer"
                             title="Edit Post"
                           >
@@ -1874,9 +1960,10 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                           <button
                             type="button"
                             onClick={() => {
-                              const updated = (data.blogs || []).filter((b) => b.id !== blog.id);
-                              setData({ ...data, blogs: updated });
-                              showToast("Blog post deleted!");
+                              if (confirm(`Hapus artikel blog "${blog.title}"?`)) {
+                                const updated = (data.blogs || []).filter((b) => b.id !== blog.id);
+                                persistBlogs(updated, "Blog post deleted!");
+                              }
                             }}
                             className="p-1.5 rounded-lg border border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100 transition cursor-pointer"
                             title="Delete Post"
@@ -3163,6 +3250,137 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
                   </div>
                 </div>
 
+                {/* ═══════════════════════════════════════════
+                    CAROUSEL / PHOTO GALLERY MANAGER
+                    ═══════════════════════════════════════════ */}
+                <div className="p-4 rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <label className="block text-xs font-semibold text-[#0F172A] flex items-center gap-1.5">
+                        <ImageIcon size={14} className="text-[#4F46E5]" />
+                        <span>Galeri Foto Carousel (Multi-Gambar)</span>
+                      </label>
+                      <p className="text-[11px] text-[#64748B] mt-0.5">
+                        Unggah beberapa foto dokumentasi untuk ditampilkan sebagai carousel slide interaktif.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      disabled={isUploading}
+                      onClick={() => blogGalleryFileInputRef.current?.click()}
+                      className="h-8 px-3 rounded-lg bg-white border border-[#CBD5E1] text-[#4F46E5] hover:border-[#4F46E5] text-xs font-mono font-medium transition cursor-pointer shadow-xs flex items-center gap-1.5 flex-shrink-0"
+                    >
+                      <Plus size={13} />
+                      <span>{isUploading ? "Uploading..." : "Upload Foto (+)"}</span>
+                    </button>
+                  </div>
+
+                  {/* Image Grid / Thumbnails */}
+                  {(editingBlog.images && editingBlog.images.length > 0) ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+                      {editingBlog.images.map((imgUrl, iIdx) => {
+                        const isCover = editingBlog.coverImage === imgUrl;
+                        return (
+                          <div
+                            key={iIdx}
+                            className={`relative aspect-[4/3] rounded-lg overflow-hidden border group bg-slate-100 ${
+                              isCover ? "border-[#4F46E5] ring-2 ring-[#4F46E5]/20" : "border-[#E2E8F0]"
+                            }`}
+                          >
+                            <Image
+                              src={imgUrl}
+                              alt={`Gallery ${iIdx + 1}`}
+                              fill
+                              className="object-cover"
+                            />
+                            {/* Overlay Controls */}
+                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-1.5">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[9px] font-mono text-white/90 bg-black/40 px-1 rounded">
+                                  #{iIdx + 1}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const nextImgs = (editingBlog.images || []).filter((_, idx) => idx !== iIdx);
+                                    let nextCover = editingBlog.coverImage;
+                                    if (isCover) {
+                                      nextCover = nextImgs[0] || "";
+                                    }
+                                    setEditingBlog({
+                                      ...editingBlog,
+                                      images: nextImgs,
+                                      coverImage: nextCover,
+                                    });
+                                  }}
+                                  className="p-1 rounded bg-rose-600/80 hover:bg-rose-600 text-white cursor-pointer"
+                                  title="Hapus foto"
+                                >
+                                  <Trash2 size={11} />
+                                </button>
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setEditingBlog({ ...editingBlog, coverImage: imgUrl });
+                                  showToast("Disetel sebagai gambar sampul!");
+                                }}
+                                className={`w-full py-1 rounded text-[10px] font-mono font-medium text-center transition cursor-pointer ${
+                                  isCover
+                                    ? "bg-[#4F46E5] text-white"
+                                    : "bg-white/90 hover:bg-white text-slate-800"
+                                }`}
+                              >
+                                {isCover ? "★ Sampul Utama" : "Set Jadi Sampul"}
+                              </button>
+                            </div>
+                            {isCover && (
+                              <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded text-[8px] font-mono font-bold bg-[#4F46E5] text-white pointer-events-none">
+                                Sampul
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="text-center py-4 border border-dashed border-[#CBD5E1] rounded-lg bg-white/50 text-[11px] font-mono text-[#64748B]">
+                      Belum ada foto carousel. Klik &quot;Upload Foto (+)&quot; atau masukkan URL di bawah.
+                    </div>
+                  )}
+
+                  {/* Add manual image URL */}
+                  <div className="flex items-center gap-2 pt-1">
+                    <input
+                      type="text"
+                      placeholder="Atau tempel URL gambar (https://... atau /assets/...)"
+                      value={newGalleryUrl}
+                      onChange={(e) => setNewGalleryUrl(e.target.value)}
+                      className="flex-1 h-8 px-3 rounded-lg bg-white border border-[#E2E8F0] text-xs font-mono text-[#0F172A] focus:border-[#4F46E5] outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!newGalleryUrl.trim()) return;
+                        const current = editingBlog.images || (editingBlog.coverImage ? [editingBlog.coverImage] : []);
+                        const next = [...current, newGalleryUrl.trim()];
+                        setEditingBlog({
+                          ...editingBlog,
+                          images: next,
+                          coverImage: editingBlog.coverImage || next[0],
+                        });
+                        setNewGalleryUrl("");
+                        showToast("Foto ditambahkan ke galeri carousel!");
+                      }}
+                      className="h-8 px-3 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-xs font-mono transition cursor-pointer flex-shrink-0"
+                    >
+                      + Tambah
+                    </button>
+                  </div>
+                </div>
+
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <label className="block text-xs font-medium text-[#0F172A]">
@@ -3386,11 +3604,12 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
               <div className="px-6 py-4 border-t border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC]">
                 <button
                   type="button"
-                  onClick={() => {
-                    const updated = (data.blogs || []).filter((b) => b.id !== editingBlog.id);
-                    setData({ ...data, blogs: updated });
-                    setEditingBlog(null);
-                    showToast("Blog post deleted!");
+                  onClick={async () => {
+                    if (confirm("Hapus blog post ini?")) {
+                      const updated = (data.blogs || []).filter((b) => b.id !== editingBlog.id);
+                      setEditingBlog(null);
+                      await persistBlogs(updated, "Blog post deleted!");
+                    }
                   }}
                   className="text-xs font-mono text-rose-600 hover:underline cursor-pointer"
                 >
@@ -3408,23 +3627,40 @@ export default function CMSDashboard({ initialData }: { initialData: PortfolioCM
 
                   <button
                     type="button"
-                    onClick={() => {
+                    disabled={isSaving}
+                    onClick={async () => {
+                      if (!editingBlog.title.trim()) {
+                        showToast("Judul artikel tidak boleh kosong!", "error");
+                        return;
+                      }
                       const blogs = data.blogs || [];
                       const index = blogs.findIndex((b) => b.id === editingBlog.id);
+                      
+                      // Ensure images list is populated with coverImage if needed
+                      const imagesList = editingBlog.images && editingBlog.images.length > 0 
+                        ? editingBlog.images 
+                        : (editingBlog.coverImage ? [editingBlog.coverImage] : []);
+
+                      const postToSave: CMSBlogPost = {
+                        ...editingBlog,
+                        images: imagesList,
+                        coverImage: editingBlog.coverImage || imagesList[0] || "",
+                      };
+
                       let updated: CMSBlogPost[];
                       if (index >= 0) {
                         updated = [...blogs];
-                        updated[index] = editingBlog;
+                        updated[index] = postToSave;
                       } else {
-                        updated = [editingBlog, ...blogs];
+                        updated = [postToSave, ...blogs];
                       }
-                      setData({ ...data, blogs: updated });
+                      
                       setEditingBlog(null);
-                      showToast("Blog post saved!");
+                      await persistBlogs(updated, "🎉 Blog post berhasil disimpan & dipublikasikan!");
                     }}
-                    className="h-9 px-5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-semibold transition cursor-pointer shadow-xs"
+                    className="h-9 px-5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-mono font-semibold transition cursor-pointer shadow-xs disabled:opacity-50"
                   >
-                    Simpan &amp; Publish
+                    {isSaving ? "Menyimpan..." : "Simpan & Publish"}
                   </button>
                 </div>
               </div>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { PortfolioCMSData, CMSBlogPost } from "@/lib/cms";
-import { Search, X, Clock, ArrowRight, BookOpen } from "lucide-react";
+import { Search, X, Clock, ArrowRight, BookOpen, Image as ImageIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface BlogClientViewProps {
@@ -137,10 +137,16 @@ export default function BlogClientView({ cmsData }: BlogClientViewProps) {
                     )}
 
                     {/* Floating Pill on top-left of image */}
-                    <div className="absolute top-3 left-3">
+                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
                       <span className="px-3 py-1 rounded-full bg-[#4F46E5] text-white text-[10px] font-mono font-medium shadow-xs">
                         {blog.category}
                       </span>
+                      {blog.images && blog.images.length > 1 && (
+                        <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-mono font-medium flex items-center gap-1 shadow-xs border border-white/10">
+                          <ImageIcon size={10} className="text-white/80" />
+                          <span>{blog.images.length} Foto</span>
+                        </span>
+                      )}
                     </div>
                   </Link>
 
